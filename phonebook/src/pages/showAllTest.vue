@@ -165,6 +165,7 @@ import Forms from '@/components/forms.vue';
 
 import { useForm, defineRule, configure } from 'vee-validate';
 import * as yup from 'yup';
+import { onUpdated } from 'vue';
 
 
 
@@ -177,30 +178,31 @@ onMounted(() => {
   MyLocalContacts.value = storedContacts;
 });
 
+onUpdated(()=>{
+  const storedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+  MyLocalContacts.value = storedContacts;
+})
+
 
 </script>
 <template>
-  <div class=" mx-auto mainContent min-h-[100vh]">
+  <div class=" mx-auto mainContent h-full">
     <header class="titlePage ">
-  <div class="titleText bg-black/50 p-2 ">
-    <h1 class="text-center my-4 text-3xl text-black font-semibold ">
+  <div class="titleText ">
+    <h1 class="text-center py-8 text-3xl text-black font-semibold ">
     دفترچه تلفن
     
   </h1>
-  <v-text-field
-              v-model="titleHandler"
-              label="شماره تلفن"
-              placeholder="مثال : 09928717522"
-            />
+
               </div>
 
 </header>
 
-    <div class="bg-warning ">
-    <v-table >
-      <thead class="bg-gray-500">
-        <tr>
-          <th class="text-right">
+    <div class="container mx-auto">
+    <v-table class=" rounded-lg" >
+      <thead class=" ">
+        <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
+          <th class=" text-right">
             عملیات
           </th>
           <th class="text-right">
@@ -218,22 +220,23 @@ onMounted(() => {
           <th class="text-right">شماره</th>
         </tr>
       </thead>
-      <tbody class="">
+      <tbody class="bg-[#dddbdb] text-[#212222]">
         <tr
           v-for="(item, index) in MyLocalContacts"
           :key="index"
-          class="text-right text-xl  bg-gray-500/50 cursor-pointer hover:bg-blue-900 border-b-4  hover:border-black border-transparent select-none "
+          class="text-right text-xl even:bg-red-500  bg-gray-500/50 cursor-pointer hover:bg-sky-900 hover:text-white duration-100 select-none "
           @dblclick="toggleEditDialog(item)"
         >
           <td
             v-if="contact_state.length > 0"
-            class=" flex justify-end w-full gap-2 border-none items-center "
+            class=" flex justify-end w-full gap-2  items-center  "
           >
             <v-btn
-              variant="flat"
-              color="red"
+              variant="elevated"
+              elevation="2"
               prepend-icon="mdi-delete"
               @click="deleteContact(item.id)"
+              class="bg-red-700 text-orange-500"
             >
               حذف
             </v-btn>
@@ -257,7 +260,7 @@ onMounted(() => {
       </tbody>
     </v-table>
   </div>
-  <div class="addNewContact w-full flex justify-end py-5 px-3">
+  <div class="addNewContact w-full flex justify-end py-5 container mx-auto">
     <v-btn
       color="green"
       size="large"
@@ -293,8 +296,12 @@ onMounted(() => {
 
 <style scoped>
 .mainContent{
-  background-image: url(../assets/bckground.png);
+  background-image: url(../assets/test.jpg);
   background-position: center;
   background-repeat: repeat;
+}
+.tableHeadings {
+  background-color: red;
+  padding: 20px;
 }
 </style>

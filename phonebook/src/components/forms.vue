@@ -199,6 +199,7 @@ const submitData = () => {
     resetForm({
       values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
     });
+    state.form.isCoworker=false;
 
     loading.value = false;
   }, 1700);
@@ -210,9 +211,8 @@ console.log(state.form);
   resetForm({
       values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
     });
-
+    state.form.isCoworker=false;
   console.log(props.modelState);
-
 
 };
 // const UpdateDialog = () => {
@@ -292,7 +292,11 @@ const UpdateDialog = () => {
     });
 
     loading.value = false;
+    resetForm({
+      values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
+    });
   }, 1700);
+
 };
 
 
@@ -304,8 +308,9 @@ watch(() => state.form.isCoworker, (newValue) => {
 <template>
   <v-dialog
     v-model="props.modelState"
-    max-width="800"
+    max-width="600"
     class="bg-teal-400/0"
+    transition="dialog-bottom-transition"
     @click:outside="cancelDialog"
 
   >
@@ -315,42 +320,25 @@ watch(() => state.form.isCoworker, (newValue) => {
     <v-card
       prepend-icon="mdi-account"
       :title="props.title"
-      class="items-end "
+      class=" flex items-end justify-center  "
     >
-    <v-container>
-      <v-card-text class="text-right bg-sky-700 w-full  ">
-        <v-row class=" justify-end  bg-red-400  ">
-          <v-col
-            cols="24"
-            md="4"
-            sm="6"
-            class="flex flex-col bg-black"
-          >
-            <v-text-field
-              v-model="phoneNumber"
-              label="شماره تلفن"
-              placeholder="مثال : 09928717522"
-            />
-            <!-- :error-messages="phoneNumberError" -->
-
-          <error-message name="phoneNumber" class=" text-red-500 text-center"></error-message>
-
-          </v-col>
-
-          <v-col
-            cols="24"
-            md="4"
-            sm="6"
-            class="flex flex-col w-full bg-white"
-          >
+      <v-card-text class="text-right  w-full     ">
             <v-text-field
               v-model="fullname"
               label="نام و نام خانوادگی"
               placeholder="مثال : علی علوی"
             />
           <error-message name="fullname" class=" text-red-500 text-center"></error-message>
-          </v-col>
-          <v-col cols="8">
+          <v-text-field
+              v-model="phoneNumber"
+              label="شماره تلفن"
+              placeholder="مثال : 09928717522"
+              class=""
+            />
+            <!-- :error-messages="phoneNumberError" -->
+
+          <error-message name="phoneNumber" class=" text-red-500 text-center"></error-message>
+
             <date-picker
               v-model="selectedDate"
               format="YYYY-MM-DD"
@@ -360,13 +348,7 @@ watch(() => state.form.isCoworker, (newValue) => {
             />
           <error-message name="selectedDate" class="text-red-500 text-center"></error-message>
 
-          </v-col>
-          
-
-          <v-col
-            cols="8"
-            class="d-flex justify-end"
-          >
+      
             <v-switch
               v-model="state.form.isCoworker"
               color="primary"
@@ -375,13 +357,8 @@ watch(() => state.form.isCoworker, (newValue) => {
                 <span class="text-gray-100 text-lg font-bold">همکار</span>
               </template>
             </v-switch>
-          </v-col>
-        </v-row>
-        <v-col
-          cols="12"
-          class="mb-2 flex justify-start  "
-        >
-          <v-row class="gap-4 justify-end">
+            <div class="operationButtons flex items-center justify-end gap-4 ">
+              
             <v-btn
               variant="flat"
               color="red"
@@ -411,10 +388,9 @@ watch(() => state.form.isCoworker, (newValue) => {
             >
               ثبت مخاطب
             </v-btn>
-          </v-row>
-        </v-col>
+            </div>
+       
       </v-card-text>
-    </v-container>
 
     </v-card>
   </v-dialog>
