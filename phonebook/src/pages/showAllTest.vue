@@ -20,7 +20,47 @@ const convertNumbersToPersian = (text) => {
 
 const date = ref('')
 
-const showAlert = (id) => {
+// const showAlert = (id) => {
+//   Swal.fire({
+//     title: "آیا از حذف مخاطب اطمینان دارید؟",
+//     text: "اطلاعات حذف شده قابلیت بازیابی ندارند",
+//     icon: "warning",
+//     showCancelButton: true,
+//     confirmButtonColor: "blue",
+//     cancelButtonColor: "red",
+//     confirmButtonText: "بله، حذف شود",
+//     cancelButtonText: "انصراف",
+//     customClass: {
+//       cancelButton: "text-black text-lg font-semiBold",
+//       confirmButton: "text-black text-lg font-semiBold"
+//     }
+//   }).then((result) => {
+//     if (result.isConfirmed) {
+//       deleteContact(id)
+//       // console.log('hazf shod ')
+//       const Toast = Swal.mixin({
+//         toast: true,
+//         position: "top-end",
+//         showConfirmButton: false,
+//         timer: 2500,
+//         timerProgressBar: true,
+
+//       });
+//       Toast.fire({
+//         icon: "success",
+//         title: "مخاطب با موفقیت حذف شد"
+//       });
+//     }
+//   });
+// }
+const deleteContact = (id) => {
+  // Retrieve the contacts array from localStorage
+  const contactsFromStorage = JSON.parse(localStorage.getItem('contacts')) || [];
+  let lastId = parseInt(localStorage.getItem('lastId')) || 0;
+
+  // Filter out the contact with the given ID
+  const updatedContacts = contactsFromStorage.filter(contact => contact.id !== id);
+
   Swal.fire({
     title: "آیا از حذف مخاطب اطمینان دارید؟",
     text: "اطلاعات حذف شده قابلیت بازیابی ندارند",
@@ -36,23 +76,43 @@ const showAlert = (id) => {
     }
   }).then((result) => {
     if (result.isConfirmed) {
-      deleteContact(id)
-      // console.log('hazf shod ')
+      // Update lastId only if the deleted ID matches it
+      if (id === lastId) {
+        if (updatedContacts.length > 0) {
+          // Set lastId to the new maximum ID from the remaining contacts
+          lastId = Math.max(...updatedContacts.map(contact => contact.id));
+        } else {
+          // Reset lastId to 0 if no contacts remain
+          lastId = 0;
+        }
+        localStorage.setItem('lastId', lastId);
+      }
+
+      // Save the updated array back to localStorage
+      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+
+      // Update the local reactive variable
+      MyLocalContacts.value = updatedContacts;
+
+      // Show success message
       const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
         showConfirmButton: false,
         timer: 2500,
         timerProgressBar: true,
-
       });
       Toast.fire({
         icon: "success",
         title: "مخاطب با موفقیت حذف شد"
       });
+
+      console.log(`Contact with ID ${id} deleted successfully.`);
+      console.log(`Updated lastId: ${lastId}`);
     }
   });
-}
+};
+
 import { ref, reactive, computed, onMounted, watch } from "vue";
 
 import { useContactStore } from '../stores/contacts.js';
@@ -91,9 +151,9 @@ const contact_state = contactsStore.contacts
 
 
 
-const deleteContact = (id) => {
-  contactsStore.deleteContact(id);
-};
+// const deleteContact = (id) => {
+//   contactsStore.deleteContact(id);
+// };
 
 
 const loading = ref(false)
@@ -106,18 +166,17 @@ import Forms from '@/components/forms.vue';
 import { useForm, defineRule, configure } from 'vee-validate';
 import * as yup from 'yup';
 
-const titleStorage=ref('Stylish man')
-
-localStorage.setItem('mood',titleStorage.value)
 
 
+// Create a reactive variable to store contacts
+const MyLocalContacts = ref([]);
 
-const titleHandler=ref('')
+// Fetch contacts from localStorage on component mount
+onMounted(() => {
+  const storedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+  MyLocalContacts.value = storedContacts;
+});
 
-watch(titleHandler,(newValue)=>{
-  titleHandler.value=newValue
-  titleStorage.value=titleHandler.value
-})
 
 </script>
 <template>
@@ -132,7 +191,8 @@ watch(titleHandler,(newValue)=>{
               v-model="titleHandler"
               label="شماره تلفن"
               placeholder="مثال : 09928717522"
-            />  </div>
+            />
+              </div>
 
 </header>
 
@@ -160,7 +220,7 @@ watch(titleHandler,(newValue)=>{
       </thead>
       <tbody class="">
         <tr
-          v-for="(item, index) in contactsStore.contacts"
+          v-for="(item, index) in MyLocalContacts"
           :key="index"
           class="text-right text-xl  bg-gray-500/50 cursor-pointer hover:bg-blue-900 border-b-4  hover:border-black border-transparent select-none "
           @dblclick="toggleEditDialog(item)"
@@ -173,7 +233,7 @@ watch(titleHandler,(newValue)=>{
               variant="flat"
               color="red"
               prepend-icon="mdi-delete"
-              @click="showAlert(item.id)"
+              @click="deleteContact(item.id)"
             >
               حذف
             </v-btn>

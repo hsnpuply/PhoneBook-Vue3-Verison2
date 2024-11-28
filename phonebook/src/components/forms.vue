@@ -103,40 +103,86 @@ const handleSubmitFormClick = handleSubmit( (item) => {
 
 // });
 
-const submitNewData = ()=>{
-  // emit('update:modelState', false);
-  state.form.fullname = fullname.value
-  state.form.phoneNumber = phoneNumber.value
-  state.form.selectedDate = selectedDate.value
-  alert(state.form.fullname)
-}
 
 
 
 
 
 
-const submitData = () => {
-  console.log('STATE FORM VALUE WAS ' + state.form.isCoworker);
+
+// const submitData = () => {
+//   loading.value = true
+//   console.log('STATE FORM VALUE WAS ' + state.form.isCoworker);
   
-  loading.value = true
+//   // const registerContactInfo = {
+//   //   id: contactsStore.contacts.length + 1,
+//   //   phoneNumber: phoneNumber.value,
+//   //   fullname: fullname.value,
+//   //   selectedDate: selectedDate.value,
+//   //   isCoworker: state.form.isCoworker,
+//   // };
+//   // console.log(contactsStore.contacts.length + 1);
+//   // console.log(registerContactInfo);
+
+//   setTimeout(() => {
+//     // contactsStore.addContact(registerContactInfo)
+//     emit('update:modelState', false);
+    
+
+//   },1500)
+
+
+//   setTimeout(() => {
+//     Swal.fire({
+//       icon: 'success',
+//       title: ' مخاطب با موفقیت ثبت شد',
+//       toast: true,
+//       position: 'top-end',
+//       showConfirmButton: false,
+//       timer: 3000,
+//       timerProgressBar: true,
+//     });
+//     // Reset form fields and validation state
+//     resetForm({
+//       values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
+//     });
+
+//     loading.value = false
+//   }, 1700);
+
+
+// }
+const submitData = () => {
+  loading.value = true;
+  // console.log('STATE FORM VALUE WAS ' + state.form.isCoworker);
+
+  // Retrieve the last used ID from localStorage or initialize it to 0
+  let lastId = parseInt(localStorage.getItem('lastId')) || 0;
+
+  // Increment the ID for the new contact
+  const newId = lastId + 1;
+
   const registerContactInfo = {
-    id: contactsStore.contacts.length + 1,
+    id: newId, // Use the new ID
     phoneNumber: phoneNumber.value,
     fullname: fullname.value,
     selectedDate: selectedDate.value,
     isCoworker: state.form.isCoworker,
   };
-  // console.log(contactsStore.contacts.length + 1);
-  console.log(registerContactInfo);
+
+  // console.log(registerContactInfo);
+
+  // Store new contact in localStorage
+  const contactsFromStorage = JSON.parse(localStorage.getItem('contacts')) || [];
+  contactsFromStorage.push(registerContactInfo); // Add the new contact
+  localStorage.setItem('contacts', JSON.stringify(contactsFromStorage)); // Save to localStorage
+
+  // Update the last used ID in localStorage
+  localStorage.setItem('lastId', newId);
 
   setTimeout(() => {
-    contactsStore.addContact(registerContactInfo)
     emit('update:modelState', false);
-    
-
-  },1500)
-
+  }, 1500);
 
   setTimeout(() => {
     Swal.fire({
@@ -148,18 +194,15 @@ const submitData = () => {
       timer: 3000,
       timerProgressBar: true,
     });
+
     // Reset form fields and validation state
     resetForm({
       values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
     });
 
-    loading.value = false
+    loading.value = false;
   }, 1700);
-
-
-}
-
-
+};
 const cancelDialog = () => {
 console.log(state.form);
 
@@ -172,6 +215,47 @@ console.log(state.form);
 
 
 };
+// const UpdateDialog = () => {
+//   const updatedContact = {
+//     id: props.currentData,
+//     phoneNumber: phoneNumber.value,
+//     fullname: fullname.value,
+//     selectedDate: selectedDate.value,
+//     isCoworker: state.form.isCoworker,
+ 
+//   };
+
+//   loading.value = true
+
+  
+
+//   setTimeout(() => {
+//     contactsStore.updateContact(state.form.id, updatedContact);
+//     // console.log(idModel)
+//     console.log('↑ idish')
+//     console.log(updatedContact , state.form.id);
+
+//     emit('update:modelState', false);
+
+//   }, 1500);
+//   setTimeout(() => {
+//     Swal.fire({
+//       icon: 'success',
+//       title: ' مخاطب ویرایش  شد',
+//       toast: true,
+//       position: 'top-end',
+//       showConfirmButton: false,
+//       timer: 3000,
+//       timerProgressBar: true,
+    
+//     });
+
+//   loading.value = false
+
+//   }, 1700);
+
+// }
+
 const UpdateDialog = () => {
   const updatedContact = {
     id: props.currentData,
@@ -179,22 +263,23 @@ const UpdateDialog = () => {
     fullname: fullname.value,
     selectedDate: selectedDate.value,
     isCoworker: state.form.isCoworker,
- 
   };
 
-  loading.value = true
+  loading.value = true;
 
-  
+  // Update the contact in localStorage
+  const contactsFromStorage = JSON.parse(localStorage.getItem('contacts')) || [];
+  const contactIndex = contactsFromStorage.findIndex(contact => contact.id === props.currentData);
+
+  if (contactIndex !== -1) {
+    contactsFromStorage[contactIndex] = updatedContact; // Update the existing contact
+    localStorage.setItem('contacts', JSON.stringify(contactsFromStorage)); // Save the updated contacts
+  }
 
   setTimeout(() => {
-    contactsStore.updateContact(state.form.id, updatedContact);
-    // console.log(idModel)
-    console.log('↑ idish')
-    console.log(updatedContact , state.form.id);
-
     emit('update:modelState', false);
-
   }, 1500);
+
   setTimeout(() => {
     Swal.fire({
       icon: 'success',
@@ -204,14 +289,13 @@ const UpdateDialog = () => {
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-    
     });
 
-  loading.value = false
-
+    loading.value = false;
   }, 1700);
+};
 
-}
+
 watch(() => state.form.isCoworker, (newValue) => {
   state.form.isCoworker = newValue;
 })
