@@ -101,14 +101,13 @@ const deleteContact = (id) => {
         showConfirmButton: false,
         timer: 2500,
         timerProgressBar: true,
+        color:'green'
       });
       Toast.fire({
         icon: "success",
         title: "مخاطب با موفقیت حذف شد"
       });
 
-      console.log(`Contact with ID ${id} deleted successfully.`);
-      console.log(`Updated lastId: ${lastId}`);
     }
   });
 };
@@ -198,8 +197,8 @@ onUpdated(()=>{
 
 </header>
 
-    <div class="container mx-auto">
-    <v-table class=" rounded-lg" >
+    <div class="container mx-auto rounded-lg">
+    <v-table class="  border-2 border-gray-400" >
       <thead class=" ">
         <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
           <th class=" text-right">
@@ -224,7 +223,7 @@ onUpdated(()=>{
         <tr
           v-for="(item, index) in MyLocalContacts"
           :key="index"
-          class="text-right text-xl even:bg-red-500  bg-gray-500/50 cursor-pointer hover:bg-sky-900 hover:text-white duration-100 select-none "
+          class="text-right text-xl even:bg-gray-200  bg-gray-500/50 cursor-pointer hover:bg-sky-900/70 hover:text-white duration-100 select-none "
           @dblclick="toggleEditDialog(item)"
         >
           <td
@@ -236,15 +235,18 @@ onUpdated(()=>{
               elevation="2"
               prepend-icon="mdi-delete"
               @click="deleteContact(item.id)"
-              class="bg-red-700 text-orange-500"
+              class="bg-red-600/90 hover:bg-red-600/95"
+
             >
               حذف
             </v-btn>
             <v-btn
-              variant="flat"
+              variant="elevated"
               color="blue"
               prepend-icon="mdi-account"
               @click="toggleEditDialog(item)"
+              class="bg-sky-600/90 hover:bg-sky-600/95"
+
             >
               ویرایش
             </v-btn>
@@ -262,13 +264,15 @@ onUpdated(()=>{
   </div>
   <div class="addNewContact w-full flex justify-end py-5 container mx-auto">
     <v-btn
+    variant="elevated"
+    elevation="3"
       color="green"
       size="large"
       @click="toggleRegisterDialog"
     >
       <v-icon left>
         mdi-plus
-      </v-icon>
+      </v-icon >
       ثبت مخاطب
     </v-btn>
     <Forms

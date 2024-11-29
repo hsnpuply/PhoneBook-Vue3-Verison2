@@ -20,6 +20,8 @@ import './assets/tailwind.css'
 const app = createApp(App)
 app.component('DatePicker', Vue3PersianDatetimePicker)
 
+
+
 registerPlugins(app)
 app.use(Vue3PersianDatetimePicker, {
     name: 'CustomDatePicker',
@@ -27,12 +29,12 @@ app.use(Vue3PersianDatetimePicker, {
       format: 'YYYY-MM-DD HH:mm',
       displayFormat: 'jYYYY-jMM-jDD',
       editable: false,
-      inputClass: 'form-control my-custom-class-name',
-      placeholder: 'Please select a date',
+      inputClass: 'form-control my-custom-class-name text-right py-3',
+      placeholder: 'تاریخ تولد خود را وارد کنید',
       altFormat: 'YYYY-MM-DD HH:mm',
-      color: '#00acc1',
+      color: 'orange',
       autoSubmit: false,
-      //...
+      clearable: false,    //...
       //... And whatever you want to set as default.
       //...
     }

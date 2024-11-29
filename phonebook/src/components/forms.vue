@@ -192,6 +192,8 @@ const submitData = () => {
       position: 'top-end',
       showConfirmButton: false,
       timer: 3000,
+      color:'green',
+      background:'#dddbd',
       timerProgressBar: true,
     });
 
@@ -289,6 +291,7 @@ const UpdateDialog = () => {
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
+      color:'green'
     });
 
     loading.value = false;
@@ -309,7 +312,7 @@ watch(() => state.form.isCoworker, (newValue) => {
   <v-dialog
     v-model="props.modelState"
     max-width="600"
-    class="bg-teal-400/0"
+    class="bg-gray-400/20 "
     transition="dialog-bottom-transition"
     @click:outside="cancelDialog"
 
@@ -320,36 +323,49 @@ watch(() => state.form.isCoworker, (newValue) => {
     <v-card
       prepend-icon="mdi-account"
       :title="props.title"
-      class=" flex items-end justify-center  "
+      class=" flex items-end justify-center bg-gray-700 !shadow-md  !shadow-black  "
     >
-      <v-card-text class="text-right  w-full     ">
-            <v-text-field
+      <v-card-text class="text-right  w-full   mt-2  ">
+        <div class="flex flex-col items-end w-full">
+
+          <v-text-field
               v-model="fullname"
               label="نام و نام خانوادگی"
               placeholder="مثال : علی علوی"
+              class="text-right w-full"
             />
-          <error-message name="fullname" class=" text-red-500 text-center"></error-message>
+          <error-message name="fullname" class=" text-red-500 text-center pb-4 -pt-8"></error-message>
+        </div>
+        <div class="flex flex-col items-end w-full">
+
           <v-text-field
               v-model="phoneNumber"
               label="شماره تلفن"
               placeholder="مثال : 09928717522"
-              class=""
+              class="w-full"
             />
             <!-- :error-messages="phoneNumberError" -->
 
-          <error-message name="phoneNumber" class=" text-red-500 text-center"></error-message>
+          <error-message name="phoneNumber" class=" text-red-500 text-center pb-4 -pt-8"></error-message>
+          </div>
 
-            <date-picker
+        <div class="flex flex-col items-end w-full ">
+          <date-picker
               v-model="selectedDate"
               format="YYYY-MM-DD"
               display-format="jYYYY-jMM-jDD"
               placeholder="تاریخ تولد خود را وارد کنید"
 
-            />
-          <error-message name="selectedDate" class="text-red-500 text-center"></error-message>
+              class=" text-lg w-full "
 
+            />
+
+            <error-message name="selectedDate" class="text-red-500 text-center pb-4 -pt-8"></error-message>
       
-            <v-switch
+        </div>
+        <div class="flex w-full items-end justify-end pt-4 ">
+
+          <v-switch
               v-model="state.form.isCoworker"
               color="primary"
             >
@@ -357,13 +373,16 @@ watch(() => state.form.isCoworker, (newValue) => {
                 <span class="text-gray-100 text-lg font-bold">همکار</span>
               </template>
             </v-switch>
+        </div>
+
             <div class="operationButtons flex items-center justify-end gap-4 ">
               
             <v-btn
-              variant="flat"
-              color="red"
+              variant="elevated"
               @click="cancelDialog()"
               :disabled="loading"
+              size="large"
+              class="bg-red-600/80 hover:bg-red-600/90"
             >
               انصراف
             </v-btn>
@@ -371,9 +390,10 @@ watch(() => state.form.isCoworker, (newValue) => {
             <v-btn
               v-if="props.editMode"
               :loading="loading"
-              variant="flat"
+              variant="elevated"
               type="submit"
               color="green"
+              size="large"
               @click="handleSubmitFormClick(currentData)"
             >
               اعمال تغییرات
@@ -382,8 +402,9 @@ watch(() => state.form.isCoworker, (newValue) => {
             <v-btn
               v-if="props.registerMode"
               :loading="loading"
-              variant="flat"
+              variant="elevated"
               color="green"
+              size="large"
               @click="handleSubmitFormClick()"
             >
               ثبت مخاطب
@@ -396,6 +417,21 @@ watch(() => state.form.isCoworker, (newValue) => {
   </v-dialog>
 </template>
 
-<style scoped>
+<style >
+.vpd-body{
+  background-color: rgba(0, 0, 0, 0.567);
+}
+.vpd-actions > buttons:hover{
+  border-radius: 1rem;
+}
 
+.v-input {
+  text-align: right !important;
+}
+.v-field__input{
+  text-align: right !important;
+}
+.v-field-label{
+  right: 0;
+}
 </style>
