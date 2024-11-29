@@ -197,8 +197,8 @@ onUpdated(()=>{
 
 </header>
 
-    <div class="container mx-auto rounded-lg">
-    <v-table class="  border-2 border-gray-400" >
+    <div class="container mx-auto rounded-lg ">
+    <v-table class="the_table" >
       <thead class=" ">
         <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
           <th class=" text-right">
@@ -223,7 +223,7 @@ onUpdated(()=>{
         <tr
           v-for="(item, index) in MyLocalContacts"
           :key="index"
-          class="text-right text-xl even:bg-gray-200  bg-gray-500/50 cursor-pointer hover:bg-sky-900/70 hover:text-white duration-100 select-none "
+          class="text-right text-xl even:bg-gray-200  bg-gray-500/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none "
           @dblclick="toggleEditDialog(item)"
         >
           <td
@@ -307,5 +307,8 @@ onUpdated(()=>{
 .tableHeadings {
   background-color: red;
   padding: 20px;
+}
+.the_table{
+  filter: drop-shadow(4px 4px 5px #777575);
 }
 </style>
