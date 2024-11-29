@@ -17,23 +17,25 @@ const props = defineProps({
   allFormsFields:Object
 })
 
+const state = reactive({
+  form:{
+    id:null,
+    fullname: null,
+    phoneNumber:null,
+    selectedDate:null,
+    isCoworker:false
+  }
+})
 
-const contactsStore = useContactStore();
+
 const loading = ref(false)
 
 const emit = defineEmits(['update:modelState', 'update:allFormsFields']);
 
-// Local reactive variables
-// const localFields = reactive({ ...props.allFormsFields });
 watch(props.modelState,()=>{
   props.registerMode ? alert('Register Mode e ') : alert('Edit Mode ya smthng else')
 })
  
-onMounted(()=>{
-  console.log('This Form Mounted!');
-  
-})
-
 
 
 onUpdated(()=>{
@@ -52,15 +54,7 @@ if (props.allFormsFields && props.editMode) {
 
 })
 
-const state = reactive({
-  form:{
-    id:null,
-    fullname: null,
-    phoneNumber:null,
-    selectedDate:null,
-    isCoworker:false
-  }
-})
+
 
 
 
@@ -97,64 +91,8 @@ const handleSubmitFormClick = handleSubmit( (item) => {
   props.registerMode ? submitData() : UpdateDialog(item)
 });
 
-// const handleSubmitFormClickByEdit =
-//   handleSubmit( (item) => {
-//   props.editMode ? UpdateDialog(item) :'?'
-
-// });
-
-
-
-
-
-
-
-
-// const submitData = () => {
-//   loading.value = true
-//   console.log('STATE FORM VALUE WAS ' + state.form.isCoworker);
-  
-//   // const registerContactInfo = {
-//   //   id: contactsStore.contacts.length + 1,
-//   //   phoneNumber: phoneNumber.value,
-//   //   fullname: fullname.value,
-//   //   selectedDate: selectedDate.value,
-//   //   isCoworker: state.form.isCoworker,
-//   // };
-//   // console.log(contactsStore.contacts.length + 1);
-//   // console.log(registerContactInfo);
-
-//   setTimeout(() => {
-//     // contactsStore.addContact(registerContactInfo)
-//     emit('update:modelState', false);
-    
-
-//   },1500)
-
-
-//   setTimeout(() => {
-//     Swal.fire({
-//       icon: 'success',
-//       title: ' مخاطب با موفقیت ثبت شد',
-//       toast: true,
-//       position: 'top-end',
-//       showConfirmButton: false,
-//       timer: 3000,
-//       timerProgressBar: true,
-//     });
-//     // Reset form fields and validation state
-//     resetForm({
-//       values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
-//     });
-
-//     loading.value = false
-//   }, 1700);
-
-
-// }
 const submitData = () => {
   loading.value = true;
-  // console.log('STATE FORM VALUE WAS ' + state.form.isCoworker);
 
   // Retrieve the last used ID from localStorage or initialize it to 0
   let lastId = parseInt(localStorage.getItem('lastId')) || 0;
@@ -170,7 +108,6 @@ const submitData = () => {
     isCoworker: state.form.isCoworker,
   };
 
-  // console.log(registerContactInfo);
 
   // Store new contact in localStorage
   const contactsFromStorage = JSON.parse(localStorage.getItem('contacts')) || [];
@@ -315,7 +252,6 @@ watch(() => state.form.isCoworker, (newValue) => {
     class="bg-gray-400/20 "
     transition="dialog-bottom-transition"
     @click:outside="cancelDialog"
-
   >
     <!-- :persistent="changePresistance" -->
 

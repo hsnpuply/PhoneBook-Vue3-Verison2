@@ -1,9 +1,45 @@
 <script setup>
 import DatePicker from 'vue3-persian-datetime-picker'
 import Swal from "sweetalert2";
+import { ref, reactive, computed, onMounted, watch } from "vue";
+import { useContactStore } from '../stores/contacts.js';
+import { Icon } from '@iconify/vue';
+import { fa } from 'vuetify/locale';
+import moment, { now } from 'moment-jalaali';
+import Forms from '@/components/forms.vue';
+import { useForm, defineRule, configure } from 'vee-validate';
+import * as yup from 'yup';
+import { onUpdated } from 'vue';
 
-
+const selectedContact = ref({});
+const dialog = ref(false);
+const dialogEditState = ref(false)
+const dialogRegisterState = ref(false)
+const changePresistance = ref(false)
 const dialogMode = ref('')
+const date = ref('')
+const confirmDelete = ref(false)
+const contactsStore = useContactStore();
+const allContacts = contactsStore.getContacts
+const contact_state = contactsStore.contacts
+const loading = ref(false)
+
+
+
+// Create a reactive variable to store contacts
+const MyLocalContacts = ref([]);
+
+// Fetch contacts from localStorage on component mount
+onMounted(() => {
+  const storedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+  MyLocalContacts.value = storedContacts;
+});
+
+onUpdated(()=>{
+  const storedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+  MyLocalContacts.value = storedContacts;
+})
+
 
 
 const convertNumbersToPersian = (text) => {
@@ -18,41 +54,9 @@ const convertNumbersToPersian = (text) => {
   return result;
 }
 
-const date = ref('')
 
-// const showAlert = (id) => {
-//   Swal.fire({
-//     title: "آیا از حذف مخاطب اطمینان دارید؟",
-//     text: "اطلاعات حذف شده قابلیت بازیابی ندارند",
-//     icon: "warning",
-//     showCancelButton: true,
-//     confirmButtonColor: "blue",
-//     cancelButtonColor: "red",
-//     confirmButtonText: "بله، حذف شود",
-//     cancelButtonText: "انصراف",
-//     customClass: {
-//       cancelButton: "text-black text-lg font-semiBold",
-//       confirmButton: "text-black text-lg font-semiBold"
-//     }
-//   }).then((result) => {
-//     if (result.isConfirmed) {
-//       deleteContact(id)
-//       // console.log('hazf shod ')
-//       const Toast = Swal.mixin({
-//         toast: true,
-//         position: "top-end",
-//         showConfirmButton: false,
-//         timer: 2500,
-//         timerProgressBar: true,
 
-//       });
-//       Toast.fire({
-//         icon: "success",
-//         title: "مخاطب با موفقیت حذف شد"
-//       });
-//     }
-//   });
-// }
+
 const deleteContact = (id) => {
   // Retrieve the contacts array from localStorage
   const contactsFromStorage = JSON.parse(localStorage.getItem('contacts')) || [];
@@ -66,13 +70,14 @@ const deleteContact = (id) => {
     text: "اطلاعات حذف شده قابلیت بازیابی ندارند",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonColor: "blue",
-    cancelButtonColor: "red",
-    confirmButtonText: "بله، حذف شود",
     cancelButtonText: "انصراف",
+    confirmButtonText: "بله، حذف شود",
+    background:'#374151',
+    color:'white',
+    iconColor:'#f03935',
     customClass: {
-      cancelButton: "text-black text-lg font-semiBold",
-      confirmButton: "text-black text-lg font-semiBold"
+      cancelButton: "text-white !bg-gray-800 hover:!bg-gray-600  shadow-black !shadow-lg border-2 border-white rounded-lg text-lg font-semiBold",
+      confirmButton: "text-white !bg-red-700 hover:!bg-red-600  shadow-black !shadow-lg border-2 border-white rounded-lg text-lg font-semiBold"
     }
   }).then((result) => {
     if (result.isConfirmed) {
@@ -112,21 +117,6 @@ const deleteContact = (id) => {
   });
 };
 
-import { ref, reactive, computed, onMounted, watch } from "vue";
-
-import { useContactStore } from '../stores/contacts.js';
-
-import { Icon } from '@iconify/vue';
-import { fa } from 'vuetify/locale';
-
-const selectedContact = ref({
-
-});
-const dialog = ref(false);
-const dialogEditState = ref(false)
-const dialogRegisterState = ref(false)
-const changePresistance = ref(false)
-
 const toggleEditDialog = (item) => {
   selectedContact.value = { ...item }
   dialogEditState.value = !dialogEditState.value;
@@ -139,48 +129,6 @@ const toggleRegisterDialog = () => {
 
 
 
-const confirmDelete = ref(false)
-
-const contactsStore = useContactStore();
-// contactsStore.getAllContacts() 
-const allContacts = contactsStore.getContacts
-const contact_state = contactsStore.contacts
-
-
-
-
-
-// const deleteContact = (id) => {
-//   contactsStore.deleteContact(id);
-// };
-
-
-const loading = ref(false)
-
-
-
-import moment, { now } from 'moment-jalaali';
-import Forms from '@/components/forms.vue';
-
-import { useForm, defineRule, configure } from 'vee-validate';
-import * as yup from 'yup';
-import { onUpdated } from 'vue';
-
-
-
-// Create a reactive variable to store contacts
-const MyLocalContacts = ref([]);
-
-// Fetch contacts from localStorage on component mount
-onMounted(() => {
-  const storedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
-  MyLocalContacts.value = storedContacts;
-});
-
-onUpdated(()=>{
-  const storedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
-  MyLocalContacts.value = storedContacts;
-})
 
 
 </script>
@@ -197,7 +145,7 @@ onUpdated(()=>{
 
 </header>
 
-    <div class="container mx-auto rounded-lg ">
+    <div class="container mx-auto  rounded-lg ">
     <v-table class="the_table" >
       <thead class=" ">
         <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
