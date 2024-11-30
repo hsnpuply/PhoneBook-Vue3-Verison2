@@ -1,5 +1,5 @@
 <script setup>
-import { watch, reactive, onMounted, onUpdated } from "vue";
+import { ref,watch, reactive, onMounted, onUpdated } from "vue";
 import Swal from "sweetalert2";
 import * as yup from "yup";
 import { ErrorMessage } from "vee-validate";
@@ -10,7 +10,7 @@ const props = defineProps({
   modelState: Boolean,
   editMode: Boolean,
   registerMode: Boolean,
-  currentData: Number,
+  currentID: Number,
   UpdateDialog: Function,
   allFormsFields: Object,
 });
@@ -21,23 +21,33 @@ const state = reactive({
     fullname: null,
     phoneNumber: null,
     selectedDate: null,
+    skills:[],
     isCoworker: false,
-    
   },
   loading: false,
 });
 
+// const updateCompleted = ref(false)
+const SkillsItem =reactive([
+  'Vue3 JS', 'React Js', 'Angular', 'PHP', 'Laravel', 'Tailwind' , 'Node Js'
+])
 const emit = defineEmits(["update:modelState", "update:allFormsFields"]);
 
+
+// ON UPDATE Component
 onUpdated(() => {
   if (props.allFormsFields && props.editMode) {
     Object.assign(state.form, props.allFormsFields);
   }
-  if (props.currentData) {
+  if (props.currentID) {
     phoneNumber.value = state.form.phoneNumber;
     fullname.value = state.form.fullname;
     selectedDate.value = state.form.selectedDate;
+    skills.value = state.form.skills;
   }
+
+  console.log(state.form.skills);
+  // when it loads again show the previous data on fields
 });
 
 onMounted(() => {
@@ -71,6 +81,7 @@ const { handleSubmit, resetForm } = useForm({
 const { value: fullname } = useField("fullname");
 const { value: phoneNumber } = useField("phoneNumber");
 const { value: selectedDate } = useField("selectedDate");
+const { value: skills } = useField("skills");
 
 const handleSubmitFormClick = handleSubmit((item) => {
   props.registerMode ? submitData() : UpdateDialog(item);
@@ -91,6 +102,7 @@ const submitData = () => {
     fullname: fullname.value,
     selectedDate: selectedDate.value,
     isCoworker: state.form.isCoworker,
+    skills:skills.value
   };
 
   // Store new contact in localStorage
@@ -103,7 +115,7 @@ const submitData = () => {
 
   setTimeout(() => {
     emit("update:modelState", false);
-  }, 1500);
+  }, 1200);
 
   setTimeout(() => {
     Swal.fire({
@@ -120,8 +132,8 @@ const submitData = () => {
 
     // Reset form fields and validation state
     resetForm({
-      values: { fullname: "", phoneNumber: "", selectedDate: "", isCoworker: false },
-    });
+      values: { fullname: "", phoneNumber: "", selectedDate: "", isCoworker: false , skills:[] },
+    })
     state.form.isCoworker = false;
 
     state.loading = false;
@@ -138,27 +150,29 @@ const cancelDialog = () => {
 };
 
 const UpdateDialog = () => {
+
   const updatedContact = {
-    id: props.currentData,
+    id: props.currentID,
     phoneNumber: phoneNumber.value,
     fullname: fullname.value,
     selectedDate: selectedDate.value,
-    isCoworker: state.form.isCoworker,
+    skills:skills.value,
+    isCoworker: state.form.isCoworker
   };
 
   state.loading = true;
 
+
   // Update the contact in localStorage
   const contactsFromStorage = JSON.parse(localStorage.getItem("contacts")) || [];
   const contactIndex = contactsFromStorage.findIndex(
-    (contact) => contact.id === props.currentData
+    (contact) => contact.id === props.currentID
   );
 
   if (contactIndex !== -1) {
     contactsFromStorage[contactIndex] = updatedContact; // Update the existing contact
     localStorage.setItem("contacts", JSON.stringify(contactsFromStorage)); // Save the updated contacts
   }
-
   setTimeout(() => {
     emit("update:modelState", false);
   }, 1500);
@@ -177,10 +191,13 @@ const UpdateDialog = () => {
 
     state.loading = false;
     resetForm({
-      values: { fullname: "", phoneNumber: "", selectedDate: "" },
+      values: { fullname: "", phoneNumber: "", selectedDate: "",  },
     });
     state.form.isCoworker = false;
   }, 1700);
+
+  updateCompleted.value = true;
+
 };
 
 watch(
@@ -189,6 +206,9 @@ watch(
     state.form.isCoworker = newValue;
   }
 );
+
+
+
 </script>
 <template>
   <v-dialog
@@ -254,8 +274,9 @@ watch(
             chips
             multiple
             item-color="green"
+            v-model="skills"
             label="مهارت ها"
-            :items="['Vue3 JS', 'React Js', 'Angular', 'PHP', 'Laravel', 'Tailwind']"
+            :items="SkillsItem"
             variant="outlined"
             class="w-full !text-2xl"
           />
@@ -287,7 +308,7 @@ watch(
             type="submit"
             color="green"
             size="large"
-            @click="handleSubmitFormClick(currentData)"
+            @click="handleSubmitFormClick(currentID)"
           >
             اعمال تغییرات
           </v-btn>

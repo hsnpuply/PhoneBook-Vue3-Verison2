@@ -202,12 +202,8 @@ const toggleRegisterDialog = () => {
   <Forms
     v-model:model-state="dialogEditState"
     title="ویرایش مخاطب"
-    :phone-model="selectedContact.phoneNumber"
-    :fullname="selectedContact.fullname"
-    :isCoworker="selectedContact.isCoworker"
-    :selected-date="selectedContact.selectedDate"
     :edit-mode="true"
-    :currentData="selectedContact.id"
+    :currentID="selectedContact.id"
     :allFormsFields="selectedContact"
   />
 </template>
