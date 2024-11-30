@@ -33,7 +33,7 @@ const loading = ref(false)
 const emit = defineEmits(['update:modelState', 'update:allFormsFields']);
 
 watch(props.modelState,()=>{
-  props.registerMode ? alert('Register Mode e ') : alert('Edit Mode ya smthng else')
+  // props.registerMode ? alert('Register Mode e ') : alert('Edit Mode ya smthng else')
 })
  
 
@@ -68,8 +68,8 @@ onMounted(() => {
 
 
 const schema = yup.object({
-  fullname: yup.string().required("نوشتن نام و نام خانوادگی الزامیست"),
-  phoneNumber:yup.string().required("وارد کردن شماره تلفن الزامیست"),
+  fullname: yup.string().required("نوشتن نام و نام خانوادگی الزامیست").min(6,'کمترین مقدار 6 حرف میباشد').max(36,'بیشترین مقدار 36 کارکتر میباشد'),
+  phoneNumber:yup.string().required("وارد کردن شماره تلفن الزامیست").matches(/^09[0-9]{9}$/, "شماره تلفن باید با 09 شروع شده و شامل 11 رقم باشد"),
   selectedDate:yup.string().required("وارد کردن تاریخ تولد الزامیست")
 });
 
@@ -78,7 +78,7 @@ const { handleSubmit, resetForm } = useForm({
   validationSchema: schema,
   initialValues: state.form,
   validateOnMount: false,
-  validateOnBlur: false, 
+  validateOnBlur: true, 
   initialErrors:false,
   initialTouched:false,
 });
@@ -144,56 +144,16 @@ const submitData = () => {
   }, 1700);
 };
 const cancelDialog = () => {
-console.log(state.form);
-
+if(!loading.value){
   emit('update:modelState', false);
   resetForm({
       values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
     });
     state.form.isCoworker=false;
   console.log(props.modelState);
-
+}
+console.log(state.form);
 };
-// const UpdateDialog = () => {
-//   const updatedContact = {
-//     id: props.currentData,
-//     phoneNumber: phoneNumber.value,
-//     fullname: fullname.value,
-//     selectedDate: selectedDate.value,
-//     isCoworker: state.form.isCoworker,
- 
-//   };
-
-//   loading.value = true
-
-  
-
-//   setTimeout(() => {
-//     contactsStore.updateContact(state.form.id, updatedContact);
-//     // console.log(idModel)
-//     console.log('↑ idish')
-//     console.log(updatedContact , state.form.id);
-
-//     emit('update:modelState', false);
-
-//   }, 1500);
-//   setTimeout(() => {
-//     Swal.fire({
-//       icon: 'success',
-//       title: ' مخاطب ویرایش  شد',
-//       toast: true,
-//       position: 'top-end',
-//       showConfirmButton: false,
-//       timer: 3000,
-//       timerProgressBar: true,
-    
-//     });
-
-//   loading.value = false
-
-//   }, 1700);
-
-// }
 
 const UpdateDialog = () => {
   const updatedContact = {
@@ -251,6 +211,7 @@ watch(() => state.form.isCoworker, (newValue) => {
     max-width="600"
     class="bg-gray-400/20 "
     transition="dialog-bottom-transition"
+    persistent="true"
     @click:outside="cancelDialog"
   >
     <!-- :persistent="changePresistance" -->
