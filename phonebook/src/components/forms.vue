@@ -1,8 +1,8 @@
 <script setup>
-import { watch , reactive, onMounted, onUpdated } from 'vue';
+import { watch, reactive, onMounted, onUpdated } from "vue";
 import Swal from "sweetalert2";
-import * as yup from 'yup';
-import { ErrorMessage } from 'vee-validate';
+import * as yup from "yup";
+import { ErrorMessage } from "vee-validate";
 import { useField, useForm } from "vee-validate";
 
 const props = defineProps({
@@ -12,38 +12,33 @@ const props = defineProps({
   registerMode: Boolean,
   currentData: Number,
   UpdateDialog: Function,
-  allFormsFields:Object
-})
+  allFormsFields: Object,
+});
 
 const state = reactive({
-  form:{
-    id:null,
+  form: {
+    id: null,
     fullname: null,
-    phoneNumber:null,
-    selectedDate:null,
-    isCoworker:false
+    phoneNumber: null,
+    selectedDate: null,
+    isCoworker: false,
+    
   },
-  loading:false
-})
+  loading: false,
+});
 
-const emit = defineEmits(['update:modelState', 'update:allFormsFields']);
+const emit = defineEmits(["update:modelState", "update:allFormsFields"]);
 
-
-onUpdated(()=>{
-if (props.allFormsFields && props.editMode) {
+onUpdated(() => {
+  if (props.allFormsFields && props.editMode) {
     Object.assign(state.form, props.allFormsFields);
   }
-  if(props.currentData){
-    phoneNumber.value = state.form.phoneNumber
-    fullname.value = state.form.fullname
-    selectedDate.value = state.form.selectedDate
+  if (props.currentData) {
+    phoneNumber.value = state.form.phoneNumber;
+    fullname.value = state.form.fullname;
+    selectedDate.value = state.form.selectedDate;
   }
-})
-
-
-
-
-
+});
 
 onMounted(() => {
   if (props.allFormsFields) {
@@ -51,36 +46,41 @@ onMounted(() => {
   }
 });
 
-
 const schema = yup.object({
-  fullname: yup.string().required("نوشتن نام و نام خانوادگی الزامیست").min(6,'کمترین مقدار 6 حرف میباشد').max(36,'بیشترین مقدار 36 کارکتر میباشد'),
-  phoneNumber:yup.string().required("وارد کردن شماره تلفن الزامیست").matches(/^09[0-9]{9}$/, "شماره تلفن باید با 09 شروع شده و شامل 11 رقم باشد"),
-  selectedDate:yup.string().required("وارد کردن تاریخ تولد الزامیست")
+  fullname: yup
+    .string()
+    .required("نوشتن نام و نام خانوادگی الزامیست")
+    .min(6, "کمترین مقدار 6 حرف میباشد")
+    .max(36, "بیشترین مقدار 36 کارکتر میباشد"),
+  phoneNumber: yup
+    .string()
+    .required("وارد کردن شماره تلفن الزامیست")
+    .matches(/^09[0-9]{9}$/, "شماره تلفن باید با 09 شروع شده و شامل 11 رقم باشد"),
+  selectedDate: yup.string().required("وارد کردن تاریخ تولد الزامیست"),
 });
-
 
 const { handleSubmit, resetForm } = useForm({
   validationSchema: schema,
   initialValues: state.form,
   validateOnMount: false,
-  validateOnBlur: true, 
-  initialErrors:false,
-  initialTouched:false,
+  validateOnBlur: true,
+  initialErrors: false,
+  initialTouched: false,
 });
 
 const { value: fullname } = useField("fullname");
 const { value: phoneNumber } = useField("phoneNumber");
 const { value: selectedDate } = useField("selectedDate");
 
-const handleSubmitFormClick = handleSubmit( (item) => {
-  props.registerMode ? submitData() : UpdateDialog(item)
+const handleSubmitFormClick = handleSubmit((item) => {
+  props.registerMode ? submitData() : UpdateDialog(item);
 });
 
 const submitData = () => {
   state.loading = true;
 
   // Retrieve the last used ID from localStorage or initialize it to 0
-  let lastId = parseInt(localStorage.getItem('lastId')) || 0;
+  let lastId = parseInt(localStorage.getItem("lastId")) || 0;
 
   // Increment the ID for the new contact
   const newId = lastId + 1;
@@ -93,49 +93,48 @@ const submitData = () => {
     isCoworker: state.form.isCoworker,
   };
 
-
   // Store new contact in localStorage
-  const contactsFromStorage = JSON.parse(localStorage.getItem('contacts')) || [];
+  const contactsFromStorage = JSON.parse(localStorage.getItem("contacts")) || [];
   contactsFromStorage.push(registerContactInfo); // Add the new contact
-  localStorage.setItem('contacts', JSON.stringify(contactsFromStorage)); // Save to localStorage
+  localStorage.setItem("contacts", JSON.stringify(contactsFromStorage)); // Save to localStorage
 
   // Update the last used ID in localStorage
-  localStorage.setItem('lastId', newId);
+  localStorage.setItem("lastId", newId);
 
   setTimeout(() => {
-    emit('update:modelState', false);
+    emit("update:modelState", false);
   }, 1500);
 
   setTimeout(() => {
     Swal.fire({
-      icon: 'success',
-      title: ' مخاطب با موفقیت ثبت شد',
+      icon: "success",
+      title: " مخاطب با موفقیت ثبت شد",
       toast: true,
-      position: 'top-end',
+      position: "top-end",
       showConfirmButton: false,
       timer: 3000,
-      color:'green',
-      background:'#dddbd',
+      color: "green",
+      background: "#dddbd",
       timerProgressBar: true,
     });
 
     // Reset form fields and validation state
     resetForm({
-      values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
+      values: { fullname: "", phoneNumber: "", selectedDate: "", isCoworker: false },
     });
-    state.form.isCoworker=false;
+    state.form.isCoworker = false;
 
     state.loading = false;
   }, 1700);
 };
 const cancelDialog = () => {
-if(!state.loading){
-  emit('update:modelState', false);
-  resetForm({
-      values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
+  if (!state.loading) {
+    emit("update:modelState", false);
+    resetForm({
+      values: { fullname: "", phoneNumber: "", selectedDate: "", isCoworker: false },
     });
-    state.form.isCoworker=false;
-}
+    state.form.isCoworker = false;
+  }
 };
 
 const UpdateDialog = () => {
@@ -150,169 +149,181 @@ const UpdateDialog = () => {
   state.loading = true;
 
   // Update the contact in localStorage
-  const contactsFromStorage = JSON.parse(localStorage.getItem('contacts')) || [];
-  const contactIndex = contactsFromStorage.findIndex(contact => contact.id === props.currentData);
+  const contactsFromStorage = JSON.parse(localStorage.getItem("contacts")) || [];
+  const contactIndex = contactsFromStorage.findIndex(
+    (contact) => contact.id === props.currentData
+  );
 
   if (contactIndex !== -1) {
     contactsFromStorage[contactIndex] = updatedContact; // Update the existing contact
-    localStorage.setItem('contacts', JSON.stringify(contactsFromStorage)); // Save the updated contacts
+    localStorage.setItem("contacts", JSON.stringify(contactsFromStorage)); // Save the updated contacts
   }
 
   setTimeout(() => {
-    emit('update:modelState', false);
+    emit("update:modelState", false);
   }, 1500);
 
   setTimeout(() => {
     Swal.fire({
-      icon: 'success',
-      title: ' مخاطب ویرایش  شد',
+      icon: "success",
+      title: " مخاطب ویرایش  شد",
       toast: true,
-      position: 'top-end',
+      position: "top-end",
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-      color:'green'
+      color: "green",
     });
 
     state.loading = false;
     resetForm({
-      values: { fullname: '', phoneNumber: '', selectedDate: '' },
+      values: { fullname: "", phoneNumber: "", selectedDate: "" },
     });
-    state.form.isCoworker=false;
+    state.form.isCoworker = false;
   }, 1700);
-
 };
 
-
-watch(() => state.form.isCoworker, (newValue) => {
-  state.form.isCoworker = newValue;
-})
-
+watch(
+  () => state.form.isCoworker,
+  (newValue) => {
+    state.form.isCoworker = newValue;
+  }
+);
 </script>
 <template>
   <v-dialog
     v-model="props.modelState"
     max-width="600"
-    class="bg-gray-400/20 "
+    class="bg-gray-400/20"
     transition="dialog-bottom-transition"
     :persistent="state.loading"
     @click:outside="cancelDialog"
   >
     <!-- :persistent="changePresistance" -->
 
-
     <v-card
       prepend-icon="mdi-account"
       :title="props.title"
-      class=" flex items-end justify-center bg-gray-700 !shadow-md  !shadow-black  "
+      class="flex items-end justify-center bg-gray-700 !shadow-md !shadow-black"
     >
-      <v-card-text class="text-right  w-full   mt-2  ">
+      <v-card-text class="text-right w-full mt-2">
         <div class="flex flex-col items-end w-full">
-
           <v-text-field
-              v-model="fullname"
-              label="نام و نام خانوادگی"
-              placeholder="مثال : علی علوی"
-              class="text-right w-full"
-            />
-          <error-message name="fullname" class=" text-red-500 text-center pb-4 -pt-8"></error-message>
+            autofocus
+            v-model="fullname"
+            label="نام و نام خانوادگی"
+            placeholder="مثال : علی علوی"
+            class="text-right w-full"
+          />
+          <error-message
+            name="fullname"
+            class="text-red-500 text-center pb-4 -pt-8"
+          ></error-message>
         </div>
         <div class="flex flex-col items-end w-full">
-
           <v-text-field
-              v-model="phoneNumber"
-              label="شماره تلفن"
-              placeholder="مثال : 09928717522"
-              class="w-full"
-            />
-            <!-- :error-messages="phoneNumberError" -->
+            v-model="phoneNumber"
+            label="شماره تلفن"
+            placeholder="مثال : 09928717522"
+            class="w-full"
+          />
+          <!-- :error-messages="phoneNumberError" -->
 
-          <error-message name="phoneNumber" class=" text-red-500 text-center pb-4 -pt-8"></error-message>
-          </div>
+          <error-message
+            name="phoneNumber"
+            class="text-red-500 text-center pb-4 -pt-8"
+          ></error-message>
+        </div>
 
-        <div class="flex flex-col items-end w-full ">
+        <div class="flex flex-col items-end w-full">
           <date-picker
-              v-model="selectedDate"
-              format="YYYY-MM-DD"
-              display-format="jYYYY-jMM-jDD"
-              placeholder="تاریخ تولد خود را وارد کنید"
+            v-model="selectedDate"
+            format="YYYY-MM-DD"
+            display-format="jYYYY-jMM-jDD"
+            placeholder="تاریخ تولد خود را وارد کنید"
+            class="text-lg w-full"
+          />
 
-              class=" text-lg w-full "
-
-            />
-
-            <error-message name="selectedDate" class="text-red-500 text-center pb-4 -pt-8"></error-message>
-      
+          <error-message
+            name="selectedDate"
+            class="text-red-500 text-center pb-4 -pt-8"
+          ></error-message>
         </div>
-        <div class="flex w-full items-end justify-end pt-4 ">
-
-          <v-switch
-              v-model="state.form.isCoworker"
-              color="primary"
-            >
-              <template #label>
-                <span class="text-gray-100 text-lg font-bold">همکار</span>
-              </template>
-            </v-switch>
+        <div class="flex flex-col items-end w-full my-6">
+          <v-combobox
+            chips
+            multiple
+            item-color="green"
+            label="مهارت ها"
+            :items="['Vue3 JS', 'React Js', 'Angular', 'PHP', 'Laravel', 'Tailwind']"
+            variant="outlined"
+            class="w-full !text-2xl"
+          />
         </div>
 
-            <div class="operationButtons flex items-center justify-end gap-4 ">
-              
-            <v-btn
-              variant="elevated"
-              :disabled="state.loading"
-              @click="cancelDialog()"
-              size="large"
-              class="bg-red-600/80 hover:bg-red-600/90"
-            >
-              انصراف
-            </v-btn>
+        <div class="flex w-full items-end justify-end pt-4">
+          <v-switch v-model="state.form.isCoworker" color="primary">
+            <template #label>
+              <span class="text-gray-100 text-lg font-bold">همکار</span>
+            </template>
+          </v-switch>
+        </div>
 
-            <v-btn
-              v-if="props.editMode"
-              :loading="state.loading"
-              variant="elevated"
-              type="submit"
-              color="green"
-              size="large"
-              @click="handleSubmitFormClick(currentData)"
-            >
-              اعمال تغییرات
-            </v-btn>
+        <div class="operationButtons flex items-center justify-end gap-4">
+          <v-btn
+            variant="elevated"
+            :disabled="state.loading"
+            @click="cancelDialog()"
+            size="large"
+            class="bg-red-600/80 hover:bg-red-600/90"
+          >
+            انصراف
+          </v-btn>
 
-            <v-btn
-              v-if="props.registerMode"
-              :loading="state.loading"
-              variant="elevated"
-              color="green"
-              size="large"
-              @click="handleSubmitFormClick()"
-            >
-              ثبت مخاطب
-            </v-btn>
-            </div>
-       
+          <v-btn
+            v-if="props.editMode"
+            :loading="state.loading"
+            variant="elevated"
+            type="submit"
+            color="green"
+            size="large"
+            @click="handleSubmitFormClick(currentData)"
+          >
+            اعمال تغییرات
+          </v-btn>
+
+          <v-btn
+            v-if="props.registerMode"
+            :loading="state.loading"
+            variant="elevated"
+            color="green"
+            size="large"
+            @click="handleSubmitFormClick()"
+          >
+            ثبت مخاطب
+          </v-btn>
+        </div>
       </v-card-text>
-
     </v-card>
   </v-dialog>
 </template>
 
-<style >
-.vpd-body{
+<style>
+.vpd-body {
   background-color: rgba(0, 0, 0, 0.567);
 }
-.vpd-actions > buttons:hover{
+.vpd-actions > buttons:hover {
   border-radius: 1rem;
 }
 
 .v-input {
   text-align: right !important;
 }
-.v-field__input{
+.v-field__input {
   text-align: right !important;
 }
-.v-field-label{
+.v-field-label {
   right: 0;
 }
+
 </style>

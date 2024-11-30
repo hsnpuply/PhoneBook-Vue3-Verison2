@@ -125,6 +125,7 @@ const toggleRegisterDialog = () => {
         <thead class=" ">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
             <th class="text-right">عملیات</th>
+            <th class="text-right ">مهارت ها</th>
             <th class="text-right">همکار</th>
             <th class="text-right">تاریخ تولد</th>
             <th class="text-right">شماره تلفن</th>
@@ -162,6 +163,7 @@ const toggleRegisterDialog = () => {
                 ویرایش
               </v-btn>
             </td>
+            <td>{{ item.skills ? item.skills.join(' , ') : '' }}</td>
             <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
             <!-- <td>{{ moment(item.selectedDate).format('jYYYY/jMM/jDD') }}</td>
           <td>{{ item.phoneNumber }}</td> -->
