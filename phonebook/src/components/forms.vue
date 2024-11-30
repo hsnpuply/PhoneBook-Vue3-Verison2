@@ -1,15 +1,13 @@
 <script setup>
-import { ref, watch, computed , reactive, onMounted, onUpdated } from 'vue';
-import { useContactStore } from '../stores/contacts.js';
+import { watch , reactive, onMounted, onUpdated } from 'vue';
 import Swal from "sweetalert2";
 import * as yup from 'yup';
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { ErrorMessage } from 'vee-validate';
 import { useField, useForm } from "vee-validate";
 
 const props = defineProps({
   title: String,
   modelState: Boolean,
-  openMyDialog: Function,
   editMode: Boolean,
   registerMode: Boolean,
   currentData: Number,
@@ -24,23 +22,14 @@ const state = reactive({
     phoneNumber:null,
     selectedDate:null,
     isCoworker:false
-  }
+  },
+  loading:false
 })
-
-
-const loading = ref(false)
 
 const emit = defineEmits(['update:modelState', 'update:allFormsFields']);
 
-watch(props.modelState,()=>{
-  // props.registerMode ? alert('Register Mode e ') : alert('Edit Mode ya smthng else')
-})
- 
-
 
 onUpdated(()=>{
-console.log('the id :',props.currentData);
-
 if (props.allFormsFields && props.editMode) {
     Object.assign(state.form, props.allFormsFields);
   }
@@ -49,9 +38,6 @@ if (props.allFormsFields && props.editMode) {
     fullname.value = state.form.fullname
     selectedDate.value = state.form.selectedDate
   }
-
-  console.log("Updated form data:", state.form);
-
 })
 
 
@@ -63,7 +49,6 @@ onMounted(() => {
   if (props.allFormsFields) {
     Object.assign(state.form, props.allFormsFields);
   }
-  console.log("Initialized form data:", state.form);
 });
 
 
@@ -92,7 +77,7 @@ const handleSubmitFormClick = handleSubmit( (item) => {
 });
 
 const submitData = () => {
-  loading.value = true;
+  state.loading = true;
 
   // Retrieve the last used ID from localStorage or initialize it to 0
   let lastId = parseInt(localStorage.getItem('lastId')) || 0;
@@ -140,19 +125,17 @@ const submitData = () => {
     });
     state.form.isCoworker=false;
 
-    loading.value = false;
+    state.loading = false;
   }, 1700);
 };
 const cancelDialog = () => {
-if(!loading.value){
+if(!state.loading){
   emit('update:modelState', false);
   resetForm({
       values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
     });
     state.form.isCoworker=false;
-  console.log(props.modelState);
 }
-console.log(state.form);
 };
 
 const UpdateDialog = () => {
@@ -164,7 +147,7 @@ const UpdateDialog = () => {
     isCoworker: state.form.isCoworker,
   };
 
-  loading.value = true;
+  state.loading = true;
 
   // Update the contact in localStorage
   const contactsFromStorage = JSON.parse(localStorage.getItem('contacts')) || [];
@@ -191,10 +174,11 @@ const UpdateDialog = () => {
       color:'green'
     });
 
-    loading.value = false;
+    state.loading = false;
     resetForm({
-      values: { fullname: '', phoneNumber: '', selectedDate: '', isCoworker: false },
+      values: { fullname: '', phoneNumber: '', selectedDate: '' },
     });
+    state.form.isCoworker=false;
   }, 1700);
 
 };
@@ -211,7 +195,7 @@ watch(() => state.form.isCoworker, (newValue) => {
     max-width="600"
     class="bg-gray-400/20 "
     transition="dialog-bottom-transition"
-    persistent="true"
+    :persistent="state.loading"
     @click:outside="cancelDialog"
   >
     <!-- :persistent="changePresistance" -->
@@ -276,8 +260,8 @@ watch(() => state.form.isCoworker, (newValue) => {
               
             <v-btn
               variant="elevated"
+              :disabled="state.loading"
               @click="cancelDialog()"
-              :disabled="loading"
               size="large"
               class="bg-red-600/80 hover:bg-red-600/90"
             >
@@ -286,7 +270,7 @@ watch(() => state.form.isCoworker, (newValue) => {
 
             <v-btn
               v-if="props.editMode"
-              :loading="loading"
+              :loading="state.loading"
               variant="elevated"
               type="submit"
               color="green"
@@ -298,7 +282,7 @@ watch(() => state.form.isCoworker, (newValue) => {
 
             <v-btn
               v-if="props.registerMode"
-              :loading="loading"
+              :loading="state.loading"
               variant="elevated"
               color="green"
               size="large"

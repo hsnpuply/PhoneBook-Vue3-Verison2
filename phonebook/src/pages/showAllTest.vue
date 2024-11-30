@@ -1,38 +1,27 @@
 <script setup>
 import Swal from "sweetalert2";
 import { ref, reactive, onMounted } from "vue";
-import { useContactStore } from "../stores/contacts.js";
-import { fa } from "vuetify/locale";
-import moment, { now } from "moment-jalaali";
+import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
-import { useForm, defineRule, configure } from "vee-validate";
 import { onUpdated } from "vue";
 
 const selectedContact = ref({});
-const dialog = ref(false);
 const dialogEditState = ref(false);
 const dialogRegisterState = ref(false);
-const changePresistance = ref(false);
-const dialogMode = reactive("");
-const date = ref("");
-const confirmDelete = ref(false);
-const contactsStore = useContactStore();
-const allContacts = contactsStore.getContacts;
-const contact_state = contactsStore.contacts;
-const loading = ref(false);
 
-// Create a reactive variable to store contacts
-const MyLocalContacts = ref([]);
+
+
+const MyLocalContacts = reactive([]);
 
 // Fetch contacts from localStorage on component mount
 onMounted(() => {
   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
-  MyLocalContacts.value = storedContacts;
+  MyLocalContacts.splice(0, MyLocalContacts.length, ...storedContacts);
 });
 
 onUpdated(() => {
   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
-  MyLocalContacts.value = storedContacts;
+  MyLocalContacts.splice(0, MyLocalContacts.length, ...storedContacts);
 });
 
 const convertNumbersToPersian = (text) => {
@@ -91,7 +80,8 @@ const deleteContact = (id) => {
       localStorage.setItem("contacts", JSON.stringify(updatedContacts));
 
       // Update the local reactive variable
-      MyLocalContacts.value = updatedContacts;
+      MyLocalContacts.splice(0, MyLocalContacts.length, ...updatedContacts);
+
 
       // Show success message
       const Toast = Swal.mixin({
@@ -142,6 +132,7 @@ const toggleRegisterDialog = () => {
             <th class="text-right">شماره</th>
           </tr>
         </thead>
+
         <tbody class="bg-[#dddbdb] text-[#212222]">
           <tr
             v-for="(item, index) in MyLocalContacts"
@@ -183,7 +174,7 @@ const toggleRegisterDialog = () => {
             </td>
             <td>{{ convertNumbersToPersian(item.phoneNumber) }}</td>
             <td>{{ item.fullname }}</td>
-            <td>{{ item.id }}</td>
+            <td>{{ index + 1 }}</td>
           </tr>
         </tbody>
       </v-table>
