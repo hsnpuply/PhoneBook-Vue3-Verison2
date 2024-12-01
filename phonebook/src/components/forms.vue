@@ -1,11 +1,13 @@
 <script setup>
-import {ref, watch, reactive, onMounted, onUpdated } from "vue";
+import {ref, reactive, onMounted, onUpdated } from "vue";
 import Swal from "sweetalert2";
 import * as yup from "yup";
 import { ErrorMessage } from "vee-validate";
 import { useField, useForm } from "vee-validate";
 
 const dataPassPermission =ref(true)
+
+// const fileInputs = ref('')
 
 const props = defineProps({
   title: String,
@@ -45,7 +47,6 @@ const emit = defineEmits(["update:modelState", "update:allFormsFields"]);
 
 // ON UPDATE Component
 onUpdated(() => {
-  
   if (props.allFormsFields && props.editMode && dataPassPermission.value) {
     Object.assign(state.form, props.allFormsFields);    
   }
@@ -113,6 +114,10 @@ const submitData = () => {
 
   // Increment the ID for the new contact
   const newId = lastId + 1;
+  // const avatarUrl = fileInputs.value
+  //   ? URL.createObjectURL(fileInputs.value)
+  //   : "default-avatar.png"; // Fallback to a default avatar if none is provided
+
 
   const registerContactInfo = {
     id: newId, // Use the new ID
@@ -121,7 +126,9 @@ const submitData = () => {
     selectedDate: selectedDate.value,
     isCoworker: state.form.isCoworker,
     skills:skills.value,
-    favorites:favorites.value
+    favorites:favorites.value,
+    // avatar: avatarUrl
+
   };
 
   // Store new contact in localStorage
@@ -154,7 +161,7 @@ const submitData = () => {
       values: { fullname: "", phoneNumber: "", selectedDate: "", isCoworker: false , skills:[],favorites:[] },
     })
     state.form.isCoworker = false;
-
+    fileInputs.value = null; // Reset file input  
     state.loading = false;
   }, 1700);
 };
@@ -290,6 +297,7 @@ const UpdateDialog = () => {
 
         <div class="flex flex-col items-end w-full mt-6">
           <v-file-input
+            v-model="fileInputs"
             accept="image/png, image/jpeg, image/bmp"
             label="پروفایل"
             placeholder="عکسی برای پروفایل انتخاب کنید"
