@@ -243,6 +243,8 @@ const UpdateDialog = () => {
       class="flex items-end justify-center bg-gray-700 !shadow-md !shadow-black"
     >
       <v-card-text class="text-right w-full mt-2">
+
+
         <div class="flex flex-col items-end w-full">
           <v-text-field
             autofocus
@@ -285,7 +287,17 @@ const UpdateDialog = () => {
             class="text-red-500 text-center pb-4 -pt-8"
           ></error-message>
         </div>
+
         <div class="flex flex-col items-end w-full mt-6">
+          <v-file-input
+            accept="image/png, image/jpeg, image/bmp"
+            label="پروفایل"
+            placeholder="عکسی برای پروفایل انتخاب کنید"
+            prepend-icon="mdi-camera"
+            class="w-full"
+          />
+        </div>
+        <div class="flex flex-col items-end w-full ">
           <v-combobox
             chips
             multiple
