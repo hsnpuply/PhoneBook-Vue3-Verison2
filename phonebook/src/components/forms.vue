@@ -161,7 +161,7 @@ const submitData = () => {
       values: { fullname: "", phoneNumber: "", selectedDate: "", isCoworker: false , skills:[],favorites:[] },
     })
     state.form.isCoworker = false;
-    fileInputs.value = null; // Reset file input  
+    // fileInputs.value = null; // Reset file input  
     state.loading = false;
   }, 1700);
 };
@@ -305,7 +305,7 @@ const UpdateDialog = () => {
             class="w-full"
           />
         </div> -->
-        <div class="flex flex-col items-end w-full ">
+        <div class="flex flex-col items-end w-full mt-4">
           <v-combobox
             chips
             multiple
