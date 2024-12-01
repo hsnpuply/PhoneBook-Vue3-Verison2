@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import * as yup from "yup";
 import { ErrorMessage } from "vee-validate";
 import { useField, useForm } from "vee-validate";
+import MyTestForm from "./myTestForm.vue";
 
 const dataPassPermission =ref(true)
 
@@ -46,8 +47,8 @@ const emit = defineEmits(["update:modelState", "update:allFormsFields"]);
 // ON UPDATE Component
 onUpdated(() => {
   
-  if (props.allFormsFields && props.editMode) {
-    Object.assign(state.form, props.allFormsFields);
+  if (props.allFormsFields && props.editMode && dataPassPermission.value) {
+    Object.assign(state.form, props.allFormsFields);    
   }
   
   if (props.currentID && dataPassPermission.value) {
@@ -56,7 +57,10 @@ onUpdated(() => {
     selectedDate.value = state.form.selectedDate;
     skills.value = state.form.skills;
     favorites.value = state.form.favorites
+
+// if comment ↑ these codes it will show the nothing and still isCoworker Be the last
   }
+  console.log(state.form.isCoworker)
 
 
 });
@@ -166,6 +170,7 @@ const cancelDialog = () => {
 };
 
 const UpdateDialog = () => {
+  
   dataPassPermission.value=false
   const updatedContact = {
     id: props.currentID,
@@ -189,6 +194,8 @@ const UpdateDialog = () => {
   if (contactIndex !== -1) {
     contactsFromStorage[contactIndex] = updatedContact; // Update the existing contact
     localStorage.setItem("contacts", JSON.stringify(contactsFromStorage)); // Save the updated contacts
+    console.log(contactsFromStorage[contactIndex]);
+    
   }
   setTimeout(() => {
     emit("update:modelState", false);
@@ -207,10 +214,7 @@ const UpdateDialog = () => {
     });
 
     state.loading = false;
-    resetForm({
-      values: { fullname: "", phoneNumber: "", selectedDate: "",skills:[],favorites:[]  },
-    });
-    state.form.isCoworker = false;
+
     dataPassPermission.value=true
 
   }, 1700);
@@ -218,12 +222,7 @@ const UpdateDialog = () => {
 
 };
 
-watch(
-  () => state.form.isCoworker,
-  (newValue) => {
-    state.form.isCoworker = newValue;
-  }
-);
+
 
 
 
