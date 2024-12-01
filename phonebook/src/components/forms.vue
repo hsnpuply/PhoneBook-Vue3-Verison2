@@ -295,7 +295,7 @@ const UpdateDialog = () => {
           ></error-message>
         </div>
 
-        <div class="flex flex-col items-end w-full mt-6">
+        <!-- <div class="flex flex-col items-end w-full mt-6">
           <v-file-input
             v-model="fileInputs"
             accept="image/png, image/jpeg, image/bmp"
@@ -304,7 +304,7 @@ const UpdateDialog = () => {
             prepend-icon="mdi-camera"
             class="w-full"
           />
-        </div>
+        </div> -->
         <div class="flex flex-col items-end w-full ">
           <v-combobox
             chips
