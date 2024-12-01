@@ -179,6 +179,7 @@ const toggleRegisterDialog = () => {
             <td>{{ item.fullname }}</td>
             <td>
               <v-avatar
+                variant="elevated"
                 size="x-large"
                 image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ46h_tVzQko_iFjFWfde0epoO1f2eoILdU-Q&s"/>
             </td>

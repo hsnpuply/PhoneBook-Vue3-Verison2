@@ -4,7 +4,6 @@ import Swal from "sweetalert2";
 import * as yup from "yup";
 import { ErrorMessage } from "vee-validate";
 import { useField, useForm } from "vee-validate";
-import MyTestForm from "./myTestForm.vue";
 
 const dataPassPermission =ref(true)
 
