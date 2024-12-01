@@ -5,9 +5,10 @@ import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
 import { onUpdated } from "vue";
 
-const selectedContact = ref({});
-const dialogEditState = ref(false);
+const selectedContact = reactive({});
 const dialogRegisterState = ref(false);
+const dialogEditState = ref(false)
+
 
 
 
@@ -101,13 +102,12 @@ const deleteContact = (id) => {
 };
 
 const toggleEditDialog = (item) => {
-  selectedContact.value = { ...item };
+  Object.assign(selectedContact, item); 
   dialogEditState.value = !dialogEditState.value;
-  console.log(dialogEditState.value);
+
 };
 const toggleRegisterDialog = () => {
   dialogRegisterState.value = !dialogRegisterState.value;
-  console.log(dialogRegisterState.value);
 };
 </script>
 <template>
@@ -125,6 +125,7 @@ const toggleRegisterDialog = () => {
         <thead class=" ">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
             <th class="text-right">عملیات</th>
+            <th class="text-right ">علاقه مندی ها</th>
             <th class="text-right ">مهارت ها</th>
             <th class="text-right">همکار</th>
             <th class="text-right">تاریخ تولد</th>
@@ -142,7 +143,7 @@ const toggleRegisterDialog = () => {
             @dblclick="toggleEditDialog(item)"
           >
             <td
-              class="flex justify-end w-full gap-2 items-center"
+              class="inline-flex items-end justify-center gap-4"
             >
               <v-btn
                 variant="elevated"
@@ -157,16 +158,16 @@ const toggleRegisterDialog = () => {
                 variant="elevated"
                 color="blue"
                 prepend-icon="mdi-account"
-                @click="toggleEditDialog(item)"
+                @click="toggleEditDialog(item,'DD')"
                 class="bg-sky-600/90 hover:bg-sky-600/95"
               >
                 ویرایش
               </v-btn>
             </td>
+            <td>{{ item.favorites ? item.favorites.join(' , ') : '' }}</td>
             <td>{{ item.skills ? item.skills.join(' , ') : '' }}</td>
             <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
-            <!-- <td>{{ moment(item.selectedDate).format('jYYYY/jMM/jDD') }}</td>
-          <td>{{ item.phoneNumber }}</td> -->
+
             <td>
               {{
                 convertNumbersToPersian(
@@ -193,18 +194,19 @@ const toggleRegisterDialog = () => {
         ثبت مخاطب
       </v-btn>
       <Forms
-        v-model:model-state="dialogRegisterState"
+        v-model:modelState="dialogRegisterState"
         title="ثبت مخاطب"
-        :register-mode="true"
+        :registerMode="true"
       />
     </div>
   </div>
   <Forms
     v-model:model-state="dialogEditState"
     title="ویرایش مخاطب"
-    :edit-mode="true"
+    :editMode="true"
     :currentID="selectedContact.id"
     :allFormsFields="selectedContact"
+
   />
 </template>
 

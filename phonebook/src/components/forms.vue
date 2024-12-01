@@ -1,9 +1,11 @@
 <script setup>
-import { ref,watch, reactive, onMounted, onUpdated } from "vue";
+import {ref, watch, reactive, onMounted, onUpdated } from "vue";
 import Swal from "sweetalert2";
 import * as yup from "yup";
 import { ErrorMessage } from "vee-validate";
 import { useField, useForm } from "vee-validate";
+
+const dataPassPermission =ref(true)
 
 const props = defineProps({
   title: String,
@@ -22,32 +24,41 @@ const state = reactive({
     phoneNumber: null,
     selectedDate: null,
     skills:[],
+    favorites:[],
     isCoworker: false,
   },
   loading: false,
 });
 
-// const updateCompleted = ref(false)
 const SkillsItem =reactive([
   'Vue3 JS', 'React Js', 'Angular', 'PHP', 'Laravel', 'Tailwind' , 'Node Js'
+])
+
+const favsList=reactive([
+  'شنا','بازی های فکری',
+  'بدنسازی','بازی های کامپیوتری',
+  'بوکس','فوتسال',
+  'سینما','فوتبال',
 ])
 const emit = defineEmits(["update:modelState", "update:allFormsFields"]);
 
 
 // ON UPDATE Component
 onUpdated(() => {
+  
   if (props.allFormsFields && props.editMode) {
     Object.assign(state.form, props.allFormsFields);
   }
-  if (props.currentID) {
+  
+  if (props.currentID && dataPassPermission.value) {
     phoneNumber.value = state.form.phoneNumber;
     fullname.value = state.form.fullname;
     selectedDate.value = state.form.selectedDate;
     skills.value = state.form.skills;
+    favorites.value = state.form.favorites
   }
 
-  console.log(state.form.skills);
-  // when it loads again show the previous data on fields
+
 });
 
 onMounted(() => {
@@ -82,9 +93,13 @@ const { value: fullname } = useField("fullname");
 const { value: phoneNumber } = useField("phoneNumber");
 const { value: selectedDate } = useField("selectedDate");
 const { value: skills } = useField("skills");
+const { value: favorites } = useField("favorites");
+
 
 const handleSubmitFormClick = handleSubmit((item) => {
   props.registerMode ? submitData() : UpdateDialog(item);
+
+  // can be switch when more forms should be appeared
 });
 
 const submitData = () => {
@@ -102,7 +117,8 @@ const submitData = () => {
     fullname: fullname.value,
     selectedDate: selectedDate.value,
     isCoworker: state.form.isCoworker,
-    skills:skills.value
+    skills:skills.value,
+    favorites:favorites.value
   };
 
   // Store new contact in localStorage
@@ -132,7 +148,7 @@ const submitData = () => {
 
     // Reset form fields and validation state
     resetForm({
-      values: { fullname: "", phoneNumber: "", selectedDate: "", isCoworker: false , skills:[] },
+      values: { fullname: "", phoneNumber: "", selectedDate: "", isCoworker: false , skills:[],favorites:[] },
     })
     state.form.isCoworker = false;
 
@@ -150,25 +166,26 @@ const cancelDialog = () => {
 };
 
 const UpdateDialog = () => {
-
+  dataPassPermission.value=false
   const updatedContact = {
     id: props.currentID,
     phoneNumber: phoneNumber.value,
     fullname: fullname.value,
     selectedDate: selectedDate.value,
     skills:skills.value,
+    favorites:favorites.value,
     isCoworker: state.form.isCoworker
   };
-
+  
   state.loading = true;
-
-
+  
+  
   // Update the contact in localStorage
   const contactsFromStorage = JSON.parse(localStorage.getItem("contacts")) || [];
   const contactIndex = contactsFromStorage.findIndex(
     (contact) => contact.id === props.currentID
   );
-
+  
   if (contactIndex !== -1) {
     contactsFromStorage[contactIndex] = updatedContact; // Update the existing contact
     localStorage.setItem("contacts", JSON.stringify(contactsFromStorage)); // Save the updated contacts
@@ -176,7 +193,7 @@ const UpdateDialog = () => {
   setTimeout(() => {
     emit("update:modelState", false);
   }, 1500);
-
+  
   setTimeout(() => {
     Swal.fire({
       icon: "success",
@@ -191,12 +208,13 @@ const UpdateDialog = () => {
 
     state.loading = false;
     resetForm({
-      values: { fullname: "", phoneNumber: "", selectedDate: "",  },
+      values: { fullname: "", phoneNumber: "", selectedDate: "",skills:[],favorites:[]  },
     });
     state.form.isCoworker = false;
+    dataPassPermission.value=true
+
   }, 1700);
 
-  updateCompleted.value = true;
 
 };
 
@@ -269,7 +287,7 @@ watch(
             class="text-red-500 text-center pb-4 -pt-8"
           ></error-message>
         </div>
-        <div class="flex flex-col items-end w-full my-6">
+        <div class="flex flex-col items-end w-full mt-6">
           <v-combobox
             chips
             multiple
@@ -279,6 +297,19 @@ watch(
             :items="SkillsItem"
             variant="outlined"
             class="w-full !text-2xl"
+          />
+        </div>
+
+        <div class="flex flex-col items-end w-full ">
+          <v-autocomplete
+            clearable
+            v-model="favorites"
+            chips
+            multiple
+            label="علاقه مندی"
+            :items="favsList"
+            class="w-full !text-2xl"
+
           />
         </div>
 
