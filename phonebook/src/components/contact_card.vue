@@ -12,10 +12,13 @@ const props = defineProps({
 </script>
 <template>
   <div
-    class="cardContainer bg-gray-500 rounded-md shadow-black shadow-sm min-h-[120px] min-w-[300px]"
+    class="cardContainer text-xl  my-3 bg-gray-500 rounded-md
+     shadow-black shadow-sm   w-[370px] "
   >
-    <div class="cardInfo flex flex-col justify-center items-center">
-      <div class="cardHeaderInfo my-8 flex flex-col gap-3 justify-center items-center">
+    <div class="cardInfo flex flex-col justify-center items-cente ">
+
+    <!-- phone Number - profile  -->
+      <div class="cardHeaderInfo my-8 flex flex-col gap-3 bg-sky-500 justify-center items-center">
         <v-avatar
           variant="elevated"
           class="!h-20 !w-20 my-2"
@@ -28,7 +31,9 @@ const props = defineProps({
           <h3>{{ convertNumbersToPersian(all_forms_fields.phoneNumber) }}</h3>
         </div>
       </div>
-      <div class="cardSecondaryInfo text-center">
+
+      <!-- birthday - coworker -->
+      <div class="cardSecondaryInfo bg-sky-400/20 text-center flex items-center  justify-around w-full flex-wrap">
         <div class="birthDate">
           <h4 class="text-blue-300">
             تاریخ تولد:
@@ -45,6 +50,18 @@ const props = defineProps({
           <h4 class="text-blue-300">همکار</h4>
           <p>{{ all_forms_fields.isCoworker ? 'بله' : 'خیر' }}</p>
         </div>
+      </div>
+
+      <!-- Favs , Skillz -->
+      <div class="cardPersonalInfo flex flex-col gap-3 px-8 my-6">
+        <div class="cardSkillsContact flex flex-col items-start gap-2">
+        <h4 class=" text-blue-200 ">🛠️ مهارت ها</h4>
+        <p>{{ all_forms_fields.skills.join(" , ") }}</p>
+      </div>
+      <div class="cardFavoritesContact felx flex-col gap-2">
+      <h4 class=" text-blue-200 ">✨ علایق</h4>
+      <p>{{ all_forms_fields.favorites.join(" ، ") }}</p>
+      </div>
       </div>
     </div>
   </div>

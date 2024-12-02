@@ -12,15 +12,17 @@ const dialogEditState = ref(false);
 
 const MyLocalContacts = reactive([]);
 
-// Fetch contacts from localStorage on component mount
-onMounted(() => {
+const  getData =()=>{
   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
   MyLocalContacts.splice(0, MyLocalContacts.length, ...storedContacts);
+}
+// Fetch contacts from localStorage on component mount
+onMounted(() => {
+  getData()
 });
 
 onUpdated(() => {
-  const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
-  MyLocalContacts.splice(0, MyLocalContacts.length, ...storedContacts);
+  getData()
 });
 
 const convertNumbersToPersian = (text) => {
@@ -193,7 +195,7 @@ const toggleRegisterDialog = () => {
         :registerMode="true"
       />
     </div>
-    <div class="test_card bg-blue-500/40 flex flex-row-reverse flex-wrap items-center justify-center gap-8"  >
+    <div class="test_card bg-blue-500/40 flex flex-row-reverse flex-wrap items-stretch justify-center gap-8"  >
     <Card :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" />
   </div>
   </div>

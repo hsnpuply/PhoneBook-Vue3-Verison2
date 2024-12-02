@@ -74,21 +74,27 @@ onMounted(() => {
   if (props.allFormsFields) {
     Object.assign(state.form, props.allFormsFields);
   }
-});
+}); 
+
+// const schema = yup.object({
+//   fullname: yup
+//     .string()
+//     .required("نوشتن نام و نام خانوادگی الزامیست")
+//     .min(6, "کمترین مقدار 6 حرف میباشد")
+//     .max(36, "بیشترین مقدار 36 کارکتر میباشد"),
+//   phoneNumber: yup
+//     .string()
+//     .required("وارد کردن شماره تلفن الزامیست")
+//     .matches(/^09[0-9]{9}$/, "شماره تلفن باید با 09 شروع شده و شامل 11 رقم باشد"),
+//   selectedDate: yup.string().required("وارد کردن تاریخ تولد الزامیست"),
+// });
 
 const schema = yup.object({
   fullname: yup
-    .string()
-    .required("نوشتن نام و نام خانوادگی الزامیست")
-    .min(6, "کمترین مقدار 6 حرف میباشد")
-    .max(36, "بیشترین مقدار 36 کارکتر میباشد"),
+    .string(),
   phoneNumber: yup
-    .string()
-    .required("وارد کردن شماره تلفن الزامیست")
-    .matches(/^09[0-9]{9}$/, "شماره تلفن باید با 09 شروع شده و شامل 11 رقم باشد"),
-  selectedDate: yup.string().required("وارد کردن تاریخ تولد الزامیست"),
+    .string(),
 });
-
 const { handleSubmit, resetForm } = useForm({
   validationSchema: schema,
   initialValues: state.form,
