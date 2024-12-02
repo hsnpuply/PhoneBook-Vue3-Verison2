@@ -1,0 +1,9 @@
+/* custom styles */
+@font-face {
+    font-family: VazirPersian;
+    src: url('../assets/fonts/Vazir.woff');
+}
+
+html{
+    font-family: VazirPersian,'sans-serif';
+}

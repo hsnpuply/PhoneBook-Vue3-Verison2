@@ -15,6 +15,7 @@ import Vue3PersianDatetimePicker from 'vue3-persian-datetime-picker'
 // Composables
 import { createApp } from 'vue'
 import './assets/tailwind.css'
+import './assets/main.css'
 
 
 const app = createApp(App)
@@ -30,7 +31,6 @@ app.use(Vue3PersianDatetimePicker, {
       displayFormat: 'jYYYY-jMM-jDD',
       editable: false,
       inputClass: 'form-control my-custom-class-name text-right py-3',
-      placeholder: 'تاریخ تولد خود را وارد کنید',
       altFormat: 'YYYY-MM-DD HH:mm',
       color: 'orange',
       autoSubmit: false,

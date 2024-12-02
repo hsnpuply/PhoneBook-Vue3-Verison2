@@ -1,15 +1,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap');
-@font-face {
-    font-family: VazirPersian;
-    src: url('../assets/fonts/Vazir.ttf');
-}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;    
 
-@layer base{
-    html{
-        font-family: VazirPersian,'sans-serif';
-    }
-}

@@ -6,8 +6,8 @@
 
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
-import showAll from '@/pages/showAllTest.vue'
-import addContact from '@/pages/addContact.vue'
+import showAll from '@/views/showAllTest.vue'
+import addContact from '@/views/addContact.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
