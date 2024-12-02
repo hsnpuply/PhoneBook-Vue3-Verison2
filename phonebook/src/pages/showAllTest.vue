@@ -131,7 +131,7 @@ const toggleRegisterDialog = () => {
             <th class="text-right">تاریخ تولد</th>
             <th class="text-right">شماره تلفن</th>
             <th class="text-right">نام و نام خانوادگی</th>
-            <!-- <th class="text-right">پروفایل</th> -->
+            <th class="text-right">پروفایل</th>
             <th class="text-right">شماره</th>
           </tr>
         </thead>
@@ -177,13 +177,13 @@ const toggleRegisterDialog = () => {
             </td>
             <td>{{ convertNumbersToPersian(item.phoneNumber) }}</td>
             <td>{{ item.fullname }}</td>
-            <!-- <td>
+            <td>
               <v-avatar
                 variant="elevated"
-                size="x-large"
+                class="!h-24 !w-24  my-2"
                 :image="item.avatar"
               />
-            </td> -->
+            </td>
             <td>{{ index + 1 }}</td>
           </tr>
         </tbody>

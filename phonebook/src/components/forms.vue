@@ -26,9 +26,10 @@ const state = reactive({
     fullname: null,
     phoneNumber: null,
     selectedDate: null,
+    avatar:null,
     skills:[],
     favorites:[],
-    isCoworker: false
+    isCoworker: false,
   },
   loading: false,
 });
@@ -58,8 +59,8 @@ onUpdated(() => {
     selectedDate.value = state.form.selectedDate;
     skills.value = state.form.skills;
     favorites.value = state.form.favorites
-    // avatar.value = state.form.avatar;
-    // console.log(avatar.value);
+    avatar.value = state.form.avatar;
+    console.log(avatar.value);
     
 
 
@@ -102,7 +103,7 @@ const { value: phoneNumber } = useField("phoneNumber");
 const { value: selectedDate } = useField("selectedDate");
 const { value: skills } = useField("skills");
 const { value: favorites } = useField("favorites");
-// const { value: avatar } = useField("avatar");
+const { value: avatar } = useField("avatar");
 
 
 const handleSubmitFormClick = handleSubmit((item) => {
@@ -121,10 +122,10 @@ const submitData = () => {
   const newId = lastId + 1;
 
 
-  // const avatarFile = avatar.value instanceof File ? avatar.value : null;
-  // const avatarUrl = avatarFile
-  //   ? URL.createObjectURL(avatarFile)
-  //   : "default-avatar.png"; // Fallback to a default avatar if none is provided
+   const avatarFile = avatar.value instanceof File ? avatar.value : null;
+   const avatarUrl = avatarFile
+     ? URL.createObjectURL(avatarFile)
+     : "default-avatar.png"; // Fallback to a default avatar if none is provided
 
 
   const registerContactInfo = {
@@ -135,7 +136,7 @@ const submitData = () => {
     isCoworker: state.form.isCoworker,
     skills:skills.value,
     favorites:favorites.value,
-    // avatar: avatarUrl
+    avatar: avatarUrl
 
   };
 
@@ -193,7 +194,7 @@ const UpdateDialog = () => {
     selectedDate: selectedDate.value,
     skills:skills.value,
     favorites:favorites.value,
-    // avatar:avatar.value,
+    avatar:state.form.avatar,
     isCoworker: state.form.isCoworker
   };
   
@@ -303,7 +304,7 @@ const UpdateDialog = () => {
             class="text-red-500 text-center pb-4 -pt-8"
           ></error-message>
         </div>
-<!-- 
+
         <div class="flex flex-col items-end w-full mt-6">
           <v-file-input
             v-model="avatar"
@@ -313,7 +314,7 @@ const UpdateDialog = () => {
             prepend-icon="mdi-camera"
             class="w-full"
           />
-        </div> -->
+        </div>
         <div class="flex flex-col items-end w-full mt-4">
           <v-combobox
             chips
