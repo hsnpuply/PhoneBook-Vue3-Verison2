@@ -12,19 +12,19 @@ const props = defineProps({
 </script>
 <template>
   <div
-    class="cardContainer text-xl  my-3 bg-gray-500 rounded-md
-     shadow-black shadow-sm   w-[370px] "
+    class="cardContainer hover:-translate-y-4 duration-300 text-xl text-black px-8 my-3 bg-sky-500/60  rounded-md
+     shadow-black shadow-sm   w-[350px] "
   >
-    <div class="cardInfo flex flex-col justify-center items-cente ">
+    <div class="cardInfo flex flex-col justify-center items-center z-20">
 
     <!-- phone Number - profile  -->
-      <div class="cardHeaderInfo my-8 flex flex-col gap-3 bg-sky-500 justify-center items-center">
+      <div class="cardHeaderInfo my-8 flex flex-col gap-3  justify-center items-center">
         <v-avatar
           variant="elevated"
           class="!h-20 !w-20 my-2"
           :image="all_forms_fields.avatar"
         />
-        <div class="cardHeaderTitle text-2xl font-bold text-white">
+        <div class="cardHeaderTitle text-2xl font-bold ">
           <h2>{{ all_forms_fields.fullname }}</h2>
         </div>
         <div class="cardHeaderNumber text-xl">
@@ -33,9 +33,9 @@ const props = defineProps({
       </div>
 
       <!-- birthday - coworker -->
-      <div class="cardSecondaryInfo bg-sky-400/20 text-center flex items-center  justify-around w-full flex-wrap">
+      <div class="cardSecondaryInfo text-center flex items-center  justify-around w-full flex-wrap">
         <div class="birthDate">
-          <h4 class="text-blue-300">
+          <h4 class="text-white pb-1">
             تاریخ تولد:
           </h4>
           <p>
@@ -47,7 +47,7 @@ const props = defineProps({
           </p>
         </div>
         <div class="coworker ">
-          <h4 class="text-blue-300">همکار</h4>
+          <h4 class="text-white pb-1">همکار</h4>
           <p>{{ all_forms_fields.isCoworker ? 'بله' : 'خیر' }}</p>
         </div>
       </div>
@@ -55,11 +55,11 @@ const props = defineProps({
       <!-- Favs , Skillz -->
       <div class="cardPersonalInfo flex flex-col gap-3 px-8 my-6">
         <div class="cardSkillsContact flex flex-col items-start gap-2">
-        <h4 class=" text-blue-200 ">🛠️ مهارت ها</h4>
+        <h4 class=" text-white ">🛠️ مهارت ها</h4>
         <p>{{ all_forms_fields.skills.join(" , ") }}</p>
       </div>
       <div class="cardFavoritesContact felx flex-col gap-2">
-      <h4 class=" text-blue-200 ">✨ علایق</h4>
+      <h4 class=" text-white ">✨ علایق</h4>
       <p>{{ all_forms_fields.favorites.join(" ، ") }}</p>
       </div>
       </div>
@@ -68,6 +68,12 @@ const props = defineProps({
 </template>
 <style scoped>
 .cardContainer {
+  position: relative;
   direction: rtl;
+  background-size: cover;
+  box-shadow: 2px 2px 8px #000;
+
 }
+
+
 </style>

@@ -113,8 +113,8 @@ const toggleRegisterDialog = () => {
       </div>
     </header>
 
-    <div class="container mx-auto rounded-lg">
-      <v-table class="the_table">
+    <div class="container mx-auto rounded-lg ">
+      <v-table class="the_table hidden lg:block">
         <thead class=" ">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
             <th class="text-right">شماره</th>
@@ -178,7 +178,12 @@ const toggleRegisterDialog = () => {
         </tbody>
       </v-table>
     </div>
-    <div class="addNewContact w-full flex justify-end py-5 container mx-auto">
+
+    <div class="test_card lg:hidden  flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8"  >
+    <Card :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" />
+  </div>
+  <div class="addNewContact  w-full
+   flex justify-end  py-5 xs:px-10 xl:px-0 container mx-auto">
       <v-btn
         variant="elevated"
         elevation="3"
@@ -186,19 +191,17 @@ const toggleRegisterDialog = () => {
         size="large"
         @click="toggleRegisterDialog"
       >
-        <v-icon left> mdi-plus </v-icon>
         ثبت مخاطب
+        <v-icon left> mdi-plus </v-icon>
       </v-btn>
-      <Forms
+
+    </div>
+  </div>
+  <Forms
         v-model:modelState="dialogRegisterState"
         title="ثبت مخاطب"
         :registerMode="true"
       />
-    </div>
-    <div class="test_card bg-blue-500/40 flex flex-row-reverse flex-wrap items-stretch justify-center gap-8"  >
-    <Card :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" />
-  </div>
-  </div>
   <Forms
     v-model:model-state="dialogEditState"
     title="ویرایش مخاطب"
