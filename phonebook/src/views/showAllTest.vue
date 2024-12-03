@@ -168,7 +168,7 @@ const toggleRegisterDialog = () => {
                 variant="elevated"
                 color="blue"
                 prepend-icon="mdi-account"
-                @click="toggleEditDialog(item, 'DD')"
+                @click="toggleEditDialog(item)"
                 class="bg-sky-600/90 hover:bg-sky-600/95"
               >
                 ویرایش
@@ -179,8 +179,15 @@ const toggleRegisterDialog = () => {
       </v-table>
     </div>
 
-    <div class="test_card lg:hidden  flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8"  >
-    <Card :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" />
+    <div class="test_card 
+     flex flex-row-reverse flex-wrap 
+     items-stretch justify-center container mx-auto gap-8"  >
+    <Card   
+    v-model:dialogEditState="dialogEditState" 
+    :currentItem="item"
+    :MyLocalContacts="MyLocalContacts"
+    :selectedContact="selectedContact"
+     :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" />
   </div>
   <div class="addNewContact  w-full
    flex justify-end  py-5 xs:px-10 xl:px-0 container mx-auto">
