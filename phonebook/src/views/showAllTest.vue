@@ -133,8 +133,11 @@ const toggleRegisterDialog = () => {
           <tr
             v-for="(item, index) in MyLocalContacts"
             :key="index"
-            class="text-right text-xl even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
+            class="text-right text-xl even:bg-gray-200 bg-gray-400/50
+             cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100
+              select-none "
             @dblclick="toggleEditDialog(item)"
+            
           >
             <td>{{ index + 1 }}</td>
             <td>
@@ -154,8 +157,9 @@ const toggleRegisterDialog = () => {
             <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
             <td>{{ item.skills ? item.skills.join(" , ") : "" }}</td>
             <td>{{ item.favorites ? item.favorites.join(" , ") : "" }}</td>
-            <td class="flex items-end justify-center gap-4">
-              <v-btn
+            <td class="">
+              <div class="actionButtonsContainer flex gap-2 items-center justify-center">
+                <v-btn
                 variant="elevated"
                 elevation="2"
                 prepend-icon="mdi-delete"
@@ -173,6 +177,8 @@ const toggleRegisterDialog = () => {
               >
                 ویرایش
               </v-btn>
+              </div>
+
             </td>
           </tr>
         </tbody>
@@ -225,6 +231,7 @@ const toggleRegisterDialog = () => {
   background-image: url(../assets/test.jpg);
   background-position: center;
 }
+
 </style>
 
 <style>
