@@ -5,6 +5,26 @@ import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
 import { onUpdated } from "vue";
 import Card from "@/components/contact_card.vue";
+import axios from 'axios';
+
+const dataAxios = ref(''); // نگهداری داده دریافت شده
+const loadingAxios = ref(true); // نمایش وضعیت بارگذاری
+const errorAxios = ref(null); // نگهداری خطاها
+
+const fetchDataAxios = async () => {
+  try {
+    // const response = await axios.get('https://jsonplaceholder.typicode.com/users'); // لینک API
+    const response = await axios.get('https://fakestoreapi.com/products/3'); // لینک API
+    dataAxios.value = response.data;
+    console.log(dataAxios.value);
+    
+    // console.log('Street : ' , dataAxios.value[0].address.street,'\n' , ' in Lat ' , dataAxios.value[0].address.geo.lat , ' lang : ',dataAxios.value[0].address.geo.lng   )
+  } catch (err) {
+    errorAxios.value = err.message;
+  } finally {
+    loadingAxios.value = false;
+  }
+};
 
 const selectedContact = reactive({});
 const dialogRegisterState = ref(false);
@@ -19,6 +39,7 @@ const  getData =()=>{
 // Fetch contacts from localStorage on component mount
 onMounted(() => {
   getData()
+  fetchDataAxios()
 });
 
 onUpdated(() => {
@@ -223,7 +244,11 @@ const toggleRegisterDialog = () => {
     :allFormsFields="selectedContact"
   />
 
-
+  <p class="bg-green-500 p-2 text-black font-semibold">{{ dataAxios.category + ' ' + dataAxios.title }}</p>
+  <div class="rounded-full p-4 bg-white w-fit overflow-hidden h-32 w-32 ">
+  <img :src="dataAxios.image" alt="" class=" w-26">
+    
+  </div>
 </template>
 
 <style scoped>
