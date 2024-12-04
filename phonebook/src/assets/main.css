@@ -7,3 +7,11 @@
 html{
     font-family: VazirPersian,'sans-serif';
 }
+.skeletonLoaderCard{
+    direction: rtl;
+}
+
+.v-skeleton-loader__image{
+    height: 80px ;
+    border-radius: 2rem;
+}

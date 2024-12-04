@@ -134,7 +134,7 @@ const toggleRegisterDialog = () => {
       </div>
     </header>
 
-    <div class="container mx-auto rounded-lg ">
+    <div class="container mx-auto rounded-lg " >
       <v-table class="the_table hidden lg:block">
         <thead class=" ">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
@@ -147,10 +147,15 @@ const toggleRegisterDialog = () => {
             <th class="text-right">مهارت ها</th>
             <th class="text-right">علاقه مندی ها</th>
             <th class="text-right">عملیات</th>
+            
           </tr>
+
         </thead>
 
-        <tbody class="bg-[#dddbdb] text-[#212222]">
+        <tbody 
+        v-if="MyLocalContacts.length > 0"
+        class="bg-[#dddbdb] text-[#212222]"
+        >
           <tr
             v-for="(item, index) in MyLocalContacts"
             :key="index"
@@ -204,6 +209,11 @@ const toggleRegisterDialog = () => {
           </tr>
         </tbody>
       </v-table>
+      <div class=" flex flex-col md:rounded-lg !rounded-2xl   bg-white items-center justify-center min-h-[200px] text-center" v-if="MyLocalContacts.length <= 0">
+          <img src="../assets/no-data.jpg" alt="" class="w-[35rem]">
+          <p class="pb-10 text-3xl">😲 هیچ مخاطبی موجود نیست</p>
+        </div>
+
     </div>
 
     <div class="test_card 
@@ -216,6 +226,19 @@ const toggleRegisterDialog = () => {
     :selectedContact="selectedContact"
      :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" />
   </div>
+  <div class="skeletonLoaders flex flex-row-reverse flex-wrap 
+     items-stretch justify-center container mx-auto gap-8 rounded-lg">
+    <v-skeleton-loader
+          v-for="(item,index) in MyLocalContacts" :key="index"
+          width="350"
+          min-height="600"
+          elevation="24"
+          type="	image , paragraph , article , button , button"
+          class="bg-sky-500/60 rounded-lg border shadow-lg shadow-black skeletonLoaderCard"
+        >
+        </v-skeleton-loader>
+  </div>
+
   <div class="addNewContact  w-full
    flex justify-end  py-5 xs:px-10 xl:px-0 container mx-auto">
       <v-btn

@@ -100,7 +100,7 @@ const toggleMyEditDialog = () => {
 
   </div>
 </template>
-<style scoped>
+<style >
 .cardContainer {
   position: relative;
   direction: rtl;
