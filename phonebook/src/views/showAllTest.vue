@@ -253,15 +253,15 @@ const toggleRegisterDialog = () => {
 
     </div>
 
-    <div class="test_card 
-     flex flex-row-reverse flex-wrap xl:hidden
-     items-stretch justify-center container mx-auto gap-8"  v-if="!skeletonLoadingState" >
+    <div class="test_card  bg-pink-700 mx-auto md:container
+     flex flex-row-reverse flex-wrap xl:hidden 
+     items-stretch justify-center gap-8"  v-if="!skeletonLoadingState" >
     <Card   
     v-model:dialogEditState="dialogEditState" 
     :currentItem="item"
     :MyLocalContacts="MyLocalContacts"
     :selectedContact="selectedContact"
-     :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" />
+     :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" class=" flex-1  flex-wrap " />
   </div>
   <div class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap 
      items-stretch justify-center container mx-auto gap-8 rounded-lg" v-if="skeletonLoadingState">
@@ -278,6 +278,7 @@ const toggleRegisterDialog = () => {
   <div class="addNewContact  w-full
    flex  xl:!justify-end justify-center container mx-auto xl:!px-0  py-5 xs:px-10 xl:px-0 ">
       <v-btn
+        v-if="!skeletonLoadingState"
         variant="elevated"
         elevation="3"
         color="green"
@@ -287,9 +288,17 @@ const toggleRegisterDialog = () => {
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
-
+    </div>
+    <div class="flex items-center justify-center w-full bg-gray-600 mx-auto container">
+      <v-skeleton-loader v-if="skeletonLoadingState"
+          type="button"
+          color="transparent"
+          class="w-32"
+        >
+        </v-skeleton-loader>
     </div>
   </div>
+
   <Forms
         v-model:modelState="dialogRegisterState"
         title="ثبت مخاطب"
