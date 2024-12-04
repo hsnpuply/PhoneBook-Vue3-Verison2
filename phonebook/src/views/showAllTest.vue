@@ -7,6 +7,9 @@ import { onUpdated } from "vue";
 import Card from "@/components/contact_card.vue";
 import axios from 'axios';
 
+const skeletonLoadingState =ref(true)
+
+
 const dataAxios = ref(''); // نگهداری داده دریافت شده
 const loadingAxios = ref(true); // نمایش وضعیت بارگذاری
 const errorAxios = ref(null); // نگهداری خطاها
@@ -36,10 +39,18 @@ const  getData =()=>{
   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
   MyLocalContacts.splice(0, MyLocalContacts.length, ...storedContacts);
 }
+
+const sekeletonLoadsF=()=>{
+  setTimeout(()=>{
+    skeletonLoadingState.value =  false
+  },3000)
+}
 // Fetch contacts from localStorage on component mount
 onMounted(() => {
   getData()
   fetchDataAxios()
+  sekeletonLoadsF()
+
 });
 
 onUpdated(() => {
@@ -125,6 +136,7 @@ const toggleEditDialog = (item) => {
 const toggleRegisterDialog = () => {
   dialogRegisterState.value = !dialogRegisterState.value;
 };
+
 </script>
 <template>
   <div class="mx-auto mainContent h-full bg-cover">
@@ -134,7 +146,7 @@ const toggleRegisterDialog = () => {
       </div>
     </header>
 
-    <div class="container mx-auto rounded-lg " >
+    <div class="container mx-auto rounded-lg"  >
       <v-table class="the_table hidden lg:block">
         <thead class=" ">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
@@ -151,6 +163,28 @@ const toggleRegisterDialog = () => {
           </tr>
 
         </thead>
+
+          <tbody class=" w-full bg-[#bcbfc5] odd:bg-[#e5e7eb] " v-if="skeletonLoadingState">
+              <tr v-for="(item,index) in MyLocalContacts.length" :key="index">
+                <td v-for="item in 8" :key="item">
+                  <v-skeleton-loader
+                    type="text"
+                    color="transparent"
+                    class=""
+                  >
+                  </v-skeleton-loader>
+                </td>
+                <td>
+                  <v-skeleton-loader
+                    type="button,button"
+                    color="transparent"
+                  >
+                  </v-skeleton-loader>
+                </td>
+          </tr>
+
+
+        </tbody>
 
         <tbody 
         v-if="MyLocalContacts.length > 0"
@@ -218,7 +252,7 @@ const toggleRegisterDialog = () => {
 
     <div class="test_card 
      flex flex-row-reverse flex-wrap 
-     items-stretch justify-center container mx-auto gap-8"  >
+     items-stretch justify-center container mx-auto gap-8"  v-if="!skeletonLoadingState" >
     <Card   
     v-model:dialogEditState="dialogEditState" 
     :currentItem="item"
@@ -227,13 +261,13 @@ const toggleRegisterDialog = () => {
      :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" />
   </div>
   <div class="skeletonLoaders flex flex-row-reverse flex-wrap 
-     items-stretch justify-center container mx-auto gap-8 rounded-lg">
+     items-stretch justify-center container mx-auto gap-8 rounded-lg" v-if="skeletonLoadingState">
     <v-skeleton-loader
           v-for="(item,index) in MyLocalContacts" :key="index"
           width="350"
           min-height="600"
           elevation="24"
-          type="	image , paragraph , article , button , button"
+          type="	image , text, paragraph , article  , button , button"
           class="bg-sky-500/60 rounded-lg border shadow-lg shadow-black skeletonLoaderCard"
         >
         </v-skeleton-loader>
