@@ -25,7 +25,7 @@ const toggleMyEditDialog = () => {
 </script>
 <template>
   <div
-    class="cardContainer relative hover:-translate-y-4 duration-300 text-xl text-black px-8 my-3 bg-sky-500/60 rounded-md shadow-black shadow-sm w-[350px]"
+    class="cardContainer relative hover:-translate-y-4 duration-300 text-xl text-black px-8 my-3 bg-sky-500/60 rounded-md shadow-black shadow-sm max-w-[400px]"
   >
     <div class="cardInfo flex flex-col justify-center items-center z-20">
       <!-- phone Number - profile  -->

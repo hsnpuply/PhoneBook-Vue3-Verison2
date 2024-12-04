@@ -146,8 +146,8 @@ const toggleRegisterDialog = () => {
       </div>
     </header>
 
-    <div class="container mx-auto rounded-lg"  >
-      <v-table class="the_table hidden lg:block">
+    <div class="container mx-auto rounded-lg "  >
+      <v-table class="the_table hidden xl:block " >
         <thead class=" ">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
             <th class="text-right">شماره</th>
@@ -164,9 +164,9 @@ const toggleRegisterDialog = () => {
 
         </thead>
 
-          <tbody class=" w-full bg-[#bcbfc5] odd:bg-[#e5e7eb] " v-if="skeletonLoadingState">
-              <tr v-for="(item,index) in MyLocalContacts.length" :key="index">
-                <td v-for="item in 8" :key="item">
+          <tbody  class=" w-full  " v-if="skeletonLoadingState">
+              <tr v-for="(item,index) in MyLocalContacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
+                <td v-for="item in 8" :key="item" class="!h-28">
                   <v-skeleton-loader
                     type="text"
                     color="transparent"
@@ -174,12 +174,15 @@ const toggleRegisterDialog = () => {
                   >
                   </v-skeleton-loader>
                 </td>
-                <td>
-                  <v-skeleton-loader
+                <td class=" min-w-48 ">
+                  <div class="w-full px-8">
+                    <v-skeleton-loader
                     type="button,button"
                     color="transparent"
+                    class=" "
                   >
                   </v-skeleton-loader>
+                  </div>
                 </td>
           </tr>
 
@@ -187,13 +190,13 @@ const toggleRegisterDialog = () => {
         </tbody>
 
         <tbody 
-        v-if="MyLocalContacts.length > 0"
-        class="bg-[#dddbdb] text-[#212222]"
+        v-if="MyLocalContacts.length > 0 && !skeletonLoadingState"
+        class="bg-[#dddbdb] text-[#212222] overflow-hidden"
         >
           <tr
             v-for="(item, index) in MyLocalContacts"
             :key="index"
-            class="text-right text-xl even:bg-gray-200 bg-gray-400/50
+            class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50
              cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100
               select-none "
             @dblclick="toggleEditDialog(item)"
@@ -243,7 +246,7 @@ const toggleRegisterDialog = () => {
           </tr>
         </tbody>
       </v-table>
-      <div class=" flex flex-col md:rounded-lg !rounded-2xl   bg-white items-center justify-center min-h-[200px] text-center" v-if="MyLocalContacts.length <= 0">
+      <div class=" flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl   bg-white items-center justify-center min-h-[200px] text-center" v-if="MyLocalContacts.length <= 0">
           <img src="../assets/no-data.jpg" alt="" class="w-[35rem]">
           <p class="pb-10 text-3xl">😲 هیچ مخاطبی موجود نیست</p>
         </div>
@@ -251,7 +254,7 @@ const toggleRegisterDialog = () => {
     </div>
 
     <div class="test_card 
-     flex flex-row-reverse flex-wrap 
+     flex flex-row-reverse flex-wrap xl:hidden
      items-stretch justify-center container mx-auto gap-8"  v-if="!skeletonLoadingState" >
     <Card   
     v-model:dialogEditState="dialogEditState" 
@@ -260,21 +263,20 @@ const toggleRegisterDialog = () => {
     :selectedContact="selectedContact"
      :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" />
   </div>
-  <div class="skeletonLoaders flex flex-row-reverse flex-wrap 
+  <div class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap 
      items-stretch justify-center container mx-auto gap-8 rounded-lg" v-if="skeletonLoadingState">
     <v-skeleton-loader
           v-for="(item,index) in MyLocalContacts" :key="index"
-          width="350"
           min-height="600"
           elevation="24"
           type="	image , text, paragraph , article  , button , button"
-          class="bg-sky-500/60 rounded-lg border shadow-lg shadow-black skeletonLoaderCard"
+          class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[400px] shadow-black skeletonLoaderCard"
         >
         </v-skeleton-loader>
   </div>
 
   <div class="addNewContact  w-full
-   flex justify-end  py-5 xs:px-10 xl:px-0 container mx-auto">
+   flex  xl:!justify-end justify-center container mx-auto xl:!px-0  py-5 xs:px-10 xl:px-0 ">
       <v-btn
         variant="elevated"
         elevation="3"
