@@ -9,11 +9,7 @@ import axios from 'axios';
 
 const skeletonLoadingState =ref(true)
 
-const registerContactSkeleton = ()=>{
-  if(skeletonLoadingState.value && MyLocalContacts.length > 0){
-    return true
-  }
-}
+
 
 
 const dataAxios = ref(''); // نگهداری داده دریافت شده
@@ -259,24 +255,24 @@ const toggleRegisterDialog = () => {
 
     </div>
 
-    <div class="test_card  bg-pink-700 mx-auto md:container
+    <div class="test_card  mx-4 md:!mx-auto md:container w-full
      flex flex-row-reverse flex-wrap xl:hidden 
-     items-stretch justify-center gap-8"  v-if="!skeletonLoadingState" >
+     items-stretch justify-center gap-8 cursor-pointer"  v-if="!skeletonLoadingState" >
     <Card   
     v-model:dialogEditState="dialogEditState" 
     :currentItem="item"
     :MyLocalContacts="MyLocalContacts"
     :selectedContact="selectedContact"
-     :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" class=" flex-1  flex-wrap " />
+     :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" class="!max-w-[50%]  flex-1  flex-wrap " />
   </div>
   <div class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap 
-     items-stretch justify-center container mx-auto gap-8 rounded-lg" v-if="skeletonLoadingState">
+     items-stretch justify-center container mx-auto gap-8 rounded-lg " v-if="skeletonLoadingState">
     <v-skeleton-loader
           v-for="(item,index) in MyLocalContacts" :key="index"
-          min-height="600"
+          min-height="540"
           elevation="24"
           type="	image , text, paragraph , article  , button , button"
-          class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[400px] shadow-black skeletonLoaderCard"
+          class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard"
         >
         </v-skeleton-loader>
   </div>
@@ -295,7 +291,7 @@ const toggleRegisterDialog = () => {
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
     </div>
-    <div class="flex items-center justify-center lg:!justify-end w-full bg-gray-500/20  mx-auto container lg:mx-0 ">
+    <div class="flex items-center !justify-center lg:!justify-end w-full bg-gray-500/20  mx-auto container lg:mx-0 ">
       <v-skeleton-loader v-if="skeletonLoadingState && MyLocalContacts.length > 0"
           type="button"
           color="transparent"

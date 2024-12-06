@@ -118,7 +118,20 @@ const handleSubmitFormClick = handleSubmit((item) => {
   // can be switch when more forms should be appeared
 });
 
-const submitData = () => {
+const convertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      resolve(reader.result);  // This is the Base64 string
+    };
+    reader.onerror = (error) => {
+      reject(error);
+    };
+    reader.readAsDataURL(file); // Convert the image to Base64
+  });
+};
+
+const submitData = async () => {
   state.loading = true;
 
   // Retrieve the last used ID from localStorage or initialize it to 0
@@ -128,11 +141,14 @@ const submitData = () => {
   const newId = lastId + 1;
 
 
-   const avatarFile = avatar.value instanceof File ? avatar.value : null;
-   const avatarUrl = avatarFile
-     ? URL.createObjectURL(avatarFile)
-     : "default-avatar.png"; // Fallback to a default avatar if none is provided
-
+  let avatarBase64 = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRXrLfkPut6EaXDD0RpaHBzeqgScyncU5dkw&s"; // Default avatar if no file is selected
+  if (avatar.value instanceof File) {
+    try {
+      avatarBase64 = await convertToBase64(avatar.value); // Wait for the conversion to finish
+    } catch (error) {
+      console.error("Error converting avatar to Base64:", error);
+    }
+  }
 
   const registerContactInfo = {
     id: newId, // Use the new ID
@@ -142,7 +158,7 @@ const submitData = () => {
     isCoworker: state.form.isCoworker,
     skills:skills.value,
     favorites:favorites.value,
-    avatar: avatarUrl
+    avatar: avatarBase64
 
   };
 
@@ -190,43 +206,53 @@ const cancelDialog = () => {
   }
 };
 
-const UpdateDialog = () => {
+const UpdateDialog = async () => {
   
   dataPassPermission.value=false
+
+// If avatar is updated, convert it to Base64
+let avatarBase64 = state.form.avatar;
+  if (avatar.value instanceof File) {
+    try {
+      avatarBase64 = await convertToBase64(avatar.value); // Convert to Base64
+    } catch (error) {
+      console.error("Error converting avatar to Base64:", error);
+    }
+  }
+ 
   const updatedContact = {
     id: props.currentID,
     phoneNumber: phoneNumber.value,
     fullname: fullname.value,
     selectedDate: selectedDate.value,
-    skills:skills.value,
-    favorites:favorites.value,
-    avatar:state.form.avatar,
-    isCoworker: state.form.isCoworker
+    skills: skills.value,
+    favorites: favorites.value,
+    avatar: avatarBase64, // Store Base64 avatar
+    isCoworker: state.form.isCoworker,
   };
-  
+
   state.loading = true;
-  
-  
+
   // Update the contact in localStorage
   const contactsFromStorage = JSON.parse(localStorage.getItem("contacts")) || [];
   const contactIndex = contactsFromStorage.findIndex(
     (contact) => contact.id === props.currentID
   );
-  
+
   if (contactIndex !== -1) {
-    contactsFromStorage[contactIndex] = updatedContact; // Update the existing contact
-    localStorage.setItem("contacts", JSON.stringify(contactsFromStorage)); // Save the updated contacts
-    console.log(contactsFromStorage[contactIndex]);
-    
+    contactsFromStorage[contactIndex] = updatedContact; // Update the contact
+    localStorage.setItem("contacts", JSON.stringify(contactsFromStorage)); // Save updated contacts
+    console.log("Updated contact:", contactsFromStorage[contactIndex]);
   }
+
   setTimeout(() => {
     emit("update:modelState", false);
   }, 1500);
-  
+
   setTimeout(() => {
     Swal.fire({
       icon: "success",
-      title: " مخاطب ویرایش  شد",
+      title: " مخاطب ویرایش شد",
       toast: true,
       position: "top-end",
       showConfirmButton: false,
@@ -236,12 +262,8 @@ const UpdateDialog = () => {
     });
 
     state.loading = false;
-
-    dataPassPermission.value=true
-
+    dataPassPermission.value = true;
   }, 1700);
-
-
 };
 
 
