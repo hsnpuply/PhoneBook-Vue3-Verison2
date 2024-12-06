@@ -9,6 +9,12 @@ import axios from 'axios';
 
 const skeletonLoadingState =ref(true)
 
+const registerContactSkeleton = ()=>{
+  if(skeletonLoadingState.value && MyLocalContacts.length > 0){
+    return true
+  }
+}
+
 
 const dataAxios = ref(''); // نگهداری داده دریافت شده
 const loadingAxios = ref(true); // نمایش وضعیت بارگذاری
@@ -278,7 +284,7 @@ const toggleRegisterDialog = () => {
   <div class="addNewContact  w-full
    flex  xl:!justify-end justify-center container mx-auto xl:!px-0  py-5 xs:px-10 xl:px-0 ">
       <v-btn
-        v-if="!skeletonLoadingState"
+        v-if="!skeletonLoadingState || MyLocalContacts.length <= 0"
         variant="elevated"
         elevation="3"
         color="green"
@@ -289,8 +295,8 @@ const toggleRegisterDialog = () => {
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
     </div>
-    <div class="flex items-center justify-center w-full bg-gray-600 mx-auto container">
-      <v-skeleton-loader v-if="skeletonLoadingState"
+    <div class="flex items-center justify-center lg:!justify-end w-full bg-gray-500/20  mx-auto container lg:mx-0 ">
+      <v-skeleton-loader v-if="skeletonLoadingState && MyLocalContacts.length > 0"
           type="button"
           color="transparent"
           class="w-32"
