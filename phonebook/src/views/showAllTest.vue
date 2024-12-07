@@ -1,6 +1,6 @@
 <script setup>
 import Swal from "sweetalert2";
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted , watch } from "vue";
 import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
 import { onUpdated } from "vue";
@@ -16,10 +16,12 @@ const dataAxios = ref([]); // نگهداری داده دریافت شده
 const loadingAxios = ref(true); // نمایش وضعیت بارگذاری
 const errorAxios = ref(null); // نگهداری خطاها
 
+
+
 const fetchDataAxios = async () => {
   try {
     // const response = await axios.get('https://jsonplaceholder.typicode.com/users'); // لینک API
-    const response = await axios.get('https://reqres.in/api/users'); // لینک API
+    const response = await axios.get('https://reqres.in/api/users '); // لینک API
     dataAxios.value = response.data.data;
     console.log(dataAxios.value);
     
@@ -37,10 +39,16 @@ const dialogEditState = ref(false);
 
 const MyLocalContacts = reactive([]);
 
+
+
+
 const  getData =()=>{
   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
   MyLocalContacts.splice(0, MyLocalContacts.length, ...storedContacts);
+  // console.log(storedContacts.length + '\n' + 'See Get Data Called')
+  
 }
+
 
 const sekeletonLoadsF=()=>{
   setTimeout(()=>{
@@ -52,12 +60,10 @@ onMounted(() => {
   getData()
   fetchDataAxios()
   sekeletonLoadsF()
+  // fetchUsers()
 
 });
 
-onUpdated(() => {
-  getData()
-});
 
 const convertNumbersToPersian = (text) => {
   const englishNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -129,6 +135,7 @@ const deleteContact = (id) => {
       });
     }
   });
+
 };
 
 const toggleEditDialog = (item) => {
@@ -139,23 +146,40 @@ const toggleRegisterDialog = () => {
   dialogRegisterState.value = !dialogRegisterState.value;
 };
 
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const errorMessage = ref('');
+const successMessage = ref('');
 
-const formData = ref({ name: '', job: '', ID:'' });
-const response = ref(null);
-const error = ref(null);
-
-const createUser = async () => {
-  error.value = null;
-  response.value = null;
-
+const registerUser = async () => {
   try {
-    const res = await axios.post('https://reqres.in/api/users/3', formData.value);
-    response.value = res.data; // ذخیره پاسخ API
-  } catch (err) {
-    error.value = 'Failed to create user: ' + err.message; // ذخیره خطا
+    const response = await axios.post('http://localhost:5000/users', {
+      username: username.value,
+      email: email.value,
+      password: password.value,
+    });
+
+    successMessage.value = `User registered successfully! ID: ${response.data.id}`;
+    errorMessage.value = '';  // Clear error message if successful
+  } catch (error) {
+    errorMessage.value = 'Registration failed. Please try again.';
+    successMessage.value = '';  // Clear success message if failed
   }
-  console.log(response.value)
 };
+
+
+// const users = ref([]);
+
+// const fetchUsers = async () => {
+//   try {
+//     const response = await axios.get('http://localhost:5000/users');  // Replace with your actual URL
+//     users.value = response.data;  // Store the response data (users) in the users array
+//   } catch (error) {
+//     console.error('Error fetching users:', error);
+//   }
+// };
+
 
 </script>
 <template>
@@ -317,72 +341,69 @@ const createUser = async () => {
         >
         </v-skeleton-loader>
     </div>
-
-  <div class="bg-red-500/70 flex-col gap-4 odd:bg-blue-500/70 testAxios flex items-center " v-for="(item,index) in dataAxios" :key="index">
-  <img :src="item.avatar"  class=" w-26 rounded-full">
-    <p>full name :{{ item.first_name + ' ' + item.last_name }}</p>
-    <p>email: {{ item.email }}</p>
-    
-  </div>
-
-  <div>
-    <!-- فرم ارسال داده -->
-    <form @submit.prevent="createUser">
-      <div>
-        <label for="name">Name:</label>
-        <input
-          id="name"
-          v-model="formData.name"
-          type="text"
-          placeholder="Enter name"
-          class="border p-2"
-          required
-        />
+<!-- 
+  <div class=" flex-wrap justify-center gap-4  testAxios flex  " >
+    <div class="flex justify-stretch rounded-lg bg-red-500/70 odd:bg-blue-500/70  gap-4" v-for="(item,index) in dataAxios" :key="index">
+      <div class=" flex items-center gap-4 p-4 ">
+        <img :src="item.avatar"  class=" w-26 rounded-full">
+      <div class="i">
+        <p>full name :<span class="text-black text-lg font-bold">{{ item.first_name + ' ' + item.last_name }}</span></p>
+        <p>email: <span class="text-black text-lg font-bold">{{ item.email }}</span></p>
       </div>
-      <div>
-        <label for="job">Job:</label>
-        <input
-          id="job"
-          v-model="formData.job"
-          type="text"
-          placeholder="Enter job"
-          class="border p-2"
-          required
-        />
-        <br>
-
       </div>
-      <button type="submit" class="bg-blue-500 text-white px-4 py-2 mt-4">
-        Submit
-      </button>
-    </form>
-
-    <!-- نمایش پاسخ -->
-    <div v-if="response" class="mt-4 p-4 border">
-      <p><strong>Name:</strong> {{ response.name }}</p>
-      <p><strong>Job:</strong> {{ response.job }}</p>
-      <p><strong>ID:</strong> {{ response.id }}</p>
-      <p><strong>Created At:</strong> {{ response.createdAt }}</p>
     </div>
+  </div> -->
 
-    <!-- نمایش خطا -->
-    <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
-  </div>
+  <!-- <div>
+    <h1>User Registration</h1>
+    <form @submit.prevent="registerUser">
+      <input v-model="username" type="text" placeholder="Username" required />
+      <input v-model="email" type="email" placeholder="Email" required />
+      <input v-model="password" type="password" placeholder="Password" required />
+      <button type="submit">Register</button>
+    </form>
+    <div v-if="errorMessage" class="error">
+      <p>{{ errorMessage }}</p>
+    </div>
+    <div v-if="successMessage" class="success">
+      <p>{{ successMessage }}</p>
+    </div>
+  </div> -->
 
+
+  <!-- <div class="bg-pink-600 p-5">
+    <h1 class="text-center text-black text-xl font-bold">Users List</h1>
+    <ul v-if="users.length > 0" class="flex flex-col gap-5 ">
+      <li v-for="user in users" :key="user.id" class="last-of-type:border-none border-b-2 border-black border-spacing-9">
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+      </li>
+    </ul>
+    <p v-else>No users found.</p>
+  </div> -->
   </div>
 
   <Forms
         v-model:modelState="dialogRegisterState"
         title="ثبت مخاطب"
         :registerMode="true"
+        :getData="getData"
+
       />
+      <!-- :getData="getData()" -->
+
   <Forms
     v-model:model-state="dialogEditState"
     title="ویرایش مخاطب"
     :editMode="true"
     :currentID="selectedContact.id"
     :allFormsFields="selectedContact"
+    :getData="getData"
+
   />
+
+
+
 
 </template>
 

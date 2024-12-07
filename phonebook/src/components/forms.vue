@@ -18,6 +18,7 @@ const props = defineProps({
   currentID: Number,
   UpdateDialog: Function,
   allFormsFields: Object,
+  getData:Function
 });
 
 const state = reactive({
@@ -60,7 +61,7 @@ onUpdated(() => {
     skills.value = state.form.skills;
     favorites.value = state.form.favorites
     avatar.value = state.form.avatar;
-    console.log(avatar.value);
+    // console.log(avatar.value);
     
 
 
@@ -169,6 +170,7 @@ const submitData = async () => {
 
   // Update the last used ID in localStorage
   localStorage.setItem("lastId", newId);
+  props.getData()
 
   setTimeout(() => {
     emit("update:modelState", false);
@@ -195,6 +197,8 @@ const submitData = async () => {
     fileInputs.value = null; // Reset file input  
     state.loading = false;
   }, 1700);
+  // props.getData()
+
 };
 const cancelDialog = () => {
   if (!state.loading) {
@@ -264,6 +268,7 @@ let avatarBase64 = state.form.avatar;
     state.loading = false;
     dataPassPermission.value = true;
   }, 1700);
+  props.getData()
 };
 
 

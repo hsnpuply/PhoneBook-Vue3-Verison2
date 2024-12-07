@@ -47,7 +47,7 @@
 import DatePicker from 'vue3-persian-datetime-picker'
 
 import { useContactStore } from '../stores/contacts.js';
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { Icon } from '@iconify/vue';
 
 const contactsStore = useContactStore();
@@ -68,14 +68,14 @@ const addData = (fakeData) => {
 }
 
 
-const allContactInfo = computed(() => ({
-  id: contactsStore.contacts.length + 1,
-  fullname: fullname.value,
-  phoneNumber: phoneNumber.value,
-  selectedDate: selectedDate.value,
-  isCoworker: isCoworker.value
+// const allContactInfo = computed(() => ({
+//   id: contactsStore.contacts.length + 1,
+//   fullname: fullname.value,
+//   phoneNumber: phoneNumber.value,
+//   selectedDate: selectedDate.value,
+//   isCoworker: isCoworker.value
 
-}))
+// }))
 
 const submitData = () => {
   contactsStore.addContact(allContactInfo.value)
