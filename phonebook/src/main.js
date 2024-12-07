@@ -5,6 +5,16 @@
  */
 
 // Plugins
+
+import { createVuetify } from 'vuetify';
+
+const vuetify = createVuetify({
+  icons: {
+    defaultSet: 'mdi', // Change this if using a different icon set
+  },
+});
+
+
 import { registerPlugins } from '@/plugins'
 
 // Components
@@ -38,4 +48,4 @@ app.use(Vue3PersianDatetimePicker, {
       //... And whatever you want to set as default.
       //...
     }
-  }).mount('#app')
+  }).use(vuetify).mount('#app')

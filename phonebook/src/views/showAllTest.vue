@@ -1,11 +1,13 @@
 <script setup>
 import Swal from "sweetalert2";
-import { ref, reactive, onMounted , watch } from "vue";
+import { ref, reactive, onMounted  } from "vue";
 import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
-import { onUpdated } from "vue";
 import Card from "@/components/contact_card.vue";
 import axios from 'axios';
+
+const byLocalStorage = ref(true)
+
 
 const skeletonLoadingState =ref(true)
 
@@ -60,7 +62,7 @@ onMounted(() => {
   getData()
   fetchDataAxios()
   sekeletonLoadsF()
-  // fetchUsers()
+  fetchUsers()
 
 });
 
@@ -155,6 +157,7 @@ const successMessage = ref('');
 const registerUser = async () => {
   try {
     const response = await axios.post('http://localhost:5000/users', {
+      // id:response.length + 1,
       username: username.value,
       email: email.value,
       password: password.value,
@@ -166,20 +169,28 @@ const registerUser = async () => {
     errorMessage.value = 'Registration failed. Please try again.';
     successMessage.value = '';  // Clear success message if failed
   }
+  fetchUsers()
 };
 
 
-// const users = ref([]);
+const users = ref([]);
 
-// const fetchUsers = async () => {
-//   try {
-//     const response = await axios.get('http://localhost:5000/users');  // Replace with your actual URL
-//     users.value = response.data;  // Store the response data (users) in the users array
-//   } catch (error) {
-//     console.error('Error fetching users:', error);
-//   }
-// };
+const fetchUsers = async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/users');  // Replace with your actual URL
+    users.value = response.data;  // Store the response data (users) in the users array
+  } catch (error) {
+    console.error('Error fetching users:', error);
+  }
+};
 
+const localStorageCondition = ()=>{
+  if(MyLocalContacts.length > 0 && !skeletonLoadingState.value && byLocalStorage.value){
+    return true
+}
+}
+
+const drawer=ref(null)
 
 </script>
 <template>
@@ -191,9 +202,17 @@ const registerUser = async () => {
     </header>
 
     <div class="container mx-auto rounded-lg "  >
+
+      <v-btn
+            color="primary"
+            @click.stop="drawer = !drawer"
+          >
+            Toggle
+          </v-btn>
+
       <v-table class="the_table hidden xl:block " >
         <thead class=" ">
-          <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
+          <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg relative">
             <th class="text-right">شماره</th>
             <th class="text-right">پروفایل</th>
             <th class="text-right">نام و نام خانوادگی</th>
@@ -203,6 +222,11 @@ const registerUser = async () => {
             <th class="text-right">مهارت ها</th>
             <th class="text-right">علاقه مندی ها</th>
             <th class="text-right">عملیات</th>
+            <div class=" cursor-pointer absolute left-2 top-2 group" @click.stop="drawer = !drawer">
+              <v-icon class="group-hover:text-green-500 duration-150">mdi-flower</v-icon>
+              <!-- a -->
+            </div>
+
             
           </tr>
 
@@ -234,7 +258,7 @@ const registerUser = async () => {
         </tbody>
 
         <tbody 
-        v-if="MyLocalContacts.length > 0 && !skeletonLoadingState"
+        v-if="localStorageCondition()"
         class="bg-[#dddbdb] text-[#212222] overflow-hidden"
         >
           <tr
@@ -354,7 +378,7 @@ const registerUser = async () => {
     </div>
   </div> -->
 
-  <!-- <div>
+  <div>
     <h1>User Registration</h1>
     <form @submit.prevent="registerUser">
       <input v-model="username" type="text" placeholder="Username" required />
@@ -368,10 +392,10 @@ const registerUser = async () => {
     <div v-if="successMessage" class="success">
       <p>{{ successMessage }}</p>
     </div>
-  </div> -->
+  </div>
 
 
-  <!-- <div class="bg-pink-600 p-5">
+  <div class="bg-pink-600 p-5">
     <h1 class="text-center text-black text-xl font-bold">Users List</h1>
     <ul v-if="users.length > 0" class="flex flex-col gap-5 ">
       <li v-for="user in users" :key="user.id" class="last-of-type:border-none border-b-2 border-black border-spacing-9">
@@ -380,7 +404,36 @@ const registerUser = async () => {
       </li>
     </ul>
     <p v-else>No users found.</p>
-  </div> -->
+  </div>
+
+
+
+  <v-navigation-drawer
+        v-model="drawer"
+        temporary
+        class="fixed left-0 top-0"
+      >
+        <v-list-item
+          prepend-avatar="../assets/rose_ai.jpg"
+          title="Hasan Barati"
+        ></v-list-item>
+
+        <v-divider></v-divider>
+
+        <v-list density="compact" nav>
+          <v-list-item prepend-icon="mdi-view-dashboard"
+           title="سرور" value="home" @click.stop="byLocalStorage = true" :class="byLocalStorage ? 'bg-gray-800/40' : ''"></v-list-item>
+          <v-list-item prepend-icon="mdi-forum" title="مرورگر"
+           value="about" @click.stop="byLocalStorage = false" :class="!byLocalStorage ? 'bg-gray-800/40' : ''"></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+      <v-main style="height: 250px">
+        <div class="d-flex justify-center align-center h-100">
+
+        </div>
+      </v-main>
+  
+
   </div>
 
   <Forms
