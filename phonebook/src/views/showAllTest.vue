@@ -12,15 +12,15 @@ const skeletonLoadingState =ref(true)
 
 
 
-const dataAxios = ref(''); // نگهداری داده دریافت شده
+const dataAxios = ref([]); // نگهداری داده دریافت شده
 const loadingAxios = ref(true); // نمایش وضعیت بارگذاری
 const errorAxios = ref(null); // نگهداری خطاها
 
 const fetchDataAxios = async () => {
   try {
     // const response = await axios.get('https://jsonplaceholder.typicode.com/users'); // لینک API
-    const response = await axios.get('https://fakestoreapi.com/products/3'); // لینک API
-    dataAxios.value = response.data;
+    const response = await axios.get('https://reqres.in/api/users'); // لینک API
+    dataAxios.value = response.data.data;
     console.log(dataAxios.value);
     
     // console.log('Street : ' , dataAxios.value[0].address.street,'\n' , ' in Lat ' , dataAxios.value[0].address.geo.lat , ' lang : ',dataAxios.value[0].address.geo.lng   )
@@ -137,6 +137,24 @@ const toggleEditDialog = (item) => {
 };
 const toggleRegisterDialog = () => {
   dialogRegisterState.value = !dialogRegisterState.value;
+};
+
+
+const formData = ref({ name: '', job: '', ID:'' });
+const response = ref(null);
+const error = ref(null);
+
+const createUser = async () => {
+  error.value = null;
+  response.value = null;
+
+  try {
+    const res = await axios.post('https://reqres.in/api/users/3', formData.value);
+    response.value = res.data; // ذخیره پاسخ API
+  } catch (err) {
+    error.value = 'Failed to create user: ' + err.message; // ذخیره خطا
+  }
+  console.log(response.value)
 };
 
 </script>
@@ -291,7 +309,7 @@ const toggleRegisterDialog = () => {
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
     </div>
-    <div class="flex items-center !justify-center lg:!justify-end w-full bg-gray-500/20  mx-auto container lg:mx-0 ">
+    <div class="flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20  mx-auto container lg:mx-0 ">
       <v-skeleton-loader v-if="skeletonLoadingState && MyLocalContacts.length > 0"
           type="button"
           color="transparent"
@@ -299,6 +317,58 @@ const toggleRegisterDialog = () => {
         >
         </v-skeleton-loader>
     </div>
+
+  <div class="bg-red-500/70 flex-col gap-4 odd:bg-blue-500/70 testAxios flex items-center " v-for="(item,index) in dataAxios" :key="index">
+  <img :src="item.avatar"  class=" w-26 rounded-full">
+    <p>full name :{{ item.first_name + ' ' + item.last_name }}</p>
+    <p>email: {{ item.email }}</p>
+    
+  </div>
+
+  <div>
+    <!-- فرم ارسال داده -->
+    <form @submit.prevent="createUser">
+      <div>
+        <label for="name">Name:</label>
+        <input
+          id="name"
+          v-model="formData.name"
+          type="text"
+          placeholder="Enter name"
+          class="border p-2"
+          required
+        />
+      </div>
+      <div>
+        <label for="job">Job:</label>
+        <input
+          id="job"
+          v-model="formData.job"
+          type="text"
+          placeholder="Enter job"
+          class="border p-2"
+          required
+        />
+        <br>
+
+      </div>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 mt-4">
+        Submit
+      </button>
+    </form>
+
+    <!-- نمایش پاسخ -->
+    <div v-if="response" class="mt-4 p-4 border">
+      <p><strong>Name:</strong> {{ response.name }}</p>
+      <p><strong>Job:</strong> {{ response.job }}</p>
+      <p><strong>ID:</strong> {{ response.id }}</p>
+      <p><strong>Created At:</strong> {{ response.createdAt }}</p>
+    </div>
+
+    <!-- نمایش خطا -->
+    <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
+  </div>
+
   </div>
 
   <Forms
@@ -314,11 +384,6 @@ const toggleRegisterDialog = () => {
     :allFormsFields="selectedContact"
   />
 
-  <p class="bg-green-500 p-2 text-black font-semibold">{{ dataAxios.category + ' ' + dataAxios.title }}</p>
-  <div class="rounded-full p-4 bg-white w-fit overflow-hidden h-32 w-32 ">
-  <img :src="dataAxios.image" alt="" class=" w-26">
-    
-  </div>
 </template>
 
 <style scoped>

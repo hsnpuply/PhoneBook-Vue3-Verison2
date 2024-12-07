@@ -1,11 +1,8 @@
 <script setup>
-import { ref , defineEmits  } from "vue";
 import moment from "moment-jalaali";
 import { convertNumbersToPersian,deleteContact } from "@/utilities/functions";
 
 
-// const phone = "09928717698";
-// const persianNumber = convertNumbersToPersian(phone);
 
 const props = defineProps({
   all_forms_fields: Object,
