@@ -48,4 +48,4 @@ app.use(Vue3PersianDatetimePicker, {
       //... And whatever you want to set as default.
       //...
     }
-  }).use(vuetify).mount('#app')
+  }).mount('#app')

@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import * as yup from "yup";
 import { ErrorMessage } from "vee-validate";
 import { useField, useForm } from "vee-validate";
+import axios from 'axios';
+
 
 const dataPassPermission =ref(true)
 
@@ -18,7 +20,8 @@ const props = defineProps({
   currentID: Number,
   UpdateDialog: Function,
   allFormsFields: Object,
-  getData:Function
+  getData:Function,
+  byLocalStorage:Boolean
 });
 
 const state = reactive({
@@ -114,10 +117,15 @@ const { value: avatar } = useField("avatar");
 
 
 const handleSubmitFormClick = handleSubmit((item) => {
-  props.registerMode ? submitData() : UpdateDialog(item);
+  if (props.registerMode) {
+    props.byLocalStorage ? submitData()  : submitInServer();
+  } else {
+    props.byLocalStorage ? UpdateDialog(item) : updateInServer() ;
+  }
 
-  // can be switch when more forms should be appeared
+  // می‌تواند به switch تغییر یابد در صورت نیاز به فرم‌های بیشتر
 });
+
 
 const convertToBase64 = (file) => {
   return new Promise((resolve, reject) => {
@@ -200,6 +208,89 @@ const submitData = async () => {
   // props.getData()
 
 };
+const submitInServer = async () => {
+  state.loading = true;
+
+  // If avatar is updated, convert it to Base64
+  let avatarBase64 = state.form.avatar;
+  if (avatar.value instanceof File) {
+    try {
+      avatarBase64 = await convertToBase64(avatar.value); // Convert to Base64 if a new avatar is selected
+    } catch (error) {
+      console.error("Error converting avatar to Base64:", error);
+    }
+  }
+
+  // Prepare the data to be sent to the server
+  const contactData = {
+    phoneNumber: phoneNumber.value,
+    fullname: fullname.value,
+    selectedDate: selectedDate.value,
+    skills: skills.value,
+    favorites: favorites.value,
+    avatar: avatarBase64, // Base64 avatar
+    isCoworker: state.form.isCoworker,
+  };
+
+  try {
+    // Send the data to the server
+    const response = await axios.post('http://localhost:5000/users', contactData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Assuming the response contains the newly created contact, log it
+    console.log('New contact added:', response.data);
+
+    // Success Alert
+    Swal.fire({
+      icon: 'success',
+      title: 'مخاطب با موفقیت ثبت شد',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      color: 'green',
+      background: '#dddbd',
+      timerProgressBar: true,
+    });
+
+    // Call the getData function to refresh data
+    props.getData();
+
+    // Close the dialog and reset the form
+    setTimeout(() => {
+      emit("update:modelState", false);
+    }, 1200);
+
+    setTimeout(() => {
+      resetForm({ values: { fullname: "", phoneNumber: "", selectedDate: "", isCoworker: false, skills: [], favorites: [] } });
+      state.form.isCoworker = false;
+      fileInputs.value = null; // Reset file input
+      state.loading = false;
+    }, 1700);
+  } catch (error) {
+    console.error("Error adding contact:", error);
+
+    // Error Alert
+    Swal.fire({
+      icon: 'error',
+      title: 'خطا در ثبت مخاطب',
+      text: 'لطفاً دوباره تلاش کنید',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      color: 'red',
+      background: '#f5dcdc',
+      timerProgressBar: true,
+    });
+
+    state.loading = false;
+  }
+};
+    
 const cancelDialog = () => {
   if (!state.loading) {
     emit("update:modelState", false);
@@ -270,6 +361,11 @@ let avatarBase64 = state.form.avatar;
   }, 1700);
   props.getData()
 };
+
+
+const updateInServer = async ()=>{
+
+}
 
 
 
@@ -411,7 +507,7 @@ let avatarBase64 = state.form.avatar;
             variant="elevated"
             color="green"
             size="large"
-            @click="handleSubmitFormClick()"
+            @click="handleSubmitFormClick(state.form)"
           >
             ثبت مخاطب
           </v-btn>

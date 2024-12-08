@@ -1,0 +1,16 @@
+{
+    "users": [
+      {
+        "id": 1,
+        "fullname":"Hasani Barati",
+        "isCoworker":true,
+        "phoneNumber":"09928717698",
+        "skills" :["aa","bb","cc"],
+        "favorites" :["apple","bannana","avacado"],
+        "selectedDate":"2022-03-04",
+        "avatar":"../src/assets/background.png"
+      }
+    ]
+  }
+  
+  
