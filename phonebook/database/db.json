@@ -37,37 +37,9 @@
       "avatar": "../src/assets/rose_ai.jpg"
     },
     {
-      "id": "92",
-      "fullname": "Hasani Barati",
-      "isCoworker": true,
-      "phoneNumber": "09928717698",
-      "skills": [
-        "aa",
-        "bb",
-        "cc"
-      ],
-      "favorites": [
-        "apple",
-        "bannana",
-        "avacado"
-      ],
-      "selectedDate": "2022-03-04",
-      "avatar": "../src/assets/rose_ai.jpg"
-    },
-    {
-      "id": "f763",
-      "phoneNumber": "qwewq",
-      "fullname": "asd",
-      "selectedDate": null,
-      "skills": [],
-      "favorites": [],
-      "avatar": null,
-      "isCoworker": false
-    },
-    {
-      "id": "45c3",
-      "phoneNumber": "z",
-      "fullname": "zzzzzzzzzz",
+      "id": "d3f0",
+      "phoneNumber": "a",
+      "fullname": "asal",
       "selectedDate": null,
       "skills": [],
       "favorites": [],

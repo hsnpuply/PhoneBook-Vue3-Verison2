@@ -1,6 +1,6 @@
 <script setup>
 import Swal from "sweetalert2";
-import { ref, reactive, onMounted, computed, onUpdated  } from "vue";
+import { ref, reactive, onMounted, computed  } from "vue";
 import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
 import Card from "@/components/contact_card.vue";
@@ -154,7 +154,6 @@ const deleteLocalstorageContact = (id) => {
 };
 
 const deleteServerContact = async (id) => {
-  UpdateStatusDataServer.value = true
   Swal.fire({
     title: "آیا از حذف مخاطب اطمینان دارید؟",
     text: "اطلاعات حذف شده قابلیت بازیابی ندارند",
@@ -176,8 +175,6 @@ const deleteServerContact = async (id) => {
       try {
         await axios.delete(`http://localhost:5000/users/${id}`); // Update with your server's base URL
         users = users.filter((user) => user.id !== id); // Update the local list of users
-        fetchUsers()
-        alert('did it')
         // Show success notification
         const Toast = Swal.mixin({
           toast: true,
@@ -202,7 +199,8 @@ const deleteServerContact = async (id) => {
       }
     }
   });
-  UpdateDataServer()
+  fetchUsers()
+
 
 };
 
@@ -242,13 +240,7 @@ const registerUser = async () => {
 
 
 let users = reactive([]);
-const UpdateStatusDataServer = ref(false)
-const UpdateDataServer= ()=>{
-  if(UpdateStatusDataServer.value){
-    alert('users will fetch in 2scs')
-    fetchUsers()
-  }
-}
+
 
 const fetchUsers = async () => {
   try {
@@ -586,8 +578,9 @@ const noContactIconCondition = computed(() => {
     <h1 class="text-center text-black text-xl font-bold">Users List</h1>
     <ul v-if="users.length > 0" class="flex flex-col gap-5 ">
       <li v-for="user in users" :key="user.id" class="last-of-type:border-none border-b-2 border-black border-spacing-9">
-        <p>Username: {{ user.username }}</p>
-        <p>Email: {{ user.email }}</p>
+        <p>Username: {{ user.fullname }}</p>
+        <p>Email: {{ user.phoneNumber }}</p>
+        <img :src="user.avatar" alt="" class="w-24 rounded-full h-24 object-cover">
       </li>
     </ul>
     <p v-else>No users found.</p>

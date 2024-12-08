@@ -178,7 +178,6 @@ const submitData = async () => {
 
   // Update the last used ID in localStorage
   localStorage.setItem("lastId", newId);
-  props.getData()
 
   setTimeout(() => {
     emit("update:modelState", false);
@@ -196,6 +195,8 @@ const submitData = async () => {
       background: "#dddbd",
       timerProgressBar: true,
     });
+  props.getData()
+
 
     // Reset form fields and validation state
     resetForm({
