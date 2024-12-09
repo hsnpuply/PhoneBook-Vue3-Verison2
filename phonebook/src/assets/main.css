@@ -15,3 +15,10 @@ html{
     height: 80px ;
     border-radius: 2rem;
 }
+tr > th , tr > td{
+    text-align: right;
+}
+
+table{
+    direction: rtl;
+}

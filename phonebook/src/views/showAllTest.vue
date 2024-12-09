@@ -1,33 +1,34 @@
 <script setup>
 import Swal from "sweetalert2";
-import { ref, reactive, onMounted, computed, onUpdated  } from "vue";
+import { ref, reactive, onMounted, computed, onUpdated } from "vue";
 import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
 import Card from "@/components/contact_card.vue";
-import axios from 'axios';
+import axios from "axios";
 
-const byLocalStorage = ref(true)
+function updateMainTableKey(newValue) {
+  state.mainTableKey = newValue;
+}
+const state = reactive({
+  mainTableKey: 0,
+});
 
+const byLocalStorage = ref(true);
 
-const skeletonLocalStorageLoadingState =ref(true)
-const skeletonServerLoadingState =ref(true)
-
-
-
+const skeletonLocalStorageLoadingState = ref(true);
+const skeletonServerLoadingState = ref(true);
 
 const dataAxios = ref([]); // نگهداری داده دریافت شده
 const loadingAxios = ref(true); // نمایش وضعیت بارگذاری
 const errorAxios = ref(null); // نگهداری خطاها
 
-
-
 const fetchDataAxios = async () => {
   try {
     // const response = await axios.get('https://jsonplaceholder.typicode.com/users'); // لینک API
-    const response = await axios.get('https://reqres.in/api/users '); // لینک API
+    const response = await axios.get("https://reqres.in/api/users "); // لینک API
     dataAxios.value = response.data.data;
     console.log(dataAxios.value);
-    
+
     // console.log('Street : ' , dataAxios.value[0].address.street,'\n' , ' in Lat ' , dataAxios.value[0].address.geo.lat , ' lang : ',dataAxios.value[0].address.geo.lng   )
   } catch (err) {
     errorAxios.value = err.message;
@@ -42,43 +43,35 @@ const dialogEditState = ref(false);
 
 const MyLocalContacts = reactive([]);
 
-
-
-
-const  getData =()=>{
-  if(byLocalStorage.value){
+const getData = () => {
+  if (byLocalStorage.value) {
     const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
     MyLocalContacts.splice(0, MyLocalContacts.length, ...storedContacts);
-  }else{
+  } else {
     fetchUsers();
   }
 
   // console.log(storedContacts.length + '\n' + 'See Get Data Called')
-  
-}
+};
 
-
-const sekeletonLoadsLocal=()=>{
-    setTimeout(()=>{
-    skeletonLocalStorageLoadingState.value =  false
-  },2000)
-
-}
-const sekeletonLoadsOnServer=()=>{
-    setTimeout(()=>{
-    skeletonServerLoadingState.value =  false
-  },2000)
-}
+const sekeletonLoadsLocal = () => {
+  setTimeout(() => {
+    skeletonLocalStorageLoadingState.value = false;
+  }, 2000);
+};
+const sekeletonLoadsOnServer = () => {
+  setTimeout(() => {
+    skeletonServerLoadingState.value = false;
+  }, 2000);
+};
 // Fetch contacts from localStorage on component mount
 onMounted(() => {
-  getData()
-  fetchDataAxios()
-  sekeletonLoadsLocal()
-  sekeletonLoadsOnServer()
-  fetchUsers()
-
+  getData();
+  fetchDataAxios();
+  sekeletonLoadsLocal();
+  sekeletonLoadsOnServer();
+  fetchUsers();
 });
-
 
 const convertNumbersToPersian = (text) => {
   const englishNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -150,11 +143,9 @@ const deleteLocalstorageContact = (id) => {
       });
     }
   });
-
 };
 
 const deleteServerContact = async (id) => {
-  UpdateStatusDataServer.value = true
   Swal.fire({
     title: "آیا از حذف مخاطب اطمینان دارید؟",
     text: "اطلاعات حذف شده قابلیت بازیابی ندارند",
@@ -176,8 +167,8 @@ const deleteServerContact = async (id) => {
       try {
         await axios.delete(`http://localhost:5000/users/${id}`); // Update with your server's base URL
         users = users.filter((user) => user.id !== id); // Update the local list of users
-        fetchUsers()
-        alert('did it')
+        await fetchUsers();
+
         // Show success notification
         const Toast = Swal.mixin({
           toast: true,
@@ -202,11 +193,8 @@ const deleteServerContact = async (id) => {
       }
     }
   });
-  UpdateDataServer()
-
+  UpdateDataServer();
 };
-
-
 
 const toggleEditDialog = (item) => {
   Object.assign(selectedContact, item);
@@ -216,15 +204,15 @@ const toggleRegisterDialog = () => {
   dialogRegisterState.value = !dialogRegisterState.value;
 };
 
-const username = ref('');
-const email = ref('');
-const password = ref('');
-const errorMessage = ref('');
-const successMessage = ref('');
+const username = ref("");
+const email = ref("");
+const password = ref("");
+const errorMessage = ref("");
+const successMessage = ref("");
 
 const registerUser = async () => {
   try {
-    const response = await axios.post('http://localhost:5000/users', {
+    const response = await axios.post("http://localhost:5000/users", {
       // id:response.length + 1,
       username: username.value,
       email: email.value,
@@ -232,50 +220,51 @@ const registerUser = async () => {
     });
 
     successMessage.value = `User registered successfully! ID: ${response.data.id}`;
-    errorMessage.value = '';  // Clear error message if successful
+    errorMessage.value = ""; // Clear error message if successful
   } catch (error) {
-    errorMessage.value = 'Registration failed. Please try again.';
-    successMessage.value = '';  // Clear success message if failed
+    errorMessage.value = "Registration failed. Please try again.";
+    successMessage.value = ""; // Clear success message if failed
   }
-  fetchUsers()
+  fetchUsers();
 };
 
-
 let users = reactive([]);
-const UpdateStatusDataServer = ref(false)
-const UpdateDataServer= ()=>{
-  if(UpdateStatusDataServer.value){
-    alert('users will fetch in 2scs')
-    fetchUsers()
+const UpdateStatusDataServer = ref(false);
+const UpdateDataServer = () => {
+  if (UpdateStatusDataServer.value) {
+    fetchUsers();
   }
-}
+};
 
 const fetchUsers = async () => {
   try {
-    const response = await axios.get('http://localhost:5000/users');  // Replace with your actual URL
-    users = response.data;  
-    console.log(users)
+    const response = await axios.get("http://localhost:5000/users"); // Replace with your actual URL
+    users = response.data;
+    console.log(users);
   } catch (error) {
-    console.error('Error fetching users:', error);
+    console.error("Error fetching users:", error);
   }
 };
 
-const localStorageCondition = ()=>{
-  if(MyLocalContacts.length > 0 && !skeletonLocalStorageLoadingState.value && byLocalStorage.value){
+const localStorageCondition = () => {
+  if (
+    MyLocalContacts.length > 0 &&
+    !skeletonLocalStorageLoadingState.value &&
+    byLocalStorage.value
+  ) {
     byLocalStorage.value = true;
-    return true
-}
+    return true;
+  }
+};
 
-}
-
-const serverCondition = ()=>{
-  if(users.length > 0 && !skeletonServerLoadingState.value && !byLocalStorage.value){
+const serverCondition = () => {
+  if (users.length > 0 && !skeletonServerLoadingState.value && !byLocalStorage.value) {
     byLocalStorage.value = false;
-    return true
-}
-}
+    return true;
+  }
+};
 
-const drawer=ref(null)
+const drawer = ref(null);
 
 // Computed برای شرط نمایش
 const noContactIconCondition = computed(() => {
@@ -291,19 +280,25 @@ const noContactIconCondition = computed(() => {
   <div class="mx-auto mainContent h-full bg-cover">
     <header class="titlePage">
       <div class="titleText">
-        <h1 class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2"> <span :class="byLocalStorage ? 'mdi mdi-web' : 'mdi mdi-server'"></span> دفترچه تلفن {{ byLocalStorage ? 'مرورگر' : 'سرور' }} </h1>
+        <h1
+          class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2"
+        >
+          <span :class="byLocalStorage ? 'mdi mdi-web' : 'mdi mdi-server'"></span> دفترچه
+          تلفن {{ byLocalStorage ? "مرورگر" : "سرور" }}
+        </h1>
       </div>
     </header>
 
-    <div class="container mx-auto rounded-lg "  >
+    <div class="container mx-auto rounded-lg">
+      <div class="cursor-pointer px-4 my-2" @click.stop="drawer = !drawer">
+        <span
+          class="mdi mdi-send text-3xl text-black hover:!text-gray-800 duration-150"
+        />
+      </div>
 
-      <div class=" cursor-pointer px-4 my-2 " @click.stop="drawer = !drawer">
-              <span class="mdi mdi-send  text-3xl text-black hover:!text-gray-800 duration-150"/>
-            </div>
-
-      <v-table class="the_table hidden xl:block " >
-        <thead class=" relative">
-          <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg ">
+      <v-table class="the_table hidden xl:block" :key="state.mainTableKey">
+        <thead class="relative">
+          <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
             <th class="text-right">شماره</th>
             <th class="text-right">پروفایل</th>
             <th class="text-right">نام و نام خانوادگی</th>
@@ -313,81 +308,59 @@ const noContactIconCondition = computed(() => {
             <th class="text-right">مهارت ها</th>
             <th class="text-right">علاقه مندی ها</th>
             <th class="text-right">عملیات</th>
-
-
-            
           </tr>
-
-
         </thead>
 
-
-<!-- Skeleton of LocalStorage -->
-          <tbody  class=" w-full  " 
-            v-if="skeletonLocalStorageLoadingState">
-              <tr v-for="(item,index) in MyLocalContacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
-                <td v-for="item in 8" :key="item" class="!h-28">
-                  <v-skeleton-loader
-                    type="text"
-                    color="transparent"
-                    class=""
-                  >
-                  </v-skeleton-loader>
-                </td>
-                <td class=" min-w-48 ">
-                  <div class="w-full px-8">
-                    <v-skeleton-loader
-                    type="button,button"
-                    color="transparent"
-                    class=" "
-                  >
-                  </v-skeleton-loader>
-                  </div>
-                </td>
+        <!-- Skeleton of LocalStorage -->
+        <tbody class="w-full" v-if="skeletonLocalStorageLoadingState">
+          <tr
+            v-for="(item, index) in MyLocalContacts.length"
+            :key="index"
+            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
+          >
+            <td v-for="item in 8" :key="item" class="!h-28">
+              <v-skeleton-loader type="text" color="transparent" class="">
+              </v-skeleton-loader>
+            </td>
+            <td class="min-w-48">
+              <div class="w-full px-8">
+                <v-skeleton-loader type="button,button" color="transparent" class=" ">
+                </v-skeleton-loader>
+              </div>
+            </td>
           </tr>
-
-
         </tbody>
 
         <!-- Skeleton of Server -->
 
-        <tbody  class=" w-full  " v-if="skeletonServerLoadingState ">
-              <tr v-for="(item,index) in users.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
-                <td v-for="item in 8" :key="item" class="!h-28">
-                  <v-skeleton-loader
-                    type="text"
-                    color="transparent"
-                    class=""
-                  >
-                  </v-skeleton-loader>
-                </td>
-                <td class=" min-w-48 ">
-                  <div class="w-full px-8">
-                    <v-skeleton-loader
-                    type="button,button"
-                    color="transparent"
-                    class=" "
-                  >
-                  </v-skeleton-loader>
-                  </div>
-                </td>
+        <tbody class="w-full" v-if="skeletonServerLoadingState">
+          <tr
+            v-for="(item, index) in users.length"
+            :key="index"
+            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
+          >
+            <td v-for="item in 8" :key="item" class="!h-28">
+              <v-skeleton-loader type="text" color="transparent" class="">
+              </v-skeleton-loader>
+            </td>
+            <td class="min-w-48">
+              <div class="w-full px-8">
+                <v-skeleton-loader type="button,button" color="transparent" class=" ">
+                </v-skeleton-loader>
+              </div>
+            </td>
           </tr>
-
-
         </tbody>
 
-        <tbody 
-        v-if="localStorageCondition()"
-        class="bg-[#dddbdb] text-[#212222] overflow-hidden"
+        <tbody
+          v-if="localStorageCondition()"
+          class="bg-[#dddbdb] text-[#212222] overflow-hidden"
         >
           <tr
             v-for="(item, index) in MyLocalContacts"
             :key="index"
-            class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50
-             cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100
-              select-none "
+            class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
             @dblclick="toggleEditDialog(item)"
-            
           >
             <td>{{ index + 1 }}</td>
             <td>
@@ -410,41 +383,37 @@ const noContactIconCondition = computed(() => {
             <td class="">
               <div class="actionButtonsContainer flex gap-2 items-center justify-center">
                 <v-btn
-                variant="elevated"
-                elevation="2"
-                prepend-icon="mdi-delete"
-                @click="deleteLocalstorageContact(item.id)"
-                class="bg-red-600/90 hover:bg-red-600/95"
-              >
-                حذف
-              </v-btn>
-              <v-btn
-                variant="elevated"
-                color="blue"
-                prepend-icon="mdi-account"
-                @click="toggleEditDialog(item)"
-                class="bg-sky-600/90 hover:bg-sky-600/95"
-              >
-                ویرایش
-              </v-btn>
+                  variant="elevated"
+                  elevation="2"
+                  prepend-icon="mdi-delete"
+                  @click="deleteLocalstorageContact(item.id)"
+                  class="bg-red-600/90 hover:bg-red-600/95"
+                >
+                  حذف
+                </v-btn>
+                <v-btn
+                  variant="elevated"
+                  color="blue"
+                  prepend-icon="mdi-account"
+                  @click="toggleEditDialog(item)"
+                  class="bg-sky-600/90 hover:bg-sky-600/95"
+                >
+                  ویرایش
+                </v-btn>
               </div>
-
             </td>
           </tr>
         </tbody>
 
-        <tbody 
-        v-if="serverCondition()"
-        class="bg-[#dddbdb] text-[#212222] overflow-hidden"
+        <tbody
+          v-if="serverCondition()"
+          class="bg-[#dddbdb] text-[#212222] overflow-hidden"
         >
           <tr
             v-for="(item, index) in users"
             :key="index"
-            class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50
-             cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100
-              select-none "
+            class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
             @dblclick="toggleEditDialog(item)"
-            
           >
             <td>{{ index + 1 }}</td>
             <td>
@@ -467,73 +436,84 @@ const noContactIconCondition = computed(() => {
             <td class="">
               <div class="actionButtonsContainer flex gap-2 items-center justify-center">
                 <v-btn
-                variant="elevated"
-                elevation="2"
-                prepend-icon="mdi-delete"
-                @click="deleteServerContact(item.id)"
-                class="bg-red-600/90 hover:bg-red-600/95"
-              >
-                حذف
-              </v-btn>
-              <v-btn
-                variant="elevated"
-                color="blue"
-                prepend-icon="mdi-account"
-                @click="toggleEditDialog(item)"
-                class="bg-sky-600/90 hover:bg-sky-600/95"
-              >
-                ویرایش
-              </v-btn>
+                  variant="elevated"
+                  elevation="2"
+                  prepend-icon="mdi-delete"
+                  @click="deleteServerContact(item.id)"
+                  class="bg-red-600/90 hover:bg-red-600/95"
+                >
+                  حذف
+                </v-btn>
+                <v-btn
+                  variant="elevated"
+                  color="blue"
+                  prepend-icon="mdi-account"
+                  @click="toggleEditDialog(item)"
+                  class="bg-sky-600/90 hover:bg-sky-600/95"
+                >
+                  ویرایش
+                </v-btn>
               </div>
-
             </td>
           </tr>
         </tbody>
-
-
       </v-table>
-      <div class=" flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl 
-        bg-white items-center justify-center min-h-[200px] text-center"
-         v-if="noContactIconCondition ">
-          <img src="../assets/no-data.jpg" alt="" class="w-[35rem]">
-          <p class="pb-10 text-3xl">
-          {{ byLocalStorage ? '😲' :'😨' }} هیچ مخاطبی در{{ byLocalStorage ? 'مرورگر' : 'سرور' }} موجود نیست
-          </p>
-<!-- 
+      <div
+        class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
+        v-if="noContactIconCondition"
+      >
+        <img src="../assets/no-data.jpg" alt="" class="w-[35rem]" />
+        <p class="pb-10 text-3xl">
+          {{ byLocalStorage ? "😲" : "😨" }} هیچ مخاطبی در{{
+            byLocalStorage ? "مرورگر" : "سرور"
+          }}
+          موجود نیست
+        </p>
+        <!-- 
           <p class="pb-10 text-3xl">😲 هیچ مخاطبی موجود نیست</p>
           <p class="pb-10 text-3xl">😲 هیچ مخاطبی موجود نیست</p> -->
-        </div>
-
+      </div>
     </div>
 
-    <div class="test_card  mx-4 md:!mx-auto md:container w-full
-     flex flex-row-reverse flex-wrap xl:hidden 
-     items-stretch justify-center gap-8 cursor-pointer"  v-if="!skeletonLocalStorageLoadingState" >
-    <Card   
-    v-model:dialogEditState="dialogEditState" 
-    :currentItem="item"
-    :MyLocalContacts="MyLocalContacts"
-    :selectedContact="selectedContact"
-     :all_forms_fields="item" v-for="(item,index) in MyLocalContacts" :key="index" class="!max-w-[50%]  flex-1  flex-wrap " />
-  </div>
-  <div class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap 
-     items-stretch justify-center container mx-auto gap-8 rounded-lg " v-if="skeletonLocalStorageLoadingState">
-    <v-skeleton-loader
-          v-for="(item,index) in MyLocalContacts" :key="index"
-          min-height="540"
-          elevation="24"
-          type="	image , text, paragraph , article  , button , button"
-          class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard"
-        >
-        </v-skeleton-loader>
-  </div>
+    <div
+      class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
+      v-if="!skeletonLocalStorageLoadingState"
+    >
+      <Card
+        v-model:dialogEditState="dialogEditState"
+        :currentItem="item"
+        :MyLocalContacts="MyLocalContacts"
+        :selectedContact="selectedContact"
+        :all_forms_fields="item"
+        v-for="(item, index) in MyLocalContacts"
+        :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap"
+      />
+    </div>
+    <div
+      class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
+      v-if="skeletonLocalStorageLoadingState"
+    >
+      <v-skeleton-loader
+        v-for="(item, index) in MyLocalContacts"
+        :key="index"
+        min-height="540"
+        elevation="24"
+        type="	image , text, paragraph , article  , button , button"
+        class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard"
+      >
+      </v-skeleton-loader>
+    </div>
 
-  <div class="addNewContact  w-full
-   flex  xl:!justify-end justify-center container mx-auto xl:!px-0  py-5 xs:px-10 xl:px-0 ">
+    <div
+      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0"
+    >
       <v-btn
         v-if="
-          byLocalStorage ? !skeletonLocalStorageLoadingState || MyLocalContacts.length <= 0 
-          : !skeletonServerLoadingState || users.length <= 0"
+          byLocalStorage
+            ? !skeletonLocalStorageLoadingState || MyLocalContacts.length <= 0
+            : !skeletonServerLoadingState || users.length <= 0
+        "
         variant="elevated"
         elevation="3"
         color="green"
@@ -544,15 +524,20 @@ const noContactIconCondition = computed(() => {
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
     </div>
-    <div class="flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20  mx-auto container lg:mx-0 ">
-      <v-skeleton-loader v-if="skeletonLocalStorageLoadingState && MyLocalContacts.length > 0 && byLocalStorage"
-          type="button"
-          color="transparent"
-          class="w-32"
-        >
-        </v-skeleton-loader>
+    <div
+      class="flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0"
+    >
+      <v-skeleton-loader
+        v-if="
+          skeletonLocalStorageLoadingState && MyLocalContacts.length > 0 && byLocalStorage
+        "
+        type="button"
+        color="transparent"
+        class="w-32"
+      >
+      </v-skeleton-loader>
     </div>
-<!-- 
+    <!-- 
   <div class=" flex-wrap justify-center gap-4  testAxios flex  " >
     <div class="flex justify-stretch rounded-lg bg-red-500/70 odd:bg-blue-500/70  gap-4" v-for="(item,index) in dataAxios" :key="index">
       <div class=" flex items-center gap-4 p-4 ">
@@ -565,72 +550,88 @@ const noContactIconCondition = computed(() => {
     </div>
   </div> -->
 
-  <div>
-    <h1>User Registration</h1>
-    <form @submit.prevent="registerUser">
-      <input v-model="username" type="text" placeholder="Username" required />
-      <input v-model="email" type="email" placeholder="Email" required />
-      <input v-model="password" type="password" placeholder="Password" required />
-      <button type="submit">Register</button>
-    </form>
-    <div v-if="errorMessage" class="error">
-      <p>{{ errorMessage }}</p>
+    <div>
+      <h1>User Registration</h1>
+      <form @submit.prevent="registerUser">
+        <input v-model="username" type="text" placeholder="Username" required />
+        <input v-model="email" type="email" placeholder="Email" required />
+        <input v-model="password" type="password" placeholder="Password" required />
+        <button type="submit">Register</button>
+      </form>
+      <div v-if="errorMessage" class="error">
+        <p>{{ errorMessage }}</p>
+      </div>
+      <div v-if="successMessage" class="success">
+        <p>{{ successMessage }}</p>
+      </div>
     </div>
-    <div v-if="successMessage" class="success">
-      <p>{{ successMessage }}</p>
+
+    <div class="bg-pink-600 p-5">
+      <h1 class="text-center text-black text-xl font-bold">Users List</h1>
+      <ul v-if="users.length > 0" class="flex flex-col gap-5">
+        <li
+          v-for="user in users"
+          :key="user.id"
+          class="last-of-type:border-none border-b-2 border-black border-spacing-9"
+        >
+          <p>
+            Username:
+            <span class="text-black text-xl font-bold">{{ user.fullname }}</span>
+          </p>
+          <p>
+            Email:
+            <span class="text-black text-xl font-bold">{{ user.phoneNumber }}</span>
+          </p>
+        </li>
+      </ul>
+      <p v-else>No users found.</p>
     </div>
-  </div>
 
+    <v-navigation-drawer v-model="drawer" temporary class="fixed left-0 top-0">
+      <v-list-item
+        prepend-avatar="../assets/rose_ai.jpg"
+        title="Hasan Barati"
+      ></v-list-item>
 
-  <div class="bg-pink-600 p-5">
-    <h1 class="text-center text-black text-xl font-bold">Users List</h1>
-    <ul v-if="users.length > 0" class="flex flex-col gap-5 ">
-      <li v-for="user in users" :key="user.id" class="last-of-type:border-none border-b-2 border-black border-spacing-9">
-        <p>Username: {{ user.username }}</p>
-        <p>Email: {{ user.email }}</p>
-      </li>
-    </ul>
-    <p v-else>No users found.</p>
-  </div>
+      <v-divider></v-divider>
 
-
-
-  <v-navigation-drawer
-        v-model="drawer"
-        temporary
-        class="fixed left-0 top-0"
-      >
+      <v-list nav>
         <v-list-item
-          prepend-avatar="../assets/rose_ai.jpg"
-          title="Hasan Barati"
+          prepend-icon="mdi-web"
+          title="مرورگر"
+          value="localstorage"
+          @click.stop="byLocalStorage = true"
+          :class="byLocalStorage ? 'bg-gray-800/40' : ''"
         ></v-list-item>
-
-        <v-divider></v-divider>
-
-        <v-list nav>
-          <v-list-item prepend-icon="mdi-web"
-           title="مرورگر" value="localstorage" @click.stop="byLocalStorage = true" :class="byLocalStorage ? 'bg-gray-800/40' : ''"></v-list-item>
-          <v-list-item prepend-icon="mdi-server" title="سرور"
-           value="web-server" @click.stop="byLocalStorage = false" :class="!byLocalStorage ? 'bg-gray-800/40' : ''"></v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-      <v-main style="height: 250px">
-        <div class="d-flex justify-center align-center h-100">
-        </div>
-      </v-main>
-  
-
+        <v-list-item
+          prepend-icon="mdi-server"
+          title="سرور"
+          value="web-server"
+          @click.stop="byLocalStorage = false"
+          :class="!byLocalStorage ? 'bg-gray-800/40' : ''"
+        ></v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+    <v-main style="height: 250px">
+      <div class="d-flex justify-center align-center h-100"></div>
+    </v-main>
   </div>
+
+  <p>Current Key: {{ state.mainTableKey }}</p>
+
 
   <Forms
-        v-model:modelState="dialogRegisterState"
-        title="ثبت مخاطب"
-        :registerMode="true"
-        :getData="getData"
-        :byLocalStorage="byLocalStorage"
+    v-model:modelState="dialogRegisterState"
+    title="ثبت مخاطب"
+    :registerMode="true"
+    :getData="getData"
+    :byLocalStorage="byLocalStorage"
+    :mainTableKey="state.mainTableKey"
+     @update:mainTableKey="updateMainTableKey"
 
-      />
-      <!-- :getData="getData()" -->
+
+  />
+  <!-- :getData="getData()" -->
 
   <Forms
     v-model:model-state="dialogEditState"
@@ -640,12 +641,49 @@ const noContactIconCondition = computed(() => {
     :allFormsFields="selectedContact"
     :getData="getData"
     :byLocalStorage="byLocalStorage"
-
   />
 
-
-
-
+  <tr
+    v-for="(item, index) in users"
+    :key="index"
+    class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
+    @dblclick="toggleEditDialog(item)"
+  >
+    <td>{{ index + 1 }}</td>
+    <td>
+      <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="item.avatar" />
+    </td>
+    <td>{{ item.fullname }}</td>
+    <td>{{ convertNumbersToPersian(item.phoneNumber) }}</td>
+    <td>
+      {{ convertNumbersToPersian(moment(item.selectedDate).format("jYYYY/jMM/jDD")) }}
+    </td>
+    <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
+    <td>{{ item.skills ? item.skills.join(" , ") : "" }}</td>
+    <td>{{ item.favorites ? item.favorites.join(" , ") : "" }}</td>
+    <td class="">
+      <div class="actionButtonsContainer flex gap-2 items-center justify-center">
+        <v-btn
+          variant="elevated"
+          elevation="2"
+          prepend-icon="mdi-delete"
+          @click="deleteServerContact(item.id)"
+          class="bg-red-600/90 hover:bg-red-600/95"
+        >
+          حذف
+        </v-btn>
+        <v-btn
+          variant="elevated"
+          color="blue"
+          prepend-icon="mdi-account"
+          @click="toggleEditDialog(item)"
+          class="bg-sky-600/90 hover:bg-sky-600/95"
+        >
+          ویرایش
+        </v-btn>
+      </div>
+    </td>
+  </tr>
 </template>
 
 <style scoped>
@@ -653,7 +691,6 @@ const noContactIconCondition = computed(() => {
   background-image: url(../assets/test.jpg);
   background-position: center;
 }
-
 </style>
 
 <style>

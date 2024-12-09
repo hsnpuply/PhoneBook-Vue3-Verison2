@@ -21,8 +21,17 @@ const props = defineProps({
   UpdateDialog: Function,
   allFormsFields: Object,
   getData:Function,
-  byLocalStorage:Boolean
+  byLocalStorage:Boolean,
+  mainTableKey:Number
+
 });
+
+const currentValue = ref(props.mainTableKey)
+
+function incrementValue() {
+  const newValue = currentValue.value + 1;
+  emit('update:mainTableKey', newValue);
+}
 
 const state = reactive({
   form: {
@@ -48,7 +57,7 @@ const favsList=reactive([
   'بوکس','فوتسال',
   'سینما','فوتبال',
 ])
-const emit = defineEmits(["update:modelState", "update:allFormsFields"]);
+const emit = defineEmits(["update:modelState", "update:allFormsFields","update:mainTableKey"]);
 
 
 // ON UPDATE Component
@@ -179,9 +188,10 @@ const submitData = async () => {
   // Update the last used ID in localStorage
   localStorage.setItem("lastId", newId);
   props.getData()
-
+  incrementValue()
   setTimeout(() => {
     emit("update:modelState", false);
+    emit("update:mainTableKey", currentValue.value  + 10);
   }, 1200);
 
   setTimeout(() => {
@@ -262,6 +272,8 @@ const submitInServer = async () => {
     // Close the dialog and reset the form
     setTimeout(() => {
       emit("update:modelState", false);
+    emit("update:mainTableKey", currentValue.value  + 10);
+
     }, 1200);
 
     setTimeout(() => {
