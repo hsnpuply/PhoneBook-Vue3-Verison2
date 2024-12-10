@@ -22,7 +22,8 @@ const props = defineProps({
   allFormsFields: Object,
   getData:Function,
   byLocalStorage:Boolean,
-  mainTableKey:Number
+  mainTableKey:Number,
+  fetchUsers:Function
 
 });
 
@@ -73,7 +74,7 @@ onUpdated(() => {
     skills.value = state.form.skills;
     favorites.value = state.form.favorites
     avatar.value = state.form.avatar;
-    // console.log(avatar.value);
+    console.log(phoneNumber.value);
     
 
 
@@ -129,7 +130,7 @@ const handleSubmitFormClick = handleSubmit((item) => {
   if (props.registerMode) {
     props.byLocalStorage ? submitData()  : submitInServer();
   } else {
-    props.byLocalStorage ? UpdateDialog(item) : updateInServer(item) ;
+    props.byLocalStorage ? UpdateDialog(item) : updateInServer() ;
   }
 
   // می‌تواند به switch تغییر یابد در صورت نیاز به فرم‌های بیشتر
@@ -375,9 +376,111 @@ let avatarBase64 = state.form.avatar;
 };
 
 
-const updateInServer = async ()=>{
-  
-}
+const updateInServer = async () => {
+  state.loading = true;
+
+  dataPassPermission.value = false;
+
+
+  // If avatar is updated, convert it to Base64
+  let avatarBase64 = state.form.avatar;
+  if (avatar.value instanceof File) {
+    try {
+      avatarBase64 = await convertToBase64(avatar.value); // Convert to Base64 if a new avatar is selected
+    } catch (error) {
+      console.error("Error converting avatar to Base64:", error);
+    }
+  }
+
+  // Prepare the data to be updated
+  const updatedContact = {
+    id: props.currentID, // Ensure ID is passed for identifying the resource
+    phoneNumber: phoneNumber.value,
+    fullname: fullname.value,
+    selectedDate: selectedDate.value,
+    skills: skills.value,
+    favorites: favorites.value,
+    avatar: avatarBase64,
+    isCoworker: state.form.isCoworker,
+  };
+  emit("update:mainTableKey", 208);
+
+  try {
+    // Update the contact on the server
+    const response = await axios.patch(
+      `http://localhost:5000/users/${props.currentID}`,
+      updatedContact,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("Contact updated successfully:", response.data);
+    emit("update:mainTableKey", 208);
+
+
+    // Show success feedback to the user
+    Swal.fire({
+      icon: "success",
+      title: "مخاطب ویرایش شد",
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      color: "green",
+    });
+
+    // Refresh the data in the parent component
+    props.getData();
+    
+
+    // Close the dialog and reset the form
+    setTimeout(() => {
+      emit("update:modelState", false);
+      emit("update:mainTableKey", 202);
+    }, 1200);
+
+    setTimeout(() => {
+      resetForm({
+        values: {
+          fullname: "",
+          phoneNumber: "",
+          selectedDate: "",
+          isCoworker: false,
+          skills: [],
+          favorites: [],
+        },
+      });
+      // state.form.isCoworker = false;
+      // fileInputs.value = null; // Reset file input
+      dataPassPermission.value=true
+      state.loading = false;
+    }, 1700);
+  } catch (error) {
+    console.error("Error updating contact:", error);
+    // await props.fetchUsers()
+
+    // Show error feedback to the user
+    Swal.fire({
+      icon: "error",
+      title: "خطا در ویرایش مخاطب",
+      text: "لطفاً دوباره تلاش کنید",
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      color: "red",
+      background: "#f5dcdc",
+      timerProgressBar: true,
+    });
+
+    state.loading = false;
+
+  }
+};
 
 
 
