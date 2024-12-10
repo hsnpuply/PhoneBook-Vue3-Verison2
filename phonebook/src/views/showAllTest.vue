@@ -6,6 +6,8 @@ import Forms from "@/components/forms.vue";
 import Card from "@/components/contact_card.vue";
 import axios from "axios";
 
+
+
 function updateMainTableKey(newValue) {
   state.mainTableKey = newValue;
 }
@@ -492,26 +494,14 @@ const noContactIconCondition =  computed( () => {
         :selectedContact="selectedContact"
         :all_forms_fields="item"
         v-for="(item, index) in MyLocalContacts"
-        :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap"
-      />
-    </div>
-    <div
-      class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!skeletonServerLoadingState && byLocalStorage"
-    >
-      <Card
-        v-model:dialogEditState="dialogEditState"
-        :currentItem="item"
-        :MyLocalContacts="MyLocalContacts"
-        :selectedContact="selectedContact"
-        :all_forms_fields="item"
-        v-for="(item, index) in MyLocalContacts"
-        :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap"
-      />
-    </div>
+        :deleteServerContact="deleteServerContact"
+        :byLocalStorage="byLocalStorage"
 
+        :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap"
+      />
+    </div>
+    
     <div
       class="test_card mx-4 md:!mx-auto  md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
       v-if="!skeletonLocalStorageLoadingState && !byLocalStorage"
@@ -523,6 +513,8 @@ const noContactIconCondition =  computed( () => {
         :MyLocalContacts="MyLocalContacts"
         :selectedContact="selectedContact"
         :all_forms_fields="item"
+        :currentID="selectedContact.id"
+        :deleteServerContact="deleteServerContact"
         :key="index"
         class="!max-w-[50%] flex-1 flex-wrap"
       />

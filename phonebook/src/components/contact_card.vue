@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue';
 import moment from "moment-jalaali";
 import { convertNumbersToPersian,deleteContact } from "@/utilities/functions";
 
@@ -10,8 +11,15 @@ const props = defineProps({
   toggleEditDialog:Function,
   dialogEditState:Boolean,
   selectedContact:Object,
-  currentItem:Object
+  currentItem:Object,
+  deleteServerContact:Function,
+  currentID:String,
+  byLocalStorage:Boolean,
 });
+
+const myCurrentID = ref(props.currentID)
+
+
 const emit = defineEmits(["update:dialogEditState"]);
 
 
@@ -19,6 +27,17 @@ const toggleMyEditDialog = () => {
   Object.assign(props.selectedContact, props.currentItem);
   emit("update:dialogEditState", true);
 };
+
+const deleteByMode = ()=>{
+  console.log(props.currentItem)
+  if(props.byLocalStorage){
+  deleteContact(props.all_forms_fields.id,props.MyLocalContacts)
+}else{
+  props.deleteServerContact(props.currentItem.id)
+  
+}
+
+}
 </script>
 <template>
   <div
@@ -89,7 +108,7 @@ const toggleMyEditDialog = () => {
           variant="elevated"
           elevation="2"
           prepend-icon="mdi-delete"
-          @click="deleteContact(props.all_forms_fields.id,props.MyLocalContacts)"
+          @click="deleteByMode"
           class="bg-red-600/90 hover:bg-red-600/95"
         >
           حذف
