@@ -129,7 +129,7 @@ const handleSubmitFormClick = handleSubmit((item) => {
   if (props.registerMode) {
     props.byLocalStorage ? submitData()  : submitInServer();
   } else {
-    props.byLocalStorage ? UpdateDialog(item) : updateInServer() ;
+    props.byLocalStorage ? UpdateDialog(item) : updateInServer(item) ;
   }
 
   // می‌تواند به switch تغییر یابد در صورت نیاز به فرم‌های بیشتر
@@ -272,7 +272,7 @@ const submitInServer = async () => {
     // Close the dialog and reset the form
     setTimeout(() => {
       emit("update:modelState", false);
-    emit("update:mainTableKey", currentValue.value  + 10);
+    emit("update:mainTableKey", currentValue.value  + 1);
 
     }, 1200);
 
@@ -376,7 +376,7 @@ let avatarBase64 = state.form.avatar;
 
 
 const updateInServer = async ()=>{
-
+  
 }
 
 

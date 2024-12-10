@@ -1,6 +1,6 @@
 <script setup>
 import Swal from "sweetalert2";
-import { ref, reactive, onMounted, computed, onUpdated } from "vue";
+import { ref, reactive, onMounted, computed, onUpdated, watch } from "vue";
 import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
 import Card from "@/components/contact_card.vue";
@@ -65,12 +65,11 @@ const sekeletonLoadsOnServer = () => {
   }, 2000);
 };
 // Fetch contacts from localStorage on component mount
-onMounted(() => {
+onMounted(async () => {
   getData();
-  fetchDataAxios();
   sekeletonLoadsLocal();
   sekeletonLoadsOnServer();
-  fetchUsers();
+  await fetchUsers();
 });
 
 const convertNumbersToPersian = (text) => {
@@ -167,8 +166,7 @@ const deleteServerContact = async (id) => {
       try {
         await axios.delete(`http://localhost:5000/users/${id}`); // Update with your server's base URL
         users = users.filter((user) => user.id !== id); // Update the local list of users
-        await fetchUsers();
-
+        state.mainTableKey = state.mainTableKey + 1
         // Show success notification
         const Toast = Swal.mixin({
           toast: true,
@@ -194,6 +192,8 @@ const deleteServerContact = async (id) => {
     }
   });
   UpdateDataServer();
+  state.mainTableKey = state.mainTableKey + 1;
+
 };
 
 const toggleEditDialog = (item) => {
@@ -267,7 +267,7 @@ const serverCondition = () => {
 const drawer = ref(null);
 
 // Computed برای شرط نمایش
-const noContactIconCondition = computed(() => {
+const noContactIconCondition =  computed( () => {
   if (MyLocalContacts.length === 0 && byLocalStorage.value) {
     return true; // هیچ مخاطبی در مرورگر نیست
   } else if (users.length === 0 && !byLocalStorage.value) {
@@ -275,6 +275,12 @@ const noContactIconCondition = computed(() => {
   }
   return false;
 });
+
+// const noContactIconCondition = ()=>{
+
+// }
+
+
 </script>
 <template>
   <div class="mx-auto mainContent h-full bg-cover">
@@ -477,7 +483,7 @@ const noContactIconCondition = computed(() => {
 
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!skeletonLocalStorageLoadingState"
+      v-if="!skeletonLocalStorageLoadingState && byLocalStorage"
     >
       <Card
         v-model:dialogEditState="dialogEditState"
@@ -490,6 +496,38 @@ const noContactIconCondition = computed(() => {
         class="!max-w-[50%] flex-1 flex-wrap"
       />
     </div>
+    <div
+      class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
+      v-if="!skeletonServerLoadingState && !byLocalStorage"
+    >
+      <Card
+        v-model:dialogEditState="dialogEditState"
+        :currentItem="item"
+        :MyLocalContacts="MyLocalContacts"
+        :selectedContact="selectedContact"
+        :all_forms_fields="item"
+        v-for="(item, index) in MyLocalContacts"
+        :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap"
+      />
+    </div>
+
+    <div
+      class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
+      v-if="!skeletonLocalStorageLoadingState && !byLocalStorage"
+    >
+      <!-- <Card
+        v-model:dialogEditState="dialogEditState"
+        :currentItem="item"
+        :MyLocalContacts="MyLocalContacts"
+        :selectedContact="selectedContact"
+        :all_forms_fields="item"
+        v-for="(item, index) in MyLocalContacts"
+        :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap"
+      /> -->
+    </div>
+
     <div
       class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
       v-if="skeletonLocalStorageLoadingState"
@@ -549,7 +587,7 @@ const noContactIconCondition = computed(() => {
       </div>
     </div>
   </div> -->
-
+<!-- 
     <div>
       <h1>User Registration</h1>
       <form @submit.prevent="registerUser">
@@ -564,9 +602,9 @@ const noContactIconCondition = computed(() => {
       <div v-if="successMessage" class="success">
         <p>{{ successMessage }}</p>
       </div>
-    </div>
+    </div> -->
 
-    <div class="bg-pink-600 p-5">
+    <!-- <div class="bg-pink-600 p-5">
       <h1 class="text-center text-black text-xl font-bold">Users List</h1>
       <ul v-if="users.length > 0" class="flex flex-col gap-5">
         <li
@@ -585,7 +623,7 @@ const noContactIconCondition = computed(() => {
         </li>
       </ul>
       <p v-else>No users found.</p>
-    </div>
+    </div> -->
 
     <v-navigation-drawer v-model="drawer" temporary class="fixed left-0 top-0">
       <v-list-item
@@ -641,6 +679,8 @@ const noContactIconCondition = computed(() => {
     :allFormsFields="selectedContact"
     :getData="getData"
     :byLocalStorage="byLocalStorage"
+    @update:mainTableKey="updateMainTableKey"
+    
   />
 
   <tr
