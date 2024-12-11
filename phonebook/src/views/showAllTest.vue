@@ -5,11 +5,14 @@ import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
 import Card from "@/components/contact_card.vue";
 import axios from "axios";
-
+import LoadingComponent from "@/components/LoadingComponent.vue";
 
 
 function updateMainTableKey(newValue) {
   state.mainTableKey = newValue;
+}
+function updateUsers(newValue){
+  users = users + newValue
 }
 const state = reactive({
   mainTableKey: 0,
@@ -206,31 +209,10 @@ const toggleRegisterDialog = () => {
   dialogRegisterState.value = !dialogRegisterState.value;
 };
 
-const username = ref("");
-const email = ref("");
-const password = ref("");
-const errorMessage = ref("");
-const successMessage = ref("");
 
-const registerUser = async () => {
-  try {
-    const response = await axios.post("http://localhost:5000/users", {
-      // id:response.length + 1,
-      username: username.value,
-      email: email.value,
-      password: password.value,
-    });
 
-    successMessage.value = `User registered successfully! ID: ${response.data.id}`;
-    errorMessage.value = ""; // Clear error message if successful
-  } catch (error) {
-    errorMessage.value = "Registration failed. Please try again.";
-    successMessage.value = ""; // Clear success message if failed
-  }
-  fetchUsers();
-};
-
-let users = reactive([]);
+// change to const make it not working
+let users = reactive({});
 const UpdateStatusDataServer = ref(false);
 const UpdateDataServer = () => {
   if (UpdateStatusDataServer.value) {
@@ -268,24 +250,38 @@ const serverCondition = () => {
 
 const drawer = ref(null);
 
-// Computed برای شرط نمایش
 const noContactIconCondition =  computed( () => {
-  if (MyLocalContacts.length === 0 && byLocalStorage.value) {
+  if (MyLocalContacts.length === 0 && byLocalStorage.value ) {
     return true; // هیچ مخاطبی در مرورگر نیست
-  } else if (users.length === 0 && !byLocalStorage.value) {
+  } else if (users.length === 0 && !byLocalStorage.value ) {
     return true; // هیچ مخاطبی در سرور نیست
   }
   return false;
 });
 
-// const noContactIconCondition = ()=>{
 
-// }
 
+const loadingState = ref(false)
+onMounted(()=>{
+  setTimeout(()=>{
+    loadingState.value = true
+  },3000)
+})
+
+import { HalfCircleSpinner } from 'epic-spinners'
 
 </script>
 <template>
-  <div class="mx-auto mainContent h-full bg-cover">
+        <!-- <loading  loader="bars"  v-model:active="loadingState"
+                 is-full-page="true" color="green" opacity="1" lock-scroll="true"
+                 /> -->
+<div class="w-full h-[100vh] flex items-center justify-center bg-black/20" v-if="!loadingState">
+  <half-circle-spinner
+    :size="100"
+    color="green"
+/>
+</div>
+    <div class="mx-auto mainContent h-full bg-cover" v-if="loadingState">
     <header class="titlePage">
       <div class="titleText">
         <h1
@@ -470,16 +466,13 @@ const noContactIconCondition =  computed( () => {
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
         v-if="noContactIconCondition"
       >
-        <img src="../assets/no-data.jpg" alt="" class="w-[35rem]" />
+        <img src="../assets/no-data.jpg" alt="" class="w-[35rem] " />
         <p class="pb-10 text-3xl">
           {{ byLocalStorage ? "😲" : "😨" }} هیچ مخاطبی در{{
             byLocalStorage ? "مرورگر" : "سرور"
           }}
           موجود نیست
         </p>
-        <!-- 
-          <p class="pb-10 text-3xl">😲 هیچ مخاطبی موجود نیست</p>
-          <p class="pb-10 text-3xl">😲 هیچ مخاطبی موجود نیست</p> -->
       </div>
     </div>
 
@@ -567,56 +560,6 @@ const noContactIconCondition =  computed( () => {
       >
       </v-skeleton-loader>
     </div>
-    <!-- 
-  <div class=" flex-wrap justify-center gap-4  testAxios flex  " >
-    <div class="flex justify-stretch rounded-lg bg-red-500/70 odd:bg-blue-500/70  gap-4" v-for="(item,index) in dataAxios" :key="index">
-      <div class=" flex items-center gap-4 p-4 ">
-        <img :src="item.avatar"  class=" w-26 rounded-full">
-      <div class="i">
-        <p>full name :<span class="text-black text-lg font-bold">{{ item.first_name + ' ' + item.last_name }}</span></p>
-        <p>email: <span class="text-black text-lg font-bold">{{ item.email }}</span></p>
-      </div>
-      </div>
-    </div>
-  </div> -->
-<!-- 
-    <div>
-      <h1>User Registration</h1>
-      <form @submit.prevent="registerUser">
-        <input v-model="username" type="text" placeholder="Username" required />
-        <input v-model="email" type="email" placeholder="Email" required />
-        <input v-model="password" type="password" placeholder="Password" required />
-        <button type="submit">Register</button>
-      </form>
-      <div v-if="errorMessage" class="error">
-        <p>{{ errorMessage }}</p>
-      </div>
-      <div v-if="successMessage" class="success">
-        <p>{{ successMessage }}</p>
-      </div>
-    </div> -->
-
-    <!-- <div class="bg-pink-600 p-5">
-      <h1 class="text-center text-black text-xl font-bold">Users List</h1>
-      <ul v-if="users.length > 0" class="flex flex-col gap-5">
-        <li
-          v-for="user in users"
-          :key="user.id"
-          class="last-of-type:border-none border-b-2 border-black border-spacing-9"
-        >
-          <p>
-            Username:
-            <span class="text-black text-xl font-bold">{{ user.fullname }}</span>
-          </p>
-          <p>
-            Email:
-            <span class="text-black text-xl font-bold">{{ user.phoneNumber }}</span>
-          </p>
-        </li>
-      </ul>
-      <p v-else>No users found.</p>
-    </div> -->
-
     <v-navigation-drawer v-model="drawer" temporary class="fixed left-0 top-0">
       <v-list-item
         prepend-avatar="../assets/rose_ai.jpg"
@@ -648,6 +591,7 @@ const noContactIconCondition =  computed( () => {
   </div>
 
   <p>Current Key: {{ state.mainTableKey }}</p>
+  <p> Current Length of Users : {{ users.length  }}</p>
 
 
   <Forms
@@ -658,6 +602,7 @@ const noContactIconCondition =  computed( () => {
     :byLocalStorage="byLocalStorage"
     :mainTableKey="state.mainTableKey"
      @update:mainTableKey="updateMainTableKey"
+    @update:users="updateUsers"
 
 
   />

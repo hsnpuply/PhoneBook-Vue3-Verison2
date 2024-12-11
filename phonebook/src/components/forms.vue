@@ -9,7 +9,6 @@ import axios from 'axios';
 
 const dataPassPermission =ref(true)
 
-// const fileInputs = ref('')
 const fileInputs = ref(null);
 
 const props = defineProps({
@@ -23,7 +22,8 @@ const props = defineProps({
   getData:Function,
   byLocalStorage:Boolean,
   mainTableKey:Number,
-  fetchUsers:Function
+  fetchUsers:Function,
+  users:Object
 
 });
 
@@ -58,7 +58,7 @@ const favsList=reactive([
   'بوکس','فوتسال',
   'سینما','فوتبال',
 ])
-const emit = defineEmits(["update:modelState", "update:allFormsFields","update:mainTableKey"]);
+const emit = defineEmits(["update:modelState", "update:allFormsFields","update:mainTableKey","update:users"]);
 
 
 // ON UPDATE Component
@@ -75,11 +75,9 @@ onUpdated(() => {
     favorites.value = state.form.favorites
     avatar.value = state.form.avatar;
     console.log(phoneNumber.value);
-    
-
-
 
   }
+  
 
 
 });
@@ -250,6 +248,8 @@ const submitInServer = async () => {
         'Content-Type': 'application/json',
       },
     });
+    emit("update:mainTableKey", 208);
+    emit("update:users",1)
 
     // Assuming the response contains the newly created contact, log it
     console.log('New contact added:', response.data);
@@ -269,10 +269,9 @@ const submitInServer = async () => {
 
     // Call the getData function to refresh data
     props.getData();
-
     // Close the dialog and reset the form
     setTimeout(() => {
-      emit("update:modelState", false);
+    emit("update:modelState", false);
     emit("update:mainTableKey", currentValue.value  + 1);
 
     }, 1200);
@@ -301,6 +300,10 @@ const submitInServer = async () => {
     });
 
     state.loading = false;
+    // await props.fetchUsers();
+    console.log('look we added a data on server');
+    
+    
   }
 };
     
