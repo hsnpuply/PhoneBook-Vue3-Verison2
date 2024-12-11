@@ -5,7 +5,6 @@ import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
 import Card from "@/components/contact_card.vue";
 import axios from "axios";
-import LoadingComponent from "@/components/LoadingComponent.vue";
 
 
 function updateMainTableKey(newValue) {
@@ -252,9 +251,9 @@ const drawer = ref(null);
 
 const noContactIconCondition =  computed( () => {
   if (MyLocalContacts.length === 0 && byLocalStorage.value ) {
-    return true; // هیچ مخاطبی در مرورگر نیست
+    return true; 
   } else if (users.length === 0 && !byLocalStorage.value ) {
-    return true; // هیچ مخاطبی در سرور نیست
+    return true; 
   }
   return false;
 });
@@ -269,9 +268,15 @@ onMounted(()=>{
 })
 
 import { HalfCircleSpinner } from 'epic-spinners'
+import 'animate.css';
 
 </script>
 <template>
+
+<!-- <div class="overflow-hidden">
+  <h1 class="animate__animated animate__fadeInUp animate__delay-3s ">An animated element</h1>
+
+</div> -->
         <!-- <loading  loader="bars"  v-model:active="loadingState"
                  is-full-page="true" color="green" opacity="1" lock-scroll="true"
                  /> -->
@@ -282,8 +287,8 @@ import { HalfCircleSpinner } from 'epic-spinners'
 />
 </div>
     <div class="mx-auto mainContent h-full bg-cover" v-if="loadingState">
-    <header class="titlePage">
-      <div class="titleText">
+    <header class="titlePage overflow-hidden">
+      <div class="titleText animate__animated animate__fadeInUp animate__slow">
         <h1
           class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2"
         >
@@ -293,15 +298,16 @@ import { HalfCircleSpinner } from 'epic-spinners'
       </div>
     </header>
 
-    <div class="container mx-auto rounded-lg">
-      <div class="cursor-pointer px-4 my-2" @click.stop="drawer = !drawer">
+    <div class="container mx-auto rounded-lg ">
+      <div class="cursor-pointer px-4 my-2 animate__animated animate__slow animate__fadeInLeft" @click.stop="drawer = !drawer">
         <span
           class="mdi mdi-send text-3xl text-black hover:!text-gray-800 duration-150"
         />
       </div>
 
-      <v-table class="the_table hidden xl:block" :key="state.mainTableKey">
-        <thead class="relative">
+      <v-table :class="!skeletonLocalStorageLoadingState ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft' : ''" class="the_table hidden 
+      xl:block" :key="state.mainTableKey">
+        <thead class="relative  ">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
             <th class="text-right">شماره</th>
             <th class="text-right">پروفایل</th>
@@ -316,11 +322,11 @@ import { HalfCircleSpinner } from 'epic-spinners'
         </thead>
 
         <!-- Skeleton of LocalStorage -->
-        <tbody class="w-full" v-if="skeletonLocalStorageLoadingState">
+        <tbody class="w-full " v-if="skeletonLocalStorageLoadingState">
           <tr
             v-for="(item, index) in MyLocalContacts.length"
             :key="index"
-            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
+            class="bg-[#bcbfc5] even:bg-[#e5e7eb] "
           >
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
@@ -463,7 +469,10 @@ import { HalfCircleSpinner } from 'epic-spinners'
         </tbody>
       </v-table>
       <div
-        class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
+        class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl
+         bg-white items-center justify-center min-h-[200px] text-center
+
+         " :class="!skeletonLocalStorageLoadingState ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''"
         v-if="noContactIconCondition"
       >
         <img src="../assets/no-data.jpg" alt="" class="w-[35rem] " />
@@ -529,7 +538,8 @@ import { HalfCircleSpinner } from 'epic-spinners'
     </div>
 
     <div
-      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0"
+      class="addNewContact w-full flex xl:!justify-end justify-center
+       container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated   animate__slow animate__delay-3s animate__fadeInRight"
     >
       <v-btn
         v-if="
@@ -661,6 +671,8 @@ import { HalfCircleSpinner } from 'epic-spinners'
       </div>
     </td>
   </tr>
+
+
 </template>
 
 <style scoped>
