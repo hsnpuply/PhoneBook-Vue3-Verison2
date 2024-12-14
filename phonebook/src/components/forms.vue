@@ -228,6 +228,7 @@ const submitData = async () => {
 };
 const submitInServer = async () => {
   state.loading = true;
+  emit("update:mainTableKey", 102);
 
   // If avatar is updated, convert it to Base64
   let avatarBase64 = state.form.avatar;
@@ -258,8 +259,7 @@ const submitInServer = async () => {
       },
     });
     emit("update:mainTableKey", 208);
-    emit("update:users", 1);
-
+    
     // Assuming the response contains the newly created contact, log it
     console.log("New contact added:", response.data);
 

@@ -6,6 +6,30 @@ import Forms from "@/components/forms.vue";
 import Card from "@/components/contact_card.vue";
 import axios from "axios";
 
+import { convertNumbersToPersian  as PersianNumberConvertorX , deleteLocalstorageContact as DeleteLocalStorageContacts} from '../utilities/functions'
+
+const loadingPreview = ref(true)
+const byLocalStorage = ref(true);
+const skeletonLocalStorageLoadingState = ref(true);
+const skeletonServerLoadingState = ref(true);
+const selectedContact = reactive({});
+const dialogRegisterState = ref(false);
+const dialogEditState = ref(false);
+const MyLocalContacts = reactive([]);
+
+
+onMounted(async () => {
+  getData();
+  sekeletonLoadsLocal();
+  sekeletonLoadsOnServer();
+  await fetchUsers();
+  setTimeout(()=>{
+    loadingPreview.value = false
+  },7000)
+  setTimeout(()=>{
+    loadingState.value = true
+  },3000)
+});
 
 function updateMainTableKey(newValue) {
   state.mainTableKey = newValue;
@@ -17,35 +41,6 @@ const state = reactive({
   mainTableKey: 0,
 });
 
-const byLocalStorage = ref(true);
-
-const skeletonLocalStorageLoadingState = ref(true);
-const skeletonServerLoadingState = ref(true);
-
-const dataAxios = ref([]); // نگهداری داده دریافت شده
-const loadingAxios = ref(true); // نمایش وضعیت بارگذاری
-const errorAxios = ref(null); // نگهداری خطاها
-
-const fetchDataAxios = async () => {
-  try {
-    // const response = await axios.get('https://jsonplaceholder.typicode.com/users'); // لینک API
-    const response = await axios.get("https://reqres.in/api/users "); // لینک API
-    dataAxios.value = response.data.data;
-    console.log(dataAxios.value);
-
-    // console.log('Street : ' , dataAxios.value[0].address.street,'\n' , ' in Lat ' , dataAxios.value[0].address.geo.lat , ' lang : ',dataAxios.value[0].address.geo.lng   )
-  } catch (err) {
-    errorAxios.value = err.message;
-  } finally {
-    loadingAxios.value = false;
-  }
-};
-
-const selectedContact = reactive({});
-const dialogRegisterState = ref(false);
-const dialogEditState = ref(false);
-
-const MyLocalContacts = reactive([]);
 
 const getData = () => {
   if (byLocalStorage.value) {
@@ -55,7 +50,6 @@ const getData = () => {
     fetchUsers();
   }
 
-  // console.log(storedContacts.length + '\n' + 'See Get Data Called')
 };
 
 const sekeletonLoadsLocal = () => {
@@ -68,25 +62,7 @@ const sekeletonLoadsOnServer = () => {
     skeletonServerLoadingState.value = false;
   }, 2000);
 };
-// Fetch contacts from localStorage on component mount
-onMounted(async () => {
-  getData();
-  sekeletonLoadsLocal();
-  sekeletonLoadsOnServer();
-  await fetchUsers();
-});
 
-const convertNumbersToPersian = (text) => {
-  const englishNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-  const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
-
-  let result = text;
-  for (let i = 0; i < englishNumbers.length; i++) {
-    const regex = new RegExp(englishNumbers[i], "g");
-    result = result.replace(regex, persianNumbers[i]);
-  }
-  return result;
-};
 
 const deleteLocalstorageContact = (id) => {
   // Retrieve the contacts array from localStorage
@@ -255,21 +231,29 @@ const noContactIconCondition =  computed( () => {
   } else if (users.length === 0 && !byLocalStorage.value ) {
     return true; 
   }
+  console.log('one of them might having having Records');
+  console.log(users.length);
+  
   return false;
 });
 
 
 
 const loadingState = ref(false)
-onMounted(()=>{
-  setTimeout(()=>{
-    loadingState.value = true
-  },3000)
-})
+
 
 import { HalfCircleSpinner } from 'epic-spinners'
 import 'animate.css';
 
+
+watch(
+  users.length, 
+  (newValue, oldValue) => {
+    console.log('New Value:', newValue);
+    console.log('Old Value:', oldValue);
+  },
+  { deep: true } // Ensures nested changes are tracked
+);
 </script>
 <template>
 
@@ -280,7 +264,8 @@ import 'animate.css';
         <!-- <loading  loader="bars"  v-model:active="loadingState"
                  is-full-page="true" color="green" opacity="1" lock-scroll="true"
                  /> -->
-<div class="w-full h-[100vh] flex items-center justify-center bg-black/20" v-if="!loadingState">
+<div class="w-full h-[100vh] flex items-center justify-center bg-black/20"
+ v-if="!loadingState">
   <half-circle-spinner
     :size="100"
     color="green"
@@ -305,7 +290,7 @@ import 'animate.css';
         />
       </div>
 
-      <v-table :class="!skeletonLocalStorageLoadingState ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft' : ''" class="the_table hidden 
+      <v-table :class="loadingPreview ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft' : ''" class="the_table hidden 
       xl:block" :key="state.mainTableKey">
         <thead class="relative  ">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
@@ -381,10 +366,10 @@ import 'animate.css';
               />
             </td>
             <td>{{ item.fullname }}</td>
-            <td>{{ convertNumbersToPersian(item.phoneNumber) }}</td>
+            <td>{{ PersianNumberConvertorX(item.phoneNumber) }}</td>
             <td>
               {{
-                convertNumbersToPersian(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
+                PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
               }}
             </td>
             <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
@@ -396,7 +381,7 @@ import 'animate.css';
                   variant="elevated"
                   elevation="2"
                   prepend-icon="mdi-delete"
-                  @click="deleteLocalstorageContact(item.id)"
+                  @click="DeleteLocalStorageContacts(item.id,MyLocalContacts)"
                   class="bg-red-600/90 hover:bg-red-600/95"
                 >
                   حذف
@@ -424,6 +409,7 @@ import 'animate.css';
             :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
             @dblclick="toggleEditDialog(item)"
+
           >
             <td>{{ index + 1 }}</td>
             <td>
@@ -434,10 +420,10 @@ import 'animate.css';
               />
             </td>
             <td>{{ item.fullname }}</td>
-            <td>{{ convertNumbersToPersian(item.phoneNumber) }}</td>
+            <td>{{ PersianNumberConvertorX(item.phoneNumber) }}</td>
             <td>
               {{
-                convertNumbersToPersian(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
+                PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
               }}
             </td>
             <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
@@ -472,7 +458,10 @@ import 'animate.css';
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl
          bg-white items-center justify-center min-h-[200px] text-center
 
-         " :class="!skeletonLocalStorageLoadingState ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''"
+         " :class="loadingPreview ?
+          'animate__animated animate__fadeInUp  animate__delay-2s' :
+           ''
+           "
         v-if="noContactIconCondition"
       >
         <img src="../assets/no-data.jpg" alt="" class="w-[35rem] " />
@@ -641,9 +630,9 @@ import 'animate.css';
       <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="item.avatar" />
     </td>
     <td>{{ item.fullname }}</td>
-    <td>{{ convertNumbersToPersian(item.phoneNumber) }}</td>
+    <td>{{ PersianNumberConvertorX(item.phoneNumber) }}</td>
     <td>
-      {{ convertNumbersToPersian(moment(item.selectedDate).format("jYYYY/jMM/jDD")) }}
+      {{ PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD")) }}
     </td>
     <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
     <td>{{ item.skills ? item.skills.join(" , ") : "" }}</td>
