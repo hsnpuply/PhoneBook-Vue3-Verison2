@@ -259,7 +259,7 @@ const submitInServer = async () => {
       },
     });
     emit("update:mainTableKey", 208);
-    
+
     // Assuming the response contains the newly created contact, log it
     console.log("New contact added:", response.data);
 
@@ -503,17 +503,21 @@ const updateInServer = async () => {
     :persistent="state.loading"
     @click:outside="cancelDialog"
   >
-    <!-- :persistent="changePresistance" -->
-
     <v-card
       prepend-icon="mdi-account"
       :title="props.title"
       class="flex items-end justify-center bg-gray-700 !shadow-md !shadow-black"
     >
       <v-card-text class="text-right w-full mt-2">
-        <v-stepper alt-labels  editable :items="['1', '2', '3','4','5', '6']">
+        <v-stepper
+          alt-labels
+          prev-text="قـبـل"
+          next-text="بـعـد"
+          editable
+          :items="['1', '2', '3', '4', '5', '6']"
+        >
           <template v-slot:item.1>
-            <v-card title="اطلاعات پایه" >
+            <v-card title="اطلاعات پایه">
               <div class="flex flex-col items-end w-full">
                 <v-text-field
                   autofocus
@@ -545,9 +549,10 @@ const updateInServer = async () => {
           </template>
 
           <template v-slot:item.2>
-            <v-card title="تاریخ" >
+            <v-card title="تاریخ">
               <div class="flex flex-col items-end w-full">
                 <date-picker
+                  append-to="body"
                   v-model="selectedDate"
                   format="YYYY-MM-DD"
                   display-format="jYYYY-jMM-jDD"
@@ -564,7 +569,7 @@ const updateInServer = async () => {
           </template>
 
           <template v-slot:item.3>
-            <v-card title="پروفایل" >
+            <v-card title="پروفایل">
               <div class="flex flex-col items-end w-full mt-6">
                 <v-file-input
                   v-model="avatar"
@@ -579,7 +584,7 @@ const updateInServer = async () => {
           </template>
 
           <template v-slot:item.4>
-            <v-card title="مهارت ها" >
+            <v-card title="مهارت ها">
               <div class="flex flex-col items-end w-full mt-4">
                 <v-combobox
                   chips
@@ -596,7 +601,7 @@ const updateInServer = async () => {
           </template>
 
           <template v-slot:item.5>
-            <v-card title="علاقمندی ها" >
+            <v-card title="علاقمندی ها">
               <div class="flex flex-col items-end w-full">
                 <v-autocomplete
                   clearable
@@ -612,7 +617,7 @@ const updateInServer = async () => {
           </template>
 
           <template v-slot:item.6>
-            <v-card title="وضعیت همکاری" >
+            <v-card title="وضعیت همکاری">
               <div class="flex w-full items-end justify-end pt-4">
                 <v-switch v-model="state.form.isCoworker" color="primary">
                   <template #label>
@@ -624,13 +629,15 @@ const updateInServer = async () => {
           </template>
         </v-stepper>
 
-        <div class="operationButtons flex items-center justify-end gap-4 mt-5">
+        <div class="operationButtons flex items-center justify-end
+         gap-4 mt-5 ">
           <v-btn
             variant="elevated"
             :disabled="state.loading"
             @click="cancelDialog()"
             size="large"
-            class="bg-red-600/80 hover:bg-red-600/90 "
+            class="bg-red-600/80 hover:bg-red-600/90 ] "
+            
           >
             انصراف
           </v-btn>
@@ -664,22 +671,6 @@ const updateInServer = async () => {
 </template>
 
 <style>
-.vpd-body {
-  background-color: rgba(0, 0, 0, 0.567);
-  z-index: 200000;
-}
-.vpd-actions > buttons:hover {
-  border-radius: 1rem;
-}
 
 
-.v-input {
-  text-align: right !important;
-}
-.v-field__input {
-  text-align: right !important;
-}
-.v-field-label {
-  right: 0;
-}
 </style>

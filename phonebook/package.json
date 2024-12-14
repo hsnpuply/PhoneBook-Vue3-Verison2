@@ -10,7 +10,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
-    "@mdi/font": "7.4.47",
+    "@mdi/font": "^7.4.47",
     "@vee-validate/rules": "^4.14.7",
     "@vee-validate/yup": "^4.14.7",
     "animate.css": "^4.1.1",

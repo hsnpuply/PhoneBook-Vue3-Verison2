@@ -24,3 +24,24 @@ table{
 }
 
 
+.vpd-body {
+    background-color: rgba(0, 0, 0, 0.567);
+  }
+  .vpd-actions > buttons:hover {
+    border-radius: 1rem;
+  }
+  
+  .v-input {
+    text-align: right !important;
+  }
+  .v-field__input {
+    text-align: right !important;
+  }
+  .v-field-label {
+    right: 0;
+  }
+  .v-stepper-header{
+    z-index: 0;
+  }
+
+  

@@ -7,6 +7,7 @@
 // Plugins
 
 import { createVuetify } from 'vuetify';
+import '@mdi/font/css/materialdesignicons.min.css'
 
 const vuetify = createVuetify({
   icons: {

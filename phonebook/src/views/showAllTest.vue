@@ -1,14 +1,19 @@
 <script setup>
 import Swal from "sweetalert2";
-import { ref, reactive, onMounted, computed, onUpdated, watch } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
 import Card from "@/components/contact_card.vue";
 import axios from "axios";
+import { HalfCircleSpinner } from "epic-spinners";
+import "animate.css";
 
-import { convertNumbersToPersian  as PersianNumberConvertorX , deleteLocalstorageContact as DeleteLocalStorageContacts} from '../utilities/functions'
+import {
+  convertNumbersToPersian as PersianNumberConvertorX,
+  deleteLocalstorageContact as DeleteLocalStorageContacts,
+} from "../utilities/functions";
 
-const loadingPreview = ref(true)
+const loadingPreview = ref(true);
 const byLocalStorage = ref(true);
 const skeletonLocalStorageLoadingState = ref(true);
 const skeletonServerLoadingState = ref(true);
@@ -16,6 +21,9 @@ const selectedContact = reactive({});
 const dialogRegisterState = ref(false);
 const dialogEditState = ref(false);
 const MyLocalContacts = reactive([]);
+// changing to const gives an error
+let users = reactive({});
+const loadingState = ref(false);
 
 
 onMounted(async () => {
@@ -23,24 +31,23 @@ onMounted(async () => {
   sekeletonLoadsLocal();
   sekeletonLoadsOnServer();
   await fetchUsers();
-  setTimeout(()=>{
-    loadingPreview.value = false
-  },7000)
-  setTimeout(()=>{
-    loadingState.value = true
-  },3000)
+  setTimeout(() => {
+    loadingPreview.value = false;
+  }, 7000);
+  setTimeout(() => {
+    loadingState.value = true;
+  }, 3000);
 });
 
 function updateMainTableKey(newValue) {
   state.mainTableKey = newValue;
 }
-function updateUsers(newValue){
-  users = users + newValue
+function updateUsers(newValue) {
+  users = users + newValue;
 }
 const state = reactive({
   mainTableKey: 0,
 });
-
 
 const getData = () => {
   if (byLocalStorage.value) {
@@ -49,7 +56,6 @@ const getData = () => {
   } else {
     fetchUsers();
   }
-
 };
 
 const sekeletonLoadsLocal = () => {
@@ -61,67 +67,6 @@ const sekeletonLoadsOnServer = () => {
   setTimeout(() => {
     skeletonServerLoadingState.value = false;
   }, 2000);
-};
-
-
-const deleteLocalstorageContact = (id) => {
-  // Retrieve the contacts array from localStorage
-  const contactsFromStorage = JSON.parse(localStorage.getItem("contacts")) || [];
-  let lastId = parseInt(localStorage.getItem("lastId")) || 0;
-
-  // Filter out the contact with the given ID
-  const updatedContacts = contactsFromStorage.filter((contact) => contact.id !== id);
-
-  Swal.fire({
-    title: "آیا از حذف مخاطب اطمینان دارید؟",
-    text: "اطلاعات حذف شده قابلیت بازیابی ندارند",
-    icon: "warning",
-    showCancelButton: true,
-    cancelButtonText: "انصراف",
-    confirmButtonText: "بله، حذف شود",
-    background: "#374151",
-    color: "white",
-    iconColor: "#f03935",
-    customClass: {
-      cancelButton:
-        "text-white !bg-gray-800 hover:!bg-gray-600  shadow-black !shadow-lg border-2 border-white rounded-lg text-lg font-semiBold",
-      confirmButton:
-        "text-white !bg-red-700 hover:!bg-red-600  shadow-black !shadow-lg border-2 border-white rounded-lg text-lg font-semiBold",
-    },
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Update lastId only if the deleted ID matches it
-      if (id === lastId) {
-        if (updatedContacts.length > 0) {
-          // Set lastId to the new maximum ID from the remaining contacts
-          lastId = Math.max(...updatedContacts.map((contact) => contact.id));
-        } else {
-          // Reset lastId to 0 if no contacts remain
-          lastId = 0;
-        }
-        localStorage.setItem("lastId", lastId);
-      }
-      // Save the updated array back to localStorage
-      localStorage.setItem("contacts", JSON.stringify(updatedContacts));
-
-      // Update the local reactive variable
-      MyLocalContacts.splice(0, MyLocalContacts.length, ...updatedContacts);
-
-      // Show success message
-      const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true,
-        color: "green",
-      });
-      Toast.fire({
-        icon: "success",
-        title: "مخاطب با موفقیت حذف شد",
-      });
-    }
-  });
 };
 
 const deleteServerContact = async (id) => {
@@ -146,7 +91,7 @@ const deleteServerContact = async (id) => {
       try {
         await axios.delete(`http://localhost:5000/users/${id}`); // Update with your server's base URL
         users = users.filter((user) => user.id !== id); // Update the local list of users
-        state.mainTableKey = state.mainTableKey + 1
+        state.mainTableKey = state.mainTableKey + 1;
         // Show success notification
         const Toast = Swal.mixin({
           toast: true,
@@ -173,7 +118,6 @@ const deleteServerContact = async (id) => {
   });
   UpdateDataServer();
   state.mainTableKey = state.mainTableKey + 1;
-
 };
 
 const toggleEditDialog = (item) => {
@@ -184,10 +128,6 @@ const toggleRegisterDialog = () => {
   dialogRegisterState.value = !dialogRegisterState.value;
 };
 
-
-
-// change to const make it not working
-let users = reactive({});
 const UpdateStatusDataServer = ref(false);
 const UpdateDataServer = () => {
   if (UpdateStatusDataServer.value) {
@@ -225,53 +165,26 @@ const serverCondition = () => {
 
 const drawer = ref(null);
 
-const noContactIconCondition =  computed( () => {
-  if (MyLocalContacts.length === 0 && byLocalStorage.value ) {
-    return true; 
-  } else if (users.length === 0 && !byLocalStorage.value ) {
-    return true; 
+const noContactIconCondition = computed(() => {
+  if (MyLocalContacts.length === 0 && byLocalStorage.value) {
+    return true;
+  } else if (users.length === 0 && !byLocalStorage.value) {
+    return true;
   }
-  console.log('one of them might having having Records');
+  console.log("one of them might having having Records");
   console.log(users.length);
-  
+
   return false;
 });
-
-
-
-const loadingState = ref(false)
-
-
-import { HalfCircleSpinner } from 'epic-spinners'
-import 'animate.css';
-
-
-watch(
-  users.length, 
-  (newValue, oldValue) => {
-    console.log('New Value:', newValue);
-    console.log('Old Value:', oldValue);
-  },
-  { deep: true } // Ensures nested changes are tracked
-);
 </script>
 <template>
-
-<!-- <div class="overflow-hidden">
-  <h1 class="animate__animated animate__fadeInUp animate__delay-3s ">An animated element</h1>
-
-</div> -->
-        <!-- <loading  loader="bars"  v-model:active="loadingState"
-                 is-full-page="true" color="green" opacity="1" lock-scroll="true"
-                 /> -->
-<div class="w-full h-[100vh] flex items-center justify-center bg-black/20"
- v-if="!loadingState">
-  <half-circle-spinner
-    :size="100"
-    color="green"
-/>
-</div>
-    <div class="mx-auto mainContent h-full bg-cover" v-if="loadingState">
+  <div
+    class="w-full h-[100vh] flex items-center justify-center bg-black/20"
+    v-if="!loadingState"
+  >
+    <half-circle-spinner :size="100" color="green" />
+  </div>
+  <div class="mx-auto mainContent h-full bg-cover" v-if="loadingState">
     <header class="titlePage overflow-hidden">
       <div class="titleText animate__animated animate__fadeInUp animate__slow">
         <h1
@@ -283,16 +196,28 @@ watch(
       </div>
     </header>
 
-    <div class="container mx-auto rounded-lg ">
-      <div class="cursor-pointer px-4 my-2 animate__animated animate__slow animate__fadeInLeft" @click.stop="drawer = !drawer">
+    <div class="container mx-auto rounded-lg">
+      <div
+        class="cursor-pointer px-4 my-2 text-center lg:!text-left
+         animate__animated animate__slow animate__fadeInLeft"
+        @click.stop="drawer = !drawer"
+      >
         <span
-          class="mdi mdi-send text-3xl text-black hover:!text-gray-800 duration-150"
+          class="mdi mdi-pencil text-3xl
+           text-black hover:!text-gray-800 duration-150"
         />
       </div>
 
-      <v-table :class="loadingPreview ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft' : ''" class="the_table hidden 
-      xl:block" :key="state.mainTableKey">
-        <thead class="relative  ">
+      <v-table
+        :class="
+          loadingPreview
+            ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft'
+            : ''
+        "
+        class="the_table hidden xl:block"
+        :key="state.mainTableKey"
+      >
+        <thead class="relative">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
             <th class="text-right">شماره</th>
             <th class="text-right">پروفایل</th>
@@ -307,11 +232,11 @@ watch(
         </thead>
 
         <!-- Skeleton of LocalStorage -->
-        <tbody class="w-full " v-if="skeletonLocalStorageLoadingState">
+        <tbody class="w-full" v-if="skeletonLocalStorageLoadingState">
           <tr
             v-for="(item, index) in MyLocalContacts.length"
             :key="index"
-            class="bg-[#bcbfc5] even:bg-[#e5e7eb] "
+            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
           >
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
@@ -381,7 +306,7 @@ watch(
                   variant="elevated"
                   elevation="2"
                   prepend-icon="mdi-delete"
-                  @click="DeleteLocalStorageContacts(item.id,MyLocalContacts)"
+                  @click="DeleteLocalStorageContacts(item.id, MyLocalContacts)"
                   class="bg-red-600/90 hover:bg-red-600/95"
                 >
                   حذف
@@ -409,7 +334,6 @@ watch(
             :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
             @dblclick="toggleEditDialog(item)"
-
           >
             <td>{{ index + 1 }}</td>
             <td>
@@ -455,16 +379,13 @@ watch(
         </tbody>
       </v-table>
       <div
-        class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl
-         bg-white items-center justify-center min-h-[200px] text-center
-
-         " :class="loadingPreview ?
-          'animate__animated animate__fadeInUp  animate__delay-2s' :
-           ''
-           "
+        class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
+        :class="
+          loadingPreview ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''
+        "
         v-if="noContactIconCondition"
       >
-        <img src="../assets/no-data.jpg" alt="" class="w-[35rem] " />
+        <img src="../assets/no-data.jpg" alt="" class="w-[35rem]" />
         <p class="pb-10 text-3xl">
           {{ byLocalStorage ? "😲" : "😨" }} هیچ مخاطبی در{{
             byLocalStorage ? "مرورگر" : "سرور"
@@ -487,14 +408,13 @@ watch(
         v-for="(item, index) in MyLocalContacts"
         :deleteServerContact="deleteServerContact"
         :byLocalStorage="byLocalStorage"
-
         :key="index"
         class="!max-w-[50%] flex-1 flex-wrap"
       />
     </div>
-    
+
     <div
-      class="test_card mx-4 md:!mx-auto  md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
+      class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
       v-if="!skeletonLocalStorageLoadingState && !byLocalStorage"
     >
       <Card
@@ -527,8 +447,7 @@ watch(
     </div>
 
     <div
-      class="addNewContact w-full flex xl:!justify-end justify-center
-       container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated   animate__slow animate__delay-3s animate__fadeInRight"
+      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-3s animate__fadeInRight"
     >
       <v-btn
         v-if="
@@ -559,11 +478,21 @@ watch(
       >
       </v-skeleton-loader>
     </div>
-    <v-navigation-drawer v-model="drawer" temporary class="fixed left-0 top-0">
+    <v-navigation-drawer v-model="drawer" temporary class="fixed left-0 top-0"
+
+    >
       <v-list-item
-        prepend-avatar="../assets/rose_ai.jpg"
-        title="Hasan Barati"
-      ></v-list-item>
+        prepend-avatar="../assets/profile.jpg"
+        height="80"
+        
+        title="حسن براتی "
+      >
+      <template v-slot:prepend>
+    <v-avatar size="66">
+      <img src="../assets/profile.jpg" alt="Hasan Barati" />
+    </v-avatar>
+  </template>
+      </v-list-item>
 
       <v-divider></v-divider>
 
@@ -590,8 +519,7 @@ watch(
   </div>
 
   <p>Current Key: {{ state.mainTableKey }}</p>
-  <p> Current Length of Users : {{ users.length  }}</p>
-
+  <p>Current Length of Users : {{ users.length }}</p>
 
   <Forms
     v-model:modelState="dialogRegisterState"
@@ -600,10 +528,8 @@ watch(
     :getData="getData"
     :byLocalStorage="byLocalStorage"
     :mainTableKey="state.mainTableKey"
-     @update:mainTableKey="updateMainTableKey"
+    @update:mainTableKey="updateMainTableKey"
     @update:users="updateUsers"
-
-
   />
   <!-- :getData="getData()" -->
 
@@ -660,8 +586,6 @@ watch(
       </div>
     </td>
   </tr>
-
-
 </template>
 
 <style scoped>

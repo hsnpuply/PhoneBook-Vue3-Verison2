@@ -33,7 +33,7 @@ const deleteByMode = ()=>{
   if(props.byLocalStorage){
   deleteContact(props.all_forms_fields.id,props.MyLocalContacts)
 }else{
-  props.deleteServerContact(props.currentItem.id)
+  props.deleteServerContact(props.currentItem.id,)
   
 }
 

@@ -1,3 +1,6 @@
+
+import axios from "axios";
+
 export const convertNumbersToPersian = (text) => {
     const englishNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
     const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
@@ -136,3 +139,54 @@ export const deleteContact = (id,MyLocalContacts) => {
 
 
 
+export const deleteServerContact = async (id,users,state,UpdateDataServer) => {
+  Swal.fire({
+    title: "آیا از حذف مخاطب اطمینان دارید؟",
+    text: "اطلاعات حذف شده قابلیت بازیابی ندارند",
+    icon: "warning",
+    showCancelButton: true,
+    cancelButtonText: "انصراف",
+    confirmButtonText: "بله، حذف شود",
+    background: "#374151",
+    color: "white",
+    iconColor: "#f03935",
+    customClass: {
+      cancelButton:
+        "text-white !bg-gray-800 hover:!bg-gray-600  shadow-black !shadow-lg border-2 border-white rounded-lg text-lg font-semiBold",
+      confirmButton:
+        "text-white !bg-red-700 hover:!bg-red-600  shadow-black !shadow-lg border-2 border-white rounded-lg text-lg font-semiBold",
+    },
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:5000/users/${id}`); // Update with your server's base URL
+        users = users.filter((user) => user.id !== id); // Update the local list of users
+        state.mainTableKey = state.mainTableKey + 1
+        // Show success notification
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2500,
+          timerProgressBar: true,
+          color: "green",
+        });
+        Toast.fire({
+          icon: "success",
+          title: "مخاطب با موفقیت حذف شد",
+        });
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        Swal.fire({
+          title: "خطا در حذف مخاطب",
+          text: "لطفاً دوباره تلاش کنید.",
+          icon: "error",
+          confirmButtonText: "تایید",
+        });
+      }
+    }
+  });
+  UpdateDataServer();
+  state.mainTableKey = state.mainTableKey + 1;
+
+};
