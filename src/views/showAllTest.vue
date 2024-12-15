@@ -178,18 +178,13 @@ const noContactIconCondition = computed(() => {
 });
 </script>
 <template>
-  <div
-    class="w-full h-[100vh] flex items-center justify-center bg-black/20"
-    v-if="!loadingState"
-  >
+  <div class="w-full h-[100vh] flex items-center justify-center bg-black/20" v-if="!loadingState">
     <half-circle-spinner :size="100" color="green" />
   </div>
   <div class="mx-auto mainContent h-full bg-cover" v-if="loadingState">
     <header class="titlePage overflow-hidden">
       <div class="titleText animate__animated animate__fadeInUp animate__slow">
-        <h1
-          class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2"
-        >
+        <h1 class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2">
           <span :class="byLocalStorage ? 'mdi mdi-web' : 'mdi mdi-server'"></span> دفترچه
           تلفن {{ byLocalStorage ? "مرورگر" : "سرور" }}
         </h1>
@@ -197,26 +192,20 @@ const noContactIconCondition = computed(() => {
     </header>
 
     <div class="container mx-auto rounded-lg">
-      <div
-        class="cursor-pointer px-4 my-2 text-center lg:!text-left
-         animate__animated animate__slow animate__fadeInLeft"
-        @click.stop="drawer = !drawer"
-      >
-        <span
-          class="mdi mdi-pencil text-3xl
-           text-black hover:!text-gray-800 duration-150"
-        />
+      <div class="  px-4 my-2 text-center lg:!text-left 
+         animate__animated animate__slow animate__fadeInLeft " >
+         <div class="setting ">
+    <span class=" cursor-pointer mdi mdi-cog text-3xl text-black inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
+          @click.stop="drawer = !drawer"
+    />
+  </div>
+
       </div>
 
-      <v-table
-        :class="
-          loadingPreview
-            ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft'
-            : ''
-        "
-        class="the_table hidden xl:block"
-        :key="state.mainTableKey"
-      >
+      <v-table :class="loadingPreview
+          ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft'
+          : ''
+        " class="the_table hidden xl:block" :key="state.mainTableKey">
         <thead class="relative">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
             <th class="text-right">شماره</th>
@@ -233,11 +222,7 @@ const noContactIconCondition = computed(() => {
 
         <!-- Skeleton of LocalStorage -->
         <tbody class="w-full" v-if="skeletonLocalStorageLoadingState">
-          <tr
-            v-for="(item, index) in MyLocalContacts.length"
-            :key="index"
-            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
-          >
+          <tr v-for="(item, index) in MyLocalContacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
@@ -254,11 +239,7 @@ const noContactIconCondition = computed(() => {
         <!-- Skeleton of Server -->
 
         <tbody class="w-full" v-if="skeletonServerLoadingState">
-          <tr
-            v-for="(item, index) in users.length"
-            :key="index"
-            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
-          >
+          <tr v-for="(item, index) in users.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
@@ -272,29 +253,19 @@ const noContactIconCondition = computed(() => {
           </tr>
         </tbody>
 
-        <tbody
-          v-if="localStorageCondition()"
-          class="bg-[#dddbdb] text-[#212222] overflow-hidden"
-        >
-          <tr
-            v-for="(item, index) in MyLocalContacts"
-            :key="index"
+        <tbody v-if="localStorageCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
+          <tr v-for="(item, index) in MyLocalContacts" :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
-            @dblclick="toggleEditDialog(item)"
-          >
+            @dblclick="toggleEditDialog(item)">
             <td>{{ index + 1 }}</td>
             <td>
-              <v-avatar
-                variant="elevated"
-                class="!h-20 !w-20 my-2"
-                :image="item.avatar"
-              />
+              <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="item.avatar" />
             </td>
             <td>{{ item.fullname }}</td>
             <td>{{ PersianNumberConvertorX(item.phoneNumber) }}</td>
             <td>
               {{
-                PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
+              PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
               }}
             </td>
             <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
@@ -302,22 +273,13 @@ const noContactIconCondition = computed(() => {
             <td>{{ item.favorites ? item.favorites.join(" , ") : "" }}</td>
             <td class="">
               <div class="actionButtonsContainer flex gap-2 items-center justify-center">
-                <v-btn
-                  variant="elevated"
-                  elevation="2"
-                  prepend-icon="mdi-delete"
+                <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete"
                   @click="DeleteLocalStorageContacts(item.id, MyLocalContacts)"
-                  class="bg-red-600/90 hover:bg-red-600/95"
-                >
+                  class="bg-red-600/90 hover:bg-red-600/95">
                   حذف
                 </v-btn>
-                <v-btn
-                  variant="elevated"
-                  color="blue"
-                  prepend-icon="mdi-account"
-                  @click="toggleEditDialog(item)"
-                  class="bg-sky-600/90 hover:bg-sky-600/95"
-                >
+                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditDialog(item)"
+                  class="bg-sky-600/90 hover:bg-sky-600/95">
                   ویرایش
                 </v-btn>
               </div>
@@ -325,29 +287,19 @@ const noContactIconCondition = computed(() => {
           </tr>
         </tbody>
 
-        <tbody
-          v-if="serverCondition()"
-          class="bg-[#dddbdb] text-[#212222] overflow-hidden"
-        >
-          <tr
-            v-for="(item, index) in users"
-            :key="index"
+        <tbody v-if="serverCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
+          <tr v-for="(item, index) in users" :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
-            @dblclick="toggleEditDialog(item)"
-          >
+            @dblclick="toggleEditDialog(item)">
             <td>{{ index + 1 }}</td>
             <td>
-              <v-avatar
-                variant="elevated"
-                class="!h-20 !w-20 my-2"
-                :image="item.avatar"
-              />
+              <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="item.avatar" />
             </td>
             <td>{{ item.fullname }}</td>
             <td>{{ PersianNumberConvertorX(item.phoneNumber) }}</td>
             <td>
               {{
-                PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
+              PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
               }}
             </td>
             <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
@@ -355,22 +307,12 @@ const noContactIconCondition = computed(() => {
             <td>{{ item.favorites ? item.favorites.join(" , ") : "" }}</td>
             <td class="">
               <div class="actionButtonsContainer flex gap-2 items-center justify-center">
-                <v-btn
-                  variant="elevated"
-                  elevation="2"
-                  prepend-icon="mdi-delete"
-                  @click="deleteServerContact(item.id)"
-                  class="bg-red-600/90 hover:bg-red-600/95"
-                >
+                <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete" @click="deleteServerContact(item.id)"
+                  class="bg-red-600/90 hover:bg-red-600/95">
                   حذف
                 </v-btn>
-                <v-btn
-                  variant="elevated"
-                  color="blue"
-                  prepend-icon="mdi-account"
-                  @click="toggleEditDialog(item)"
-                  class="bg-sky-600/90 hover:bg-sky-600/95"
-                >
+                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditDialog(item)"
+                  class="bg-sky-600/90 hover:bg-sky-600/95">
                   ویرایش
                 </v-btn>
               </div>
@@ -380,15 +322,12 @@ const noContactIconCondition = computed(() => {
       </v-table>
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
-        :class="
-          loadingPreview ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''
-        "
-        v-if="noContactIconCondition"
-      >
+        :class="loadingPreview ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''
+          " v-if="noContactIconCondition">
         <img src="../assets/no-data.jpg" alt="" class="w-[35rem]" />
         <p class="pb-10 text-3xl">
           {{ byLocalStorage ? "😲" : "😨" }} هیچ مخاطبی در{{
-            byLocalStorage ? "مرورگر" : "سرور"
+          byLocalStorage ? "مرورگر" : "سرور"
           }}
           موجود نیست
         </p>
@@ -397,120 +336,64 @@ const noContactIconCondition = computed(() => {
 
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!skeletonLocalStorageLoadingState && byLocalStorage"
-    >
-      <Card
-        v-model:dialogEditState="dialogEditState"
-        :currentItem="item"
-        :MyLocalContacts="MyLocalContacts"
-        :selectedContact="selectedContact"
-        :all_forms_fields="item"
-        v-for="(item, index) in MyLocalContacts"
-        :deleteServerContact="deleteServerContact"
-        :byLocalStorage="byLocalStorage"
-        :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap"
-      />
+      v-if="!skeletonLocalStorageLoadingState && byLocalStorage">
+      <Card v-model:dialogEditState="dialogEditState" :currentItem="item" :MyLocalContacts="MyLocalContacts"
+        :selectedContact="selectedContact" :all_forms_fields="item" v-for="(item, index) in MyLocalContacts"
+        :deleteServerContact="deleteServerContact" :byLocalStorage="byLocalStorage" :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
 
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!skeletonLocalStorageLoadingState && !byLocalStorage"
-    >
-      <Card
-        v-model:dialogEditState="dialogEditState"
-        v-for="(item, index) in users"
-        :currentItem="item"
-        :MyLocalContacts="MyLocalContacts"
-        :selectedContact="selectedContact"
-        :all_forms_fields="item"
-        :currentID="selectedContact.id"
-        :deleteServerContact="deleteServerContact"
-        :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap"
-      />
+      v-if="!skeletonLocalStorageLoadingState && !byLocalStorage">
+      <Card v-model:dialogEditState="dialogEditState" v-for="(item, index) in users" :currentItem="item"
+        :MyLocalContacts="MyLocalContacts" :selectedContact="selectedContact" :all_forms_fields="item"
+        :currentID="selectedContact.id" :deleteServerContact="deleteServerContact" :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
 
     <div
       class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
-      v-if="skeletonLocalStorageLoadingState"
-    >
-      <v-skeleton-loader
-        v-for="(item, index) in MyLocalContacts"
-        :key="index"
-        min-height="540"
-        elevation="24"
+      v-if="skeletonLocalStorageLoadingState">
+      <v-skeleton-loader v-for="(item, index) in MyLocalContacts" :key="index" min-height="540" elevation="24"
         type="	image , text, paragraph , article  , button , button"
-        class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard"
-      >
+        class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard">
       </v-skeleton-loader>
     </div>
 
     <div
-      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-3s animate__fadeInRight"
-    >
-      <v-btn
-        v-if="
-          byLocalStorage
-            ? !skeletonLocalStorageLoadingState || MyLocalContacts.length <= 0
-            : !skeletonServerLoadingState || users.length <= 0
-        "
-        variant="elevated"
-        elevation="3"
-        color="green"
-        size="large"
-        @click="toggleRegisterDialog"
-      >
+      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-3s animate__fadeInRight">
+      <v-btn v-if="
+        byLocalStorage
+          ? !skeletonLocalStorageLoadingState || MyLocalContacts.length <= 0
+          : !skeletonServerLoadingState || users.length <= 0
+      " variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterDialog">
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
     </div>
-    <div
-      class="flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0"
-    >
-      <v-skeleton-loader
-        v-if="
-          skeletonLocalStorageLoadingState && MyLocalContacts.length > 0 && byLocalStorage
-        "
-        type="button"
-        color="transparent"
-        class="w-32"
-      >
+    <div class="flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0">
+      <v-skeleton-loader v-if="
+        skeletonLocalStorageLoadingState && MyLocalContacts.length > 0 && byLocalStorage
+      " type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
-    <v-navigation-drawer v-model="drawer" temporary class="fixed left-0 top-0"
-
-    >
-      <v-list-item
-        prepend-avatar="../assets/profile.jpg"
-        height="80"
-        
-        title="حسن براتی "
-      >
-      <template v-slot:prepend>
-    <v-avatar size="66">
-      <img src="../assets/profile.jpg" alt="Hasan Barati" />
-    </v-avatar>
-  </template>
+    <v-navigation-drawer v-model="drawer" temporary class="fixed left-0 top-0">
+      <v-list-item prepend-avatar="../assets/profile.jpg" height="80" title="حسن براتی ">
+        <template v-slot:prepend>
+          <v-avatar size="66">
+            <img src="../assets/profile.jpg" alt="Hasan Barati" />
+          </v-avatar>
+        </template>
       </v-list-item>
 
       <v-divider></v-divider>
 
       <v-list nav>
-        <v-list-item
-          prepend-icon="mdi-web"
-          title="مرورگر"
-          value="localstorage"
-          @click.stop="byLocalStorage = true"
-          :class="byLocalStorage ? 'bg-gray-800/40' : ''"
-        ></v-list-item>
-        <v-list-item
-          prepend-icon="mdi-server"
-          title="سرور"
-          value="web-server"
-          @click.stop="byLocalStorage = false"
-          :class="!byLocalStorage ? 'bg-gray-800/40' : ''"
-        ></v-list-item>
+        <v-list-item prepend-icon="mdi-web" title="مرورگر" value="localstorage" @click.stop="byLocalStorage = true"
+          :class="byLocalStorage ? 'bg-gray-800/40' : ''"></v-list-item>
+        <v-list-item prepend-icon="mdi-server" title="سرور" value="web-server" @click.stop="byLocalStorage = false"
+          :class="!byLocalStorage ? 'bg-gray-800/40' : ''"></v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-main style="height: 250px">
@@ -521,36 +404,18 @@ const noContactIconCondition = computed(() => {
   <p>Current Key: {{ state.mainTableKey }}</p>
   <p>Current Length of Users : {{ users.length }}</p>
 
-  <Forms
-    v-model:modelState="dialogRegisterState"
-    title="ثبت مخاطب"
-    :registerMode="true"
-    :getData="getData"
-    :byLocalStorage="byLocalStorage"
-    :mainTableKey="state.mainTableKey"
-    @update:mainTableKey="updateMainTableKey"
-    @update:users="updateUsers"
-  />
+  <Forms v-model:modelState="dialogRegisterState" title="ثبت مخاطب" :registerMode="true" :getData="getData"
+    :byLocalStorage="byLocalStorage" :mainTableKey="state.mainTableKey" @update:mainTableKey="updateMainTableKey"
+    @update:users="updateUsers" />
   <!-- :getData="getData()" -->
 
-  <Forms
-    v-model:model-state="dialogEditState"
-    title="ویرایش مخاطب"
-    :editMode="true"
-    :currentID="selectedContact.id"
-    :allFormsFields="selectedContact"
-    :getData="getData"
-    :byLocalStorage="byLocalStorage"
-    @update:mainTableKey="updateMainTableKey"
-    :fetchUsers="fetchUsers()"
-  />
+  <Forms v-model:model-state="dialogEditState" title="ویرایش مخاطب" :editMode="true" :currentID="selectedContact.id"
+    :allFormsFields="selectedContact" :getData="getData" :byLocalStorage="byLocalStorage"
+    @update:mainTableKey="updateMainTableKey" :fetchUsers="fetchUsers()" />
 
-  <tr
-    v-for="(item, index) in users"
-    :key="index"
+  <tr v-for="(item, index) in users" :key="index"
     class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
-    @dblclick="toggleEditDialog(item)"
-  >
+    @dblclick="toggleEditDialog(item)">
     <td>{{ index + 1 }}</td>
     <td>
       <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="item.avatar" />
@@ -565,22 +430,12 @@ const noContactIconCondition = computed(() => {
     <td>{{ item.favorites ? item.favorites.join(" , ") : "" }}</td>
     <td class="">
       <div class="actionButtonsContainer flex gap-2 items-center justify-center">
-        <v-btn
-          variant="elevated"
-          elevation="2"
-          prepend-icon="mdi-delete"
-          @click="deleteServerContact(item.id)"
-          class="bg-red-600/90 hover:bg-red-600/95"
-        >
+        <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete" @click="deleteServerContact(item.id)"
+          class="bg-red-600/90 hover:bg-red-600/95">
           حذف
         </v-btn>
-        <v-btn
-          variant="elevated"
-          color="blue"
-          prepend-icon="mdi-account"
-          @click="toggleEditDialog(item)"
-          class="bg-sky-600/90 hover:bg-sky-600/95"
-        >
+        <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditDialog(item)"
+          class="bg-sky-600/90 hover:bg-sky-600/95">
           ویرایش
         </v-btn>
       </div>
@@ -600,10 +455,12 @@ const noContactIconCondition = computed(() => {
   background-color: red;
   padding: 20px;
 }
+
 .the_table {
   filter: drop-shadow(4px 4px 5px #777575);
   direction: rtl;
 }
+
 .swal2-actions {
   flex-direction: row-reverse !important;
 }

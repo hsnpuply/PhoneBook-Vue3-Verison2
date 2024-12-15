@@ -1,10 +1,3 @@
-/**
- * main.js
- *
- * Bootstraps Vuetify and other plugins then mounts the App`
- */
-
-// Plugins
 
 import { createVuetify } from 'vuetify';
 import '@mdi/font/css/materialdesignicons.min.css'
