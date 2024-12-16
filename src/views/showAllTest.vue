@@ -1,6 +1,6 @@
 <script setup>
 import Swal from "sweetalert2";
-import { ref, reactive, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, computed, watch, watchEffect } from "vue";
 import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
 import Card from "@/components/contact_card.vue";
@@ -24,9 +24,41 @@ const MyLocalContacts = reactive([]);
 // changing to const gives an error
 let users = reactive({});
 const loadingState = ref(false);
+// all in STATE
+const previewStatus = ref('LocalStorage')
+
+const storedPreviewStatus = localStorage.getItem('Preview Status');
+
+watch(byLocalStorage,(newValue)=>{
+
+  if(newValue=== true){
+    previewStatus.value = 'LocalStorage'
+    localStorage.setItem('Preview Status', previewStatus.value);
+    byLocalStorage.value = true;
+  }else{
+    previewStatus.value = 'Server'
+   localStorage.setItem('Preview Status', previewStatus.value);
+   byLocalStorage.value = false;
+  }
+})
+
 
 
 onMounted(async () => {
+  if(!localStorage.getItem('Preview Status')){
+    localStorage.setItem('Preview Status', 'LocalStorage');
+    byLocalStorage.value = true;
+  }
+
+  if(storedPreviewStatus === 'LocalStorage'){
+    previewStatus.value = 'LocalStorage'
+    localStorage.setItem('Preview Status', previewStatus.value);
+    byLocalStorage.value = true;
+  }else if(storedPreviewStatus === 'Server'){
+    previewStatus.value = 'Server'
+   localStorage.setItem('Preview Status', previewStatus.value);
+   byLocalStorage.value = false;
+  }
   getData();
   sekeletonLoadsLocal();
   sekeletonLoadsOnServer();
@@ -89,7 +121,7 @@ const deleteServerContact = async (id) => {
   }).then(async (result) => {
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/users/${id}`); // Update with your server's base URL
+        await axios.delete(`http://localhost:4000/users/${id}`); // Update with your server's base URL
         users = users.filter((user) => user.id !== id); // Update the local list of users
         state.mainTableKey = state.mainTableKey + 1;
         // Show success notification
@@ -137,7 +169,7 @@ const UpdateDataServer = () => {
 
 const fetchUsers = async () => {
   try {
-    const response = await axios.get("http://localhost:5000/users"); // Replace with your actual URL
+    const response = await axios.get("http://localhost:4000/users"); // Replace with your actual URL
     users = response.data;
     console.log(users);
   } catch (error) {

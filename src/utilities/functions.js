@@ -159,7 +159,7 @@ export const deleteServerContact = async (id,users,state,UpdateDataServer) => {
   }).then(async (result) => {
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/users/${id}`); // Update with your server's base URL
+        await axios.delete(`http://localhost:4000/users/${id}`); // Update with your server's base URL
         users = users.filter((user) => user.id !== id); // Update the local list of users
         state.mainTableKey = state.mainTableKey + 1
         // Show success notification

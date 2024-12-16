@@ -253,7 +253,7 @@ const submitInServer = async () => {
 
   try {
     // Send the data to the server
-    const response = await axios.post("http://localhost:5000/users", contactData, {
+    const response = await axios.post("http://localhost:4000/users", contactData, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -423,7 +423,7 @@ const updateInServer = async () => {
   try {
     // Update the contact on the server
     const response = await axios.patch(
-      `http://localhost:5000/users/${props.currentID}`,
+      `http://localhost:4000/users/${props.currentID}`,
       updatedContact,
       {
         headers: {
