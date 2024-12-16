@@ -45,3 +45,13 @@ table{
   }
 
   
+
+
+  /* Drawer */
+  .listSettings{
+    direction: rtl;
+  }
+  .switchBtn{
+    transform: scale(1.14);
+  }
+  /* End of Drawer */

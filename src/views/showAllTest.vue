@@ -63,12 +63,13 @@ onMounted(async () => {
   sekeletonLoadsLocal();
   sekeletonLoadsOnServer();
   await fetchUsers();
+  // set To .5s
   setTimeout(() => {
     loadingPreview.value = false;
-  }, 7000);
+  }, 500);
   setTimeout(() => {
     loadingState.value = true;
-  }, 3000);
+  }, 500);
 });
 
 function updateMainTableKey(newValue) {
@@ -208,6 +209,8 @@ const noContactIconCondition = computed(() => {
 
   return false;
 });
+
+const themeItems = ref(['آبی','سبز','زرد','بنفش'])
 </script>
 <template>
   <div class="w-full h-[100vh] flex items-center justify-center bg-black/20" v-if="!loadingState">
@@ -225,12 +228,12 @@ const noContactIconCondition = computed(() => {
 
     <div class="container mx-auto rounded-lg">
       <div class="  px-4 my-2 text-center lg:!text-left 
-         animate__animated animate__slow animate__fadeInLeft " >
-         <div class="setting ">
-    <span class=" cursor-pointer mdi mdi-cog text-3xl text-black inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
-          @click.stop="drawer = !drawer"
-    />
-  </div>
+         animate__animated animate__slow animate__fadeInLeft ">
+        <div class="setting ">
+          <span
+            class=" cursor-pointer mdi mdi-cog text-3xl text-black inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
+            @click.stop="drawer = !drawer" />
+        </div>
 
       </div>
 
@@ -410,24 +413,72 @@ const noContactIconCondition = computed(() => {
       " type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
-    <v-navigation-drawer v-model="drawer" temporary class="fixed left-0 top-0">
-      <v-list-item prepend-avatar="../assets/profile.jpg" height="80" title="حسن براتی ">
-        <template v-slot:prepend>
-          <v-avatar size="66">
-            <img src="../assets/profile.jpg" alt="Hasan Barati" />
-          </v-avatar>
-        </template>
+    <v-navigation-drawer v-model="drawer" temporary class="fixed duration-[580ms] left-0 top-0 bg-[#ebf1ef]" :width="500">
+      <v-list-item class="bg-[#f2faf5] h-16  shadow-sm shadow-sky-600/20 ">
+        <div class="headerDrawer    ">
+          <div class="headerContainer flex items-center justify-between w-full ">
+            <div class="closeDrawer text-[#19a44c] bg-[#9ad7b1] font-extrabold rounded-md cursor-pointer
+               px-2 py-1 text-center text-sm select-none flex items-center justify-center leading-[1.5]"
+              @click.stop="drawer = !drawer">
+              X
+            </div>
+            <div class="titleHeader">
+              <h2 class="text-[#38ac67] text-lg font-semibold">تنظیمات کاربری</h2>
+            </div>
+          </div>
+        </div>
       </v-list-item>
 
       <v-divider></v-divider>
 
-      <v-list nav>
+      <div class="settingsImage mt-8 mb-10 flex items-center justify-center">
+        <img src="@/assets/settingsDrawer.jpg" title="تنظیمات کاربری" class="w-[52%] rounded-lg shadow-sm shadow-black">
+      </div>
+      <div class="listSettings  py-8  bg-black flex flex-col gap-5 px-12">
+        <div class="apperanceSettings ">
+          <div class="settingsTitle text-right">
+            <h3 class="text-xl text-[#58b97f]"><span class="text-gray-600 select-none ">__ </span> ظاهر <span
+                class=" select-none text-gray-600"> __</span></h3>
+          </div>
+          <div class="apperanceSettingsList flex items-center justify-between  ">
+            <!-- Theme Setting -->
+            <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6">
+              <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full">?</span>
+              <span>انتخاب قالب :</span>
+            </div>
+            <div class="selectTheme">
+              <v-select :items="themeItems" class="w-28 text-right " />
+            </div>
+          </div>
+                    <!-- Animation -->
+                    <div class="animationSettings flex items-ceneter justify-between ">
+            <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
+              <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full">?</span>
+              <span>انیمیشن :</span>
+            </div>
+            <!-- Centered Switch Button -->
+            <div class="animationSwitchButton flex justify-center items-center ">
+              <v-switch color="success"  ripple class=" flex switchBtn" />
+            </div>
+          </div>
+        </div>
+        <div class="contentSettings">
+          <div class="settingsTitle text-right">
+            <h3 class="text-xl text-[#58b97f]"><span class="text-gray-600 select-none ">__ </span> نحوه ذخیره سازی <span
+                class=" select-none text-gray-600"> __</span></h3>
+          </div>
+          <v-list nav>
         <v-list-item prepend-icon="mdi-web" title="مرورگر" value="localstorage" @click.stop="byLocalStorage = true"
           :class="byLocalStorage ? 'bg-gray-800/40' : ''"></v-list-item>
         <v-list-item prepend-icon="mdi-server" title="سرور" value="web-server" @click.stop="byLocalStorage = false"
           :class="!byLocalStorage ? 'bg-gray-800/40' : ''"></v-list-item>
       </v-list>
+        </div>
+      </div>
+
     </v-navigation-drawer>
+
+
     <v-main style="height: 250px">
       <div class="d-flex justify-center align-center h-100"></div>
     </v-main>
