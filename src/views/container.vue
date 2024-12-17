@@ -112,7 +112,7 @@ function updateMainTableKey(newValue) {
   state.mainTableKey = newValue;
 }
 function updateUsers(newValue) {
-  state.contacts.server_1_Contacts = state.contacts.server_1_Contacts + newValue;
+  users = users + newValue;
 }
 
 
@@ -160,7 +160,7 @@ const deleteServerContact = async (id) => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:4000/users/${id}`); // Update with your server's base URL
-        state.contacts.server_1_Contacts = state.contacts.server_1_Contacts.filter((user) => user.id !== id); // Update the local list of users
+        users = users.filter((user) => user.id !== id); // Update the local list of users
         state.mainTableKey = state.mainTableKey + 1;
         // Show success notification
         const Toast = Swal.mixin({
@@ -208,8 +208,8 @@ const UpdateDataServer = () => {
 const fetchUsers = async () => {
   try {
     const response = await axios.get("http://localhost:4000/users"); // Replace with your actual URL
-    state.contacts.server_1_Contacts = response.data;
-    console.log(state.contacts.server_1_Contacts);
+    users = response.data;
+    console.log(users);
   } catch (error) {
     console.error("Error fetching users:", error);
   }
@@ -227,7 +227,7 @@ const localStorageCondition = () => {
 };
 
 const serverCondition = () => {
-  if (state.contacts.server_1_Contacts.length > 0 && !state.loading.skeletonLoads.server_1_Contacts && !byLocalStorage.value) {
+  if (users.length > 0 && !state.loading.skeletonLoads.server_1_Contacts && !byLocalStorage.value) {
     byLocalStorage.value = false;
     return true;
   }
@@ -238,11 +238,11 @@ const drawer = ref(null);
 const noContactIconCondition = computed(() => {
   if (state.contacts.LocalContacts.length === 0 && byLocalStorage.value) {
     return true;
-  } else if (state.contacts.server_1_Contacts.length === 0 && !byLocalStorage.value) {
+  } else if (users.length === 0 && !byLocalStorage.value) {
     return true;
   }
   console.log("one of them might having having Records");
-  console.log(state.contacts.server_1_Contacts.length);
+  console.log(users.length);
 
   return false;
 });
@@ -311,7 +311,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
         <!-- Skeleton of Server -->
 
         <tbody class="w-full" v-if="state.loading.skeletonLoads.server_1_Contacts">
-          <tr v-for="(item, index) in state.contacts.server_1_Contacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
+          <tr v-for="(item, index) in users.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
@@ -360,7 +360,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
         </tbody>
 
         <tbody v-if="serverCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
-          <tr v-for="(item, index) in state.contacts.server_1_Contacts" :key="index"
+          <tr v-for="(item, index) in users" :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
             @dblclick="toggleEditForm(item)">
             <td>{{ index + 1 }}</td>
@@ -418,7 +418,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
       v-if="!state.loading.skeletonLoads.LocalContacts && !byLocalStorage">
-      <Card v-model:dialogEditState="state.forms.edit" v-for="(item, index) in state.contacts.server_1_Contacts" :currentItem="item"
+      <Card v-model:dialogEditState="state.forms.edit" v-for="(item, index) in users" :currentItem="item"
         :MyLocalContacts="state.contacts.LocalContacts" :selectedContact="state.contacts.selectedContact" :all_forms_fields="item"
         :currentID="state.contacts.selectedContact.id" :deleteServerContact="deleteServerContact" :key="index"
         class="!max-w-[50%] flex-1 flex-wrap" />
@@ -438,7 +438,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
       <v-btn v-if="
         byLocalStorage
           ? !state.loading.skeletonLoads.LocalContacts || state.contacts.LocalContacts.length <= 0
-          : !state.loading.skeletonLoads.server_1_Contacts || state.contacts.server_1_Contacts.length <= 0
+          : !state.loading.skeletonLoads.server_1_Contacts || users.length <= 0
       " variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
@@ -557,7 +557,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
     :allFormsFields="state.contacts.selectedContact" :getData="getData" :byLocalStorage="byLocalStorage"
     @update:mainTableKey="updateMainTableKey" :fetchUsers="fetchUsers()" />
 
-  <tr v-for="(item, index) in state.contacts.server_1_Contacts" :key="index"
+  <tr v-for="(item, index) in users" :key="index"
     class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
     @dblclick="toggleEditForm(item)">
     <td>{{ index + 1 }}</td>
