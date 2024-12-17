@@ -14,16 +14,22 @@ import {
 } from "../utilities/functions";
 
 const loadingPreview = ref(true);
+
 const byLocalStorage = ref(true);
 const skeletonLocalStorageLoadingState = ref(true);
 const skeletonServerLoadingState = ref(true);
-const selectedContact = reactive({});
+
+// const selectedContact = reactive({});
+
 const dialogRegisterState = ref(false);
 const dialogEditState = ref(false);
+
 const MyLocalContacts = reactive([]);
 // changing to const gives an error
 let users = reactive({});
-const loadingState = ref(false);
+
+// const loadingState = ref(false);
+
 // all in STATE
 const previewStatus = ref('LocalStorage')
 
@@ -38,17 +44,17 @@ const state = reactive({
     
   selectedContact:{},
   },
-  skeletonLoads:{
-    LocalContacts: true,
-    server_1_Contacts: true
-  },
   forms:{
     register:false,
     edit:false,
   },
   loading:{
     preview:true,
-    loadingStatus:false
+    loadingStatus:false,
+    skeletonLoads:{
+    LocalContacts: true,
+    server_1_Contacts: true
+  }
   },
   mainTableKey: 0,
   
@@ -92,10 +98,14 @@ onMounted(async () => {
   await fetchUsers();
   // set To .5s
   setTimeout(() => {
-    loadingPreview.value = false;
+    // loadingPreview.value = false;
+    state.loading.preview = false;
+    // state.loading.preview = false
   }, 500);
   setTimeout(() => {
-    loadingState.value = true;
+    // loadingState.value = true;
+    state.loading.loadingStatus = true;
+    
   }, 500);
 });
 
@@ -118,12 +128,15 @@ const getData = () => {
 
 const sekeletonLoadsLocal = () => {
   setTimeout(() => {
-    skeletonLocalStorageLoadingState.value = false;
+    // skeletonLocalStorageLoadingState.value = false;
+    state.loading.skeletonLoads.LocalContacts = false;
   }, 2000);
 };
 const sekeletonLoadsOnServer = () => {
   setTimeout(() => {
-    skeletonServerLoadingState.value = false;
+    // skeletonServerLoadingState.value = false;
+    state.loading.skeletonLoads.server_1_Contacts = false;
+
   }, 2000);
 };
 
@@ -178,12 +191,12 @@ const deleteServerContact = async (id) => {
   state.mainTableKey = state.mainTableKey + 1;
 };
 
-const toggleEditDialog = (item) => {
-  Object.assign(selectedContact, item);
-  dialogEditState.value = !dialogEditState.value;
+const toggleEditForm = (item) => {
+  Object.assign(state.contacts.selectedContact, item);
+  state.forms.edit = !state.forms.edit;
 };
-const toggleRegisterDialog = () => {
-  dialogRegisterState.value = !dialogRegisterState.value;
+const toggleRegisterForm = () => {
+  state.forms.register = !state.forms.register;
 };
 
 const UpdateStatusDataServer = ref(false);
@@ -206,7 +219,7 @@ const fetchUsers = async () => {
 const localStorageCondition = () => {
   if (
     MyLocalContacts.length > 0 &&
-    !skeletonLocalStorageLoadingState.value &&
+    !state.loading.skeletonLoads.LocalContacts &&
     byLocalStorage.value
   ) {
     byLocalStorage.value = true;
@@ -215,7 +228,7 @@ const localStorageCondition = () => {
 };
 
 const serverCondition = () => {
-  if (users.length > 0 && !skeletonServerLoadingState.value && !byLocalStorage.value) {
+  if (users.length > 0 && !state.loading.skeletonLoads.server_1_Contacts && !byLocalStorage.value) {
     byLocalStorage.value = false;
     return true;
   }
@@ -238,10 +251,10 @@ const noContactIconCondition = computed(() => {
 const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 </script>
 <template>
-  <div class="w-full h-[100vh] flex items-center justify-center bg-black/20" v-if="!loadingState">
+  <div class="w-full h-[100vh] flex items-center justify-center bg-black/20" v-if="!state.loading.loadingStatus">
     <half-circle-spinner :size="100" color="green" />
   </div>
-  <div class="mx-auto mainContent h-full bg-cover" v-if="loadingState">
+  <div class="mx-auto mainContent h-full bg-cover" v-if="state.loading.loadingStatus">
     <header class="titlePage overflow-hidden">
       <div class="titleText animate__animated animate__fadeInUp animate__slow">
         <h1 class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2">
@@ -262,7 +275,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 
       </div>
 
-      <v-table :class="loadingPreview
+      <v-table :class="state.loading.preview
         ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft'
         : ''
         " class="the_table hidden xl:block" :key="state.mainTableKey">
@@ -281,7 +294,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
         </thead>
 
         <!-- Skeleton of LocalStorage -->
-        <tbody class="w-full" v-if="skeletonLocalStorageLoadingState">
+        <tbody class="w-full" v-if="state.loading.skeletonLoads.LocalContacts">
           <tr v-for="(item, index) in MyLocalContacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
@@ -298,7 +311,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 
         <!-- Skeleton of Server -->
 
-        <tbody class="w-full" v-if="skeletonServerLoadingState">
+        <tbody class="w-full" v-if="state.loading.skeletonLoads.server_1_Contacts">
           <tr v-for="(item, index) in users.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
@@ -316,7 +329,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
         <tbody v-if="localStorageCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
           <tr v-for="(item, index) in MyLocalContacts" :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
-            @dblclick="toggleEditDialog(item)">
+            @dblclick="toggleEditForm(item)">
             <td>{{ index + 1 }}</td>
             <td>
               <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="item.avatar" />
@@ -338,7 +351,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
                   class="bg-red-600/90 hover:bg-red-600/95">
                   حذف
                 </v-btn>
-                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditDialog(item)"
+                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditForm(item)"
                   class="bg-sky-600/90 hover:bg-sky-600/95">
                   ویرایش
                 </v-btn>
@@ -350,7 +363,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
         <tbody v-if="serverCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
           <tr v-for="(item, index) in users" :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
-            @dblclick="toggleEditDialog(item)">
+            @dblclick="toggleEditForm(item)">
             <td>{{ index + 1 }}</td>
             <td>
               <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="item.avatar" />
@@ -371,7 +384,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
                   class="bg-red-600/90 hover:bg-red-600/95">
                   حذف
                 </v-btn>
-                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditDialog(item)"
+                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditForm(item)"
                   class="bg-sky-600/90 hover:bg-sky-600/95">
                   ویرایش
                 </v-btn>
@@ -382,7 +395,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
       </v-table>
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
-        :class="loadingPreview ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''
+        :class="state.loading.preview ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''
           " v-if="noContactIconCondition">
         <img src="../assets/no-data.jpg" alt="" class="w-[35rem]" />
         <p class="pb-10 text-3xl">
@@ -396,25 +409,25 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!skeletonLocalStorageLoadingState && byLocalStorage">
-      <Card v-model:dialogEditState="dialogEditState" :currentItem="item" :MyLocalContacts="MyLocalContacts"
-        :selectedContact="selectedContact" :all_forms_fields="item" v-for="(item, index) in MyLocalContacts"
+      v-if="!state.loading.skeletonLoads.LocalContacts && byLocalStorage">
+      <Card v-model:dialogEditState="state.forms.edit" :currentItem="item" :MyLocalContacts="MyLocalContacts"
+        :selectedContact="state.contacts.selectedContact" :all_forms_fields="item" v-for="(item, index) in MyLocalContacts"
         :deleteServerContact="deleteServerContact" :byLocalStorage="byLocalStorage" :key="index"
         class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
 
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!skeletonLocalStorageLoadingState && !byLocalStorage">
-      <Card v-model:dialogEditState="dialogEditState" v-for="(item, index) in users" :currentItem="item"
-        :MyLocalContacts="MyLocalContacts" :selectedContact="selectedContact" :all_forms_fields="item"
-        :currentID="selectedContact.id" :deleteServerContact="deleteServerContact" :key="index"
+      v-if="!state.loading.skeletonLoads.LocalContacts && !byLocalStorage">
+      <Card v-model:dialogEditState="state.forms.edit" v-for="(item, index) in users" :currentItem="item"
+        :MyLocalContacts="MyLocalContacts" :selectedContact="state.contacts.selectedContact" :all_forms_fields="item"
+        :currentID="state.contacts.selectedContact.id" :deleteServerContact="deleteServerContact" :key="index"
         class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
 
     <div
       class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
-      v-if="skeletonLocalStorageLoadingState">
+      v-if="state.loading.skeletonLoads.LocalContacts">
       <v-skeleton-loader v-for="(item, index) in MyLocalContacts" :key="index" min-height="540" elevation="24"
         type="	image , text, paragraph , article  , button , button"
         class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard">
@@ -425,16 +438,16 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
       class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-3s animate__fadeInRight">
       <v-btn v-if="
         byLocalStorage
-          ? !skeletonLocalStorageLoadingState || MyLocalContacts.length <= 0
-          : !skeletonServerLoadingState || users.length <= 0
-      " variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterDialog">
+          ? !state.loading.skeletonLoads.LocalContacts || MyLocalContacts.length <= 0
+          : !state.loading.skeletonLoads.server_1_Contacts || users.length <= 0
+      " variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
     </div>
     <div class="flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0">
       <v-skeleton-loader v-if="
-        skeletonLocalStorageLoadingState && MyLocalContacts.length > 0 && byLocalStorage
+        state.loading.skeletonLoads.LocalContacts && MyLocalContacts.length > 0 && byLocalStorage
       " type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
@@ -536,18 +549,18 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
   <!-- <p>Current Key: {{ state.mainTableKey }}</p>
   <p>Current Length of Users : {{ users.length }}</p> -->
 
-  <Forms v-model:modelState="dialogRegisterState" title="ثبت مخاطب" :registerMode="true" :getData="getData"
+  <Forms v-model:modelState="state.forms.register" title="ثبت مخاطب" :registerMode="true" :getData="getData"
     :byLocalStorage="byLocalStorage" :mainTableKey="state.mainTableKey" @update:mainTableKey="updateMainTableKey"
     @update:users="updateUsers" />
   <!-- :getData="getData()" -->
 
-  <Forms v-model:model-state="dialogEditState" title="ویرایش مخاطب" :editMode="true" :currentID="selectedContact.id"
-    :allFormsFields=" selectedContact" :getData="getData" :byLocalStorage="byLocalStorage"
+  <Forms v-model:model-state="state.forms.edit" title="ویرایش مخاطب" :editMode="true" :currentID="state.contacts.selectedContact.id"
+    :allFormsFields="state.contacts.selectedContact" :getData="getData" :byLocalStorage="byLocalStorage"
     @update:mainTableKey="updateMainTableKey" :fetchUsers="fetchUsers()" />
 
   <tr v-for="(item, index) in users" :key="index"
     class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
-    @dblclick="toggleEditDialog(item)">
+    @dblclick="toggleEditForm(item)">
     <td>{{ index + 1 }}</td>
     <td>
       <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="item.avatar" />
@@ -566,7 +579,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
           class="bg-red-600/90 hover:bg-red-600/95">
           حذف
         </v-btn>
-        <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditDialog(item)"
+        <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditForm(item)"
           class="bg-sky-600/90 hover:bg-sky-600/95">
           ویرایش
         </v-btn>
