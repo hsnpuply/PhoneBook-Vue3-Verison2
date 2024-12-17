@@ -6,7 +6,7 @@
 
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
-import showAll from '@/views/showAllTest.vue'
+import showAll from '@/views/container.vue'
 import addContact from '@/views/addContact.vue'
 
 const router = createRouter({

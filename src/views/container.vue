@@ -413,14 +413,16 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
       " type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
-    <v-navigation-drawer v-model="drawer" temporary class="fixed duration-[580ms] left-0 top-0 bg-[#ebf1ef]" :width="500">
+    <v-navigation-drawer v-model="drawer" temporary class="fixed duration-[580ms] h-[100vh] left-0 top-0 bg-[#ebf1ef]"
+      :width="500">
       <v-list-item class="bg-[#f2faf5] h-16  shadow-sm shadow-sky-600/20 ">
         <div class="headerDrawer    ">
           <div class="headerContainer flex items-center justify-between w-full ">
             <div class="closeDrawer text-[#19a44c] bg-[#9ad7b1] font-extrabold rounded-md cursor-pointer
-               px-2 py-1 text-center text-sm select-none flex items-center justify-center leading-[1.5]"
+               px-2 py-1 text-center text-sm select-none flex items-center justify-center text-lg"
               @click.stop="drawer = !drawer">
-              X
+              <v-icon icon="mdi-close"></v-icon>
+            
             </div>
             <div class="titleHeader">
               <h2 class="text-[#38ac67] text-lg font-semibold">تنظیمات کاربری</h2>
@@ -432,47 +434,88 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
       <v-divider></v-divider>
 
       <div class="settingsImage mt-8 mb-10 flex items-center justify-center">
-        <img src="@/assets/settingsDrawer.jpg" title="تنظیمات کاربری" class="w-[52%] rounded-lg shadow-sm shadow-black">
+        <img src="@/assets/settingsDrawer.jpg" title="تنظیمات کاربری" class="w-[42%] rounded-lg shadow-sm shadow-black">
       </div>
-      <div class="listSettings  py-8  bg-black flex flex-col gap-5 px-12">
+      <div class="listSettings  py-8   flex flex-col gap-5 px-12">
         <div class="apperanceSettings ">
           <div class="settingsTitle text-right">
-            <h3 class="text-xl text-[#58b97f]"><span class="text-gray-600 select-none ">__ </span> ظاهر <span
+            <h3 class="text-xl font-semibold text-[#58b97f]"><span class="text-gray-600 select-none ">__ </span> ظاهر <span
                 class=" select-none text-gray-600"> __</span></h3>
           </div>
           <div class="apperanceSettingsList flex items-center justify-between  ">
             <!-- Theme Setting -->
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6">
-              <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full">?</span>
-              <span>انتخاب قالب :</span>
+              <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full select-none">?
+
+                <v-tooltip
+        activator="parent"
+        location="top"
+      >انتخاب رنگ قالب</v-tooltip>
+              </span>
+              <span class="text-black font-semibold">انتخاب قالب :</span>
             </div>
             <div class="selectTheme">
-              <v-select :items="themeItems" class="w-28 text-right " />
+              <v-select :items="themeItems" class="w-28 text-right " label="رنگ" bg-color="white" variant="outlined" />
             </div>
           </div>
-                    <!-- Animation -->
-                    <div class="animationSettings flex items-ceneter justify-between ">
+          <!-- Animation -->
+          <div class="animationSettings flex items-ceneter justify-between ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
-              <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full">?</span>
-              <span>انیمیشن :</span>
+              <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full select-none">
+                <v-tooltip
+                   activator="parent"
+                  location="top">
+                    فعال کردن انیمیشن ها    
+                </v-tooltip>
+                ?</span>
+              <span class="text-black font-semibold">انیمیشن :</span>
             </div>
             <!-- Centered Switch Button -->
             <div class="animationSwitchButton flex justify-center items-center ">
-              <v-switch color="success"  ripple class=" flex switchBtn" />
+              <v-switch color="success" ripple class=" flex switchBtn" />
             </div>
           </div>
         </div>
         <div class="contentSettings">
           <div class="settingsTitle text-right">
-            <h3 class="text-xl text-[#58b97f]"><span class="text-gray-600 select-none ">__ </span> نحوه ذخیره سازی <span
-                class=" select-none text-gray-600"> __</span></h3>
+            <h3 class="text-xl text-[#58b97f] font-semibold"><span class="text-gray-600 select-none ">__ </span> نحوه ذخیره سازی
+              مخاطبین <span class=" select-none text-gray-600"> __</span></h3>
           </div>
-          <v-list nav>
-        <v-list-item prepend-icon="mdi-web" title="مرورگر" value="localstorage" @click.stop="byLocalStorage = true"
-          :class="byLocalStorage ? 'bg-gray-800/40' : ''"></v-list-item>
-        <v-list-item prepend-icon="mdi-server" title="سرور" value="web-server" @click.stop="byLocalStorage = false"
-          :class="!byLocalStorage ? 'bg-gray-800/40' : ''"></v-list-item>
-      </v-list>
+          <div class="storagesButtons flex flex-col gap-4 mt-5 ">
+            <!-- <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full select-none">?
+
+<v-tooltip
+activator="parent"
+location="top"
+>انتخاب رنگ قالب</v-tooltip>
+</span> -->
+            <div class="webBroweser">
+              <v-btn class="text-right w-full md:w-2/3 " size="x-large"
+             :variant="byLocalStorage ? 'elevated' : 'outlined'"
+             :color="byLocalStorage ? 'green' : 'black'"
+             @click.stop="byLocalStorage = true"
+             prepend-icon="mdi mdi-web"
+             >مرورگر
+             <v-tooltip
+        activator="parent"
+        location="top"
+      >مخاطبین در مرورگر شما ذخیره میشود و تازمانی که شما ذخیره ساز محلی را پاک نکنید  مخاطبین باقی میمانند</v-tooltip>
+            </v-btn>
+            </div>
+            <div class="server_1">
+              <v-btn class="text-right w-full md:w-2/3 " size="x-large"
+            :variant="!byLocalStorage ? 'elevated' : 'outlined'"
+            :color="!byLocalStorage ? 'green' : 'black'"
+            @click.stop="byLocalStorage = false"
+            prepend-icon="mdi mdi-server"
+            >سرور 
+            <v-tooltip
+        activator="parent"
+        location="bottom"
+      >مخاطبین در سرور شماره یک ذخیره میشوند</v-tooltip>
+          </v-btn>
+            </div>  
+          </div>
         </div>
       </div>
 

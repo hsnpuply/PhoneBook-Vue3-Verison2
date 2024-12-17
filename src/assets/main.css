@@ -54,4 +54,13 @@ table{
   .switchBtn{
     transform: scale(1.14);
   }
+  .v-overlay__content{
+    background-color: #86efac !important;
+    font-size: 1.04rem !important;
+    /* color: #15803d !important; */
+    color: black !important;
+    font-weight: 600 !important;
+    text-align: center;
+    
+  }
   /* End of Drawer */
