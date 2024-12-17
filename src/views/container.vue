@@ -16,13 +16,13 @@ import {
 const loadingPreview = ref(true);
 
 const byLocalStorage = ref(true);
-const skeletonLocalStorageLoadingState = ref(true);
-const skeletonServerLoadingState = ref(true);
+// const skeletonLocalStorageLoadingState = ref(true);
+// const skeletonServerLoadingState = ref(true);
 
 // const selectedContact = reactive({});
 
-const dialogRegisterState = ref(false);
-const dialogEditState = ref(false);
+// const dialogRegisterState = ref(false);
+// const dialogEditState = ref(false);
 
 const MyLocalContacts = reactive([]);
 // changing to const gives an error
@@ -38,7 +38,6 @@ const state = reactive({
   contacts:{
   LocalContacts:[],
   server_1_Contacts:[],
-
   contactsPreview:'LocalStorage',
   storedPreviewStatus:localStorage.getItem('Preview Status'),
     
@@ -113,14 +112,14 @@ function updateMainTableKey(newValue) {
   state.mainTableKey = newValue;
 }
 function updateUsers(newValue) {
-  users = users + newValue;
+  state.contacts.server_1_Contacts = state.contacts.server_1_Contacts + newValue;
 }
 
 
 const getData = () => {
   if (byLocalStorage.value) {
     const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
-    MyLocalContacts.splice(0, MyLocalContacts.length, ...storedContacts);
+    state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...storedContacts);
   } else {
     fetchUsers();
   }
@@ -161,7 +160,7 @@ const deleteServerContact = async (id) => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:4000/users/${id}`); // Update with your server's base URL
-        users = users.filter((user) => user.id !== id); // Update the local list of users
+        state.contacts.server_1_Contacts = state.contacts.server_1_Contacts.filter((user) => user.id !== id); // Update the local list of users
         state.mainTableKey = state.mainTableKey + 1;
         // Show success notification
         const Toast = Swal.mixin({
@@ -209,8 +208,8 @@ const UpdateDataServer = () => {
 const fetchUsers = async () => {
   try {
     const response = await axios.get("http://localhost:4000/users"); // Replace with your actual URL
-    users = response.data;
-    console.log(users);
+    state.contacts.server_1_Contacts = response.data;
+    console.log(state.contacts.server_1_Contacts);
   } catch (error) {
     console.error("Error fetching users:", error);
   }
@@ -218,7 +217,7 @@ const fetchUsers = async () => {
 
 const localStorageCondition = () => {
   if (
-    MyLocalContacts.length > 0 &&
+    state.contacts.LocalContacts.length > 0 &&
     !state.loading.skeletonLoads.LocalContacts &&
     byLocalStorage.value
   ) {
@@ -228,7 +227,7 @@ const localStorageCondition = () => {
 };
 
 const serverCondition = () => {
-  if (users.length > 0 && !state.loading.skeletonLoads.server_1_Contacts && !byLocalStorage.value) {
+  if (state.contacts.server_1_Contacts.length > 0 && !state.loading.skeletonLoads.server_1_Contacts && !byLocalStorage.value) {
     byLocalStorage.value = false;
     return true;
   }
@@ -237,13 +236,13 @@ const serverCondition = () => {
 const drawer = ref(null);
 
 const noContactIconCondition = computed(() => {
-  if (MyLocalContacts.length === 0 && byLocalStorage.value) {
+  if (state.contacts.LocalContacts.length === 0 && byLocalStorage.value) {
     return true;
-  } else if (users.length === 0 && !byLocalStorage.value) {
+  } else if (state.contacts.server_1_Contacts.length === 0 && !byLocalStorage.value) {
     return true;
   }
   console.log("one of them might having having Records");
-  console.log(users.length);
+  console.log(state.contacts.server_1_Contacts.length);
 
   return false;
 });
@@ -295,7 +294,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 
         <!-- Skeleton of LocalStorage -->
         <tbody class="w-full" v-if="state.loading.skeletonLoads.LocalContacts">
-          <tr v-for="(item, index) in MyLocalContacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
+          <tr v-for="(item, index) in state.contacts.LocalContacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
@@ -312,7 +311,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
         <!-- Skeleton of Server -->
 
         <tbody class="w-full" v-if="state.loading.skeletonLoads.server_1_Contacts">
-          <tr v-for="(item, index) in users.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
+          <tr v-for="(item, index) in state.contacts.server_1_Contacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
@@ -327,7 +326,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
         </tbody>
 
         <tbody v-if="localStorageCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
-          <tr v-for="(item, index) in MyLocalContacts" :key="index"
+          <tr v-for="(item, index) in state.contacts.LocalContacts" :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
             @dblclick="toggleEditForm(item)">
             <td>{{ index + 1 }}</td>
@@ -347,7 +346,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
             <td class="">
               <div class="actionButtonsContainer flex gap-2 items-center justify-center">
                 <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete"
-                  @click="DeleteLocalStorageContacts(item.id, MyLocalContacts)"
+                  @click="DeleteLocalStorageContacts(item.id, state.contacts.LocalContacts)"
                   class="bg-red-600/90 hover:bg-red-600/95">
                   حذف
                 </v-btn>
@@ -361,7 +360,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
         </tbody>
 
         <tbody v-if="serverCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
-          <tr v-for="(item, index) in users" :key="index"
+          <tr v-for="(item, index) in state.contacts.server_1_Contacts" :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
             @dblclick="toggleEditForm(item)">
             <td>{{ index + 1 }}</td>
@@ -410,8 +409,8 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
       v-if="!state.loading.skeletonLoads.LocalContacts && byLocalStorage">
-      <Card v-model:dialogEditState="state.forms.edit" :currentItem="item" :MyLocalContacts="MyLocalContacts"
-        :selectedContact="state.contacts.selectedContact" :all_forms_fields="item" v-for="(item, index) in MyLocalContacts"
+      <Card v-model:dialogEditState="state.forms.edit" :currentItem="item" :MyLocalContacts="state.contacts.LocalContacts"
+        :selectedContact="state.contacts.selectedContact" :all_forms_fields="item" v-for="(item, index) in state.contacts.LocalContacts"
         :deleteServerContact="deleteServerContact" :byLocalStorage="byLocalStorage" :key="index"
         class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
@@ -419,8 +418,8 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
       v-if="!state.loading.skeletonLoads.LocalContacts && !byLocalStorage">
-      <Card v-model:dialogEditState="state.forms.edit" v-for="(item, index) in users" :currentItem="item"
-        :MyLocalContacts="MyLocalContacts" :selectedContact="state.contacts.selectedContact" :all_forms_fields="item"
+      <Card v-model:dialogEditState="state.forms.edit" v-for="(item, index) in state.contacts.server_1_Contacts" :currentItem="item"
+        :MyLocalContacts="state.contacts.LocalContacts" :selectedContact="state.contacts.selectedContact" :all_forms_fields="item"
         :currentID="state.contacts.selectedContact.id" :deleteServerContact="deleteServerContact" :key="index"
         class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
@@ -428,7 +427,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
     <div
       class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
       v-if="state.loading.skeletonLoads.LocalContacts">
-      <v-skeleton-loader v-for="(item, index) in MyLocalContacts" :key="index" min-height="540" elevation="24"
+      <v-skeleton-loader v-for="(item, index) in state.contacts.LocalContacts" :key="index" min-height="540" elevation="24"
         type="	image , text, paragraph , article  , button , button"
         class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard">
       </v-skeleton-loader>
@@ -438,8 +437,8 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
       class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-3s animate__fadeInRight">
       <v-btn v-if="
         byLocalStorage
-          ? !state.loading.skeletonLoads.LocalContacts || MyLocalContacts.length <= 0
-          : !state.loading.skeletonLoads.server_1_Contacts || users.length <= 0
+          ? !state.loading.skeletonLoads.LocalContacts || state.contacts.LocalContacts.length <= 0
+          : !state.loading.skeletonLoads.server_1_Contacts || state.contacts.server_1_Contacts.length <= 0
       " variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
@@ -447,7 +446,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
     </div>
     <div class="flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0">
       <v-skeleton-loader v-if="
-        state.loading.skeletonLoads.LocalContacts && MyLocalContacts.length > 0 && byLocalStorage
+        state.loading.skeletonLoads.LocalContacts && state.contacts.LocalContacts.length > 0 && byLocalStorage
       " type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
@@ -558,7 +557,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
     :allFormsFields="state.contacts.selectedContact" :getData="getData" :byLocalStorage="byLocalStorage"
     @update:mainTableKey="updateMainTableKey" :fetchUsers="fetchUsers()" />
 
-  <tr v-for="(item, index) in users" :key="index"
+  <tr v-for="(item, index) in state.contacts.server_1_Contacts" :key="index"
     class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
     @dblclick="toggleEditForm(item)">
     <td>{{ index + 1 }}</td>

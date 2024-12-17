@@ -1,14 +1,3 @@
 {
-  "users": [
-    {
-      "id": "44da",
-      "phoneNumber": "0912451720",
-      "fullname": "حسن براتی ملکی",
-      "selectedDate": "2024-11-24",
-      "skills": [],
-      "favorites": [],
-      "avatar": null,
-      "isCoworker": false
-    }
-  ]
+  "users": []
 }
