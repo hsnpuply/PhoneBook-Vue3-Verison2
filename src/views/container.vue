@@ -27,37 +27,64 @@ const loadingState = ref(false);
 // all in STATE
 const previewStatus = ref('LocalStorage')
 
+
+const state = reactive({
+  contacts:{
+  LocalContacts:[],
+  server_1_Contacts:[],
+
+  contactsPreview:'LocalStorage',
+  storedPreviewStatus:localStorage.getItem('Preview Status'),
+    
+  selectedContact:{},
+  },
+  skeletonLoads:{
+    LocalContacts: true,
+    server_1_Contacts: true
+  },
+  forms:{
+    register:false,
+    edit:false,
+  },
+  loading:{
+    preview:true,
+    loadingStatus:false
+  },
+  mainTableKey: 0,
+  
+});
+
 const storedPreviewStatus = localStorage.getItem('Preview Status');
 
-watch(byLocalStorage,(newValue)=>{
+watch(byLocalStorage, (newValue) => {
 
-  if(newValue=== true){
+  if (newValue === true) {
     previewStatus.value = 'LocalStorage'
     localStorage.setItem('Preview Status', previewStatus.value);
     byLocalStorage.value = true;
-  }else{
+  } else {
     previewStatus.value = 'Server'
-   localStorage.setItem('Preview Status', previewStatus.value);
-   byLocalStorage.value = false;
+    localStorage.setItem('Preview Status', previewStatus.value);
+    byLocalStorage.value = false;
   }
 })
 
 
 
 onMounted(async () => {
-  if(!localStorage.getItem('Preview Status')){
+  if (!localStorage.getItem('Preview Status')) {
     localStorage.setItem('Preview Status', 'LocalStorage');
     byLocalStorage.value = true;
   }
 
-  if(storedPreviewStatus === 'LocalStorage'){
+  if (storedPreviewStatus === 'LocalStorage') {
     previewStatus.value = 'LocalStorage'
     localStorage.setItem('Preview Status', previewStatus.value);
     byLocalStorage.value = true;
-  }else if(storedPreviewStatus === 'Server'){
+  } else if (storedPreviewStatus === 'Server') {
     previewStatus.value = 'Server'
-   localStorage.setItem('Preview Status', previewStatus.value);
-   byLocalStorage.value = false;
+    localStorage.setItem('Preview Status', previewStatus.value);
+    byLocalStorage.value = false;
   }
   getData();
   sekeletonLoadsLocal();
@@ -78,9 +105,7 @@ function updateMainTableKey(newValue) {
 function updateUsers(newValue) {
   users = users + newValue;
 }
-const state = reactive({
-  mainTableKey: 0,
-});
+
 
 const getData = () => {
   if (byLocalStorage.value) {
@@ -210,7 +235,7 @@ const noContactIconCondition = computed(() => {
   return false;
 });
 
-const themeItems = ref(['آبی','سبز','زرد','بنفش'])
+const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 </script>
 <template>
   <div class="w-full h-[100vh] flex items-center justify-center bg-black/20" v-if="!loadingState">
@@ -238,8 +263,8 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
       </div>
 
       <v-table :class="loadingPreview
-          ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft'
-          : ''
+        ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft'
+        : ''
         " class="the_table hidden xl:block" :key="state.mainTableKey">
         <thead class="relative">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
@@ -300,7 +325,7 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
             <td>{{ PersianNumberConvertorX(item.phoneNumber) }}</td>
             <td>
               {{
-              PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
+                PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
               }}
             </td>
             <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
@@ -334,7 +359,7 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
             <td>{{ PersianNumberConvertorX(item.phoneNumber) }}</td>
             <td>
               {{
-              PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
+                PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
               }}
             </td>
             <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
@@ -362,7 +387,7 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
         <img src="../assets/no-data.jpg" alt="" class="w-[35rem]" />
         <p class="pb-10 text-3xl">
           {{ byLocalStorage ? "😲" : "😨" }} هیچ مخاطبی در{{
-          byLocalStorage ? "مرورگر" : "سرور"
+            byLocalStorage ? "مرورگر" : "سرور"
           }}
           موجود نیست
         </p>
@@ -413,7 +438,7 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
       " type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
-    <v-navigation-drawer v-model="drawer" temporary class="fixed duration-[580ms] h-[100vh] left-0 top-0 bg-[#ebf1ef]"
+    <v-navigation-drawer v-model="drawer" temporary class=" select-none fixed duration-[580ms] h-[100vh] left-0 top-0 bg-[#ebf1ef]"
       :width="500">
       <v-list-item class="bg-[#f2faf5] h-16  shadow-sm shadow-sky-600/20 ">
         <div class="headerDrawer    ">
@@ -422,7 +447,7 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
                px-2 py-1 text-center text-sm select-none flex items-center justify-center text-lg"
               @click.stop="drawer = !drawer">
               <v-icon icon="mdi-close"></v-icon>
-            
+
             </div>
             <div class="titleHeader">
               <h2 class="text-[#38ac67] text-lg font-semibold">تنظیمات کاربری</h2>
@@ -439,18 +464,16 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
       <div class="listSettings  py-8   flex flex-col gap-5 px-12">
         <div class="apperanceSettings ">
           <div class="settingsTitle text-right">
-            <h3 class="text-xl font-semibold text-[#58b97f]"><span class="text-gray-600 select-none ">__ </span> ظاهر <span
-                class=" select-none text-gray-600"> __</span></h3>
+            <h3 class="text-xl font-semibold text-[#58b97f]"><span class="text-gray-600 select-none ">__ </span> ظاهر
+              <span class=" select-none text-gray-600"> __</span>
+            </h3>
           </div>
           <div class="apperanceSettingsList flex items-center justify-between  ">
             <!-- Theme Setting -->
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6">
               <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full select-none">?
 
-                <v-tooltip
-        activator="parent"
-        location="top"
-      >انتخاب رنگ قالب</v-tooltip>
+                <v-tooltip activator="parent" location="top">انتخاب رنگ قالب</v-tooltip>
               </span>
               <span class="text-black font-semibold">انتخاب قالب :</span>
             </div>
@@ -462,10 +485,8 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
           <div class="animationSettings flex items-ceneter justify-between ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
               <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full select-none">
-                <v-tooltip
-                   activator="parent"
-                  location="top">
-                    فعال کردن انیمیشن ها    
+                <v-tooltip activator="parent" location="top">
+                  فعال کردن انیمیشن ها
                 </v-tooltip>
                 ?</span>
               <span class="text-black font-semibold">انیمیشن :</span>
@@ -478,43 +499,28 @@ const themeItems = ref(['آبی','سبز','زرد','بنفش'])
         </div>
         <div class="contentSettings">
           <div class="settingsTitle text-right">
-            <h3 class="text-xl text-[#58b97f] font-semibold"><span class="text-gray-600 select-none ">__ </span> نحوه ذخیره سازی
+            <h3 class="text-xl text-[#58b97f] font-semibold"><span class="text-gray-600 select-none ">__ </span> نحوه
+              ذخیره سازی
               مخاطبین <span class=" select-none text-gray-600"> __</span></h3>
           </div>
           <div class="storagesButtons flex flex-col gap-4 mt-5 ">
-            <!-- <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full select-none">?
-
-<v-tooltip
-activator="parent"
-location="top"
->انتخاب رنگ قالب</v-tooltip>
-</span> -->
+  
             <div class="webBroweser">
               <v-btn class="text-right w-full md:w-2/3 " size="x-large"
-             :variant="byLocalStorage ? 'elevated' : 'outlined'"
-             :color="byLocalStorage ? 'green' : 'black'"
-             @click.stop="byLocalStorage = true"
-             prepend-icon="mdi mdi-web"
-             >مرورگر
-             <v-tooltip
-        activator="parent"
-        location="top"
-      >مخاطبین در مرورگر شما ذخیره میشود و تازمانی که شما ذخیره ساز محلی را پاک نکنید  مخاطبین باقی میمانند</v-tooltip>
-            </v-btn>
+                :variant="byLocalStorage ? 'elevated' : 'outlined'" :color="byLocalStorage ? 'green' : 'black'"
+                @click.stop="byLocalStorage = true" prepend-icon="mdi mdi-web">مرورگر
+                <v-tooltip activator="parent" location="top">مخاطبین در مرورگر شما ذخیره میشود و تازمانی که شما ذخیره
+                  ساز محلی را پاک نکنید مخاطبین باقی میمانند</v-tooltip>
+              </v-btn>
             </div>
             <div class="server_1">
-              <v-btn class="text-right w-full md:w-2/3 " size="x-large"
-            :variant="!byLocalStorage ? 'elevated' : 'outlined'"
-            :color="!byLocalStorage ? 'green' : 'black'"
-            @click.stop="byLocalStorage = false"
-            prepend-icon="mdi mdi-server"
-            >سرور 
-            <v-tooltip
-        activator="parent"
-        location="bottom"
-      >مخاطبین در سرور شماره یک ذخیره میشوند</v-tooltip>
-          </v-btn>
-            </div>  
+              <v-btn
+                class="text-right w-full md:w-2/3 " size="x-large"
+                :variant="!byLocalStorage ? 'elevated' : 'outlined'" :color="!byLocalStorage ? 'green' : 'black'"
+                @click.stop="byLocalStorage = false" prepend-icon="mdi mdi-server"> سرور
+                <v-tooltip activator="parent" location="bottom">مخاطبین در سرور شماره یک ذخیره میشوند</v-tooltip>
+              </v-btn>
+            </div>
           </div>
         </div>
       </div>
@@ -527,8 +533,8 @@ location="top"
     </v-main>
   </div>
 
-  <p>Current Key: {{ state.mainTableKey }}</p>
-  <p>Current Length of Users : {{ users.length }}</p>
+  <!-- <p>Current Key: {{ state.mainTableKey }}</p>
+  <p>Current Length of Users : {{ users.length }}</p> -->
 
   <Forms v-model:modelState="dialogRegisterState" title="ثبت مخاطب" :registerMode="true" :getData="getData"
     :byLocalStorage="byLocalStorage" :mainTableKey="state.mainTableKey" @update:mainTableKey="updateMainTableKey"
@@ -536,7 +542,7 @@ location="top"
   <!-- :getData="getData()" -->
 
   <Forms v-model:model-state="dialogEditState" title="ویرایش مخاطب" :editMode="true" :currentID="selectedContact.id"
-    :allFormsFields="selectedContact" :getData="getData" :byLocalStorage="byLocalStorage"
+    :allFormsFields=" selectedContact" :getData="getData" :byLocalStorage="byLocalStorage"
     @update:mainTableKey="updateMainTableKey" :fetchUsers="fetchUsers()" />
 
   <tr v-for="(item, index) in users" :key="index"

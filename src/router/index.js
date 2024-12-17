@@ -6,8 +6,7 @@
 
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
-import showAll from '@/views/container.vue'
-import addContact from '@/views/addContact.vue'
+import home from '@/views/container.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,18 +14,10 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: showAll,
-      alias: ['/dashboard','/all'],   
+      component: home,
+      alias: ['/dashboard','/index' , '/home'],   
 
     },
-    {
-      path: '/add',
-      name: 'addContact',
-      component: addContact,
-      alias: '/create',
-
-    },
-
   ],
 })
 
