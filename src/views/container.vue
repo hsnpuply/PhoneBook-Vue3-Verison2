@@ -12,6 +12,7 @@ import {
   convertNumbersToPersian as PersianNumberConvertorX,
   deleteLocalstorageContact as DeleteLocalStorageContacts,
 } from "../utilities/functions";
+import { fa } from "vuetify/locale";
 
 const loadingPreview = ref(true);
 
@@ -627,15 +628,20 @@ const getTitleEmoji = (contactsPreview)=>{
   <!-- <p>Current Key: {{ state.mainTableKey }}</p>
   <p>Current Length of Users : {{ users.length }}</p> -->
 
-  <Forms v-model:modelState="state.forms.register" title="ثبت مخاطب" :registerMode="true" :getData="getData"
-    :byLocalStorage="state.contacts.contactsPreview == 'LocalStorage' ? true : false" :mainTableKey="state.mainTableKey"
-     @update:mainTableKey="updateMainTableKey"
+  <Forms
+    v-model:modelState="state.forms.register" title="ثبت مخاطب"
+    :registerMode="true" :editMode="false" :getData="getData"
+     :mainTableKey="state.mainTableKey"
+    @update:mainTableKey="updateMainTableKey"
+    :contactsPreview="state.contacts.contactsPreview"
     @update:users="updateUsers" />
   <!-- :getData="getData()" -->
 
   <Forms v-model:model-state="state.forms.edit" title="ویرایش مخاطب" :editMode="true" :currentID="state.contacts.selectedContact.id"
     :allFormsFields="state.contacts.selectedContact" :getData="getData"
-     :byLocalStorage="state.contacts.contactsPreview == 'LocalStorage' ? true : false"
+     
+     :contactsPreview="state.contacts.contactsPreview"
+      :registerMode="false"
     @update:mainTableKey="updateMainTableKey" :fetchUsers="fetchUsers()" />
 
   <tr v-for="(item, index) in users" :key="index"

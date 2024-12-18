@@ -20,12 +20,10 @@ const props = defineProps({
   allFormsFields: Object,
   getData: Function,
   contactsPreview: String,
-  byLocalStorage:Boolean,
   mainTableKey: Number,
   fetchUsers: Function,
   users: Object,
 });
-
 const currentValue = ref(props.mainTableKey);
 
 function incrementValue() {
@@ -76,6 +74,7 @@ const emit = defineEmits([
 
 // ON UPDATE Component
 onUpdated(() => {
+
   if (props.allFormsFields && props.editMode && dataPassPermission.value) {
     Object.assign(state.form, props.allFormsFields);
   }
@@ -95,6 +94,7 @@ onMounted(() => {
   if (props.allFormsFields) {
     Object.assign(state.form, props.allFormsFields);
   }
+
 });
 
 // const schema = yup.object({
@@ -131,36 +131,26 @@ const { value: favorites } = useField("favorites");
 const { value: avatar } = useField("avatar");
 
 const handleSubmitFormClick = handleSubmit((item) => {
+  // 
   if (props.registerMode) {
-    props.byLocalStorage ? submitData() : submitInServer();
-  } else {
-    props.byLocalStorage ? UpdateDialog(item) : updateInServer();
+    // props.byLocalStorage ? submitData() : submitInServer();
+    if(props.contactsPreview == 'LocalStorage'){
+      submitData();
+
+    }else if(props.contactsPreview == 'Server'){
+      submitInServer()
+
+    }
+
+
+  } else if(props.editMode) {
+    if(props.contactsPreview == 'LocalStorage'){
+      UpdateDialog(item)
+    }else if(props.contactsPreview == 'Server'){
+      updateInServer()
+    }
+    // props.byLocalStorage ? UpdateDialog(item) : updateInServer();
   }
-
-  // switch(props.registerMode){
-  //   case props.contactsPreview == 'LocalStorage':
-  //     alert('ay nasime sahari az LocalStorage')
-  //     submitData()
-  //     break;
-  //   case props.contactsPreview == 'Server':
-  //     alert('ay nasime sahari az Server')
-  //     submitInServer()
-  //     break;
-  // }
-
-  // debugger
-  //   switch(props.editMode){
-  //     case props.contactsPreview == 'LocalStorage':
-  //       alert('haji das khosh Edit Local')
-  //       UpdateDialog(item)
-  //       break;
-  //       case props.contactsPreview == 'Server':
-  //         alert('haji das khosh Edit Server')
-  //         updateInServer()
-  //   }
-  // switch(props.contactsPreview){
-  //   case 'LocalStorage'
-  // }
 
   // می‌تواند به switch تغییر یابد در صورت نیاز به فرم‌های بیشتر
 });
