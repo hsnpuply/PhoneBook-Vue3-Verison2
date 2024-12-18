@@ -12,7 +12,6 @@ import {
   convertNumbersToPersian as PersianNumberConvertorX,
   deleteLocalstorageContact as DeleteLocalStorageContacts,
 } from "../utilities/functions";
-import { fa } from "vuetify/locale";
 
 const loadingPreview = ref(true);
 
@@ -254,13 +253,13 @@ const serverCondition = () => {
 const drawer = ref(null);
 
 const noContactIconCondition = computed(() => {
-  if (state.contacts.LocalContacts.length === 0 && byLocalStorage.value) {
+  if (state.contacts.LocalContacts.length === 0 && state.contacts.contactsPreview == 'LocalStorage') {
     return true;
-  } else if (users.length === 0 && !byLocalStorage.value) {
+  } else if (users.length === 0 && state.contacts.contactsPreview == 'Server') {
     return true;
   }
-  console.log("one of them might having having Records");
-  console.log(users.length);
+  // console.log("one of them might having having Records");
+  // console.log(users.length);
 
   return false;
 });
