@@ -19,7 +19,8 @@ const props = defineProps({
   UpdateDialog: Function,
   allFormsFields: Object,
   getData: Function,
-  byLocalStorage: Boolean,
+  contactsPreview: String,
+  byLocalStorage:Boolean,
   mainTableKey: Number,
   fetchUsers: Function,
   users: Object,
@@ -135,6 +136,31 @@ const handleSubmitFormClick = handleSubmit((item) => {
   } else {
     props.byLocalStorage ? UpdateDialog(item) : updateInServer();
   }
+
+  // switch(props.registerMode){
+  //   case props.contactsPreview == 'LocalStorage':
+  //     alert('ay nasime sahari az LocalStorage')
+  //     submitData()
+  //     break;
+  //   case props.contactsPreview == 'Server':
+  //     alert('ay nasime sahari az Server')
+  //     submitInServer()
+  //     break;
+  // }
+
+  // debugger
+  //   switch(props.editMode){
+  //     case props.contactsPreview == 'LocalStorage':
+  //       alert('haji das khosh Edit Local')
+  //       UpdateDialog(item)
+  //       break;
+  //       case props.contactsPreview == 'Server':
+  //         alert('haji das khosh Edit Server')
+  //         updateInServer()
+  //   }
+  // switch(props.contactsPreview){
+  //   case 'LocalStorage'
+  // }
 
   // می‌تواند به switch تغییر یابد در صورت نیاز به فرم‌های بیشتر
 });

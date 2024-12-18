@@ -61,16 +61,18 @@ const state = reactive({
 
 const storedPreviewStatus = localStorage.getItem('Preview Status');
 
-watch(byLocalStorage, (newValue) => {
+watch(state.contacts.contactsPreview, (newValue) => {
 
-  if (newValue === true) {
-    previewStatus.value = 'LocalStorage'
-    localStorage.setItem('Preview Status', previewStatus.value);
-    byLocalStorage.value = true;
-  } else {
-    previewStatus.value = 'Server'
-    localStorage.setItem('Preview Status', previewStatus.value);
-    byLocalStorage.value = false;
+  switch (newValue) {
+    case 'LocalStorage':
+    state.contacts.contactsPreview = 'LocalStorage'
+    localStorage.setItem('Preview Status', state.contacts.contactsPreview);
+    // byLocalStorage.value = true;
+  break;
+    case 'Server' :
+    state.contacts.contactsPreview = 'Server'
+    localStorage.setItem('Preview Status', state.contacts.contactsPreview);
+    // byLocalStorage.value = false;
   }
 })
 
@@ -79,17 +81,18 @@ watch(byLocalStorage, (newValue) => {
 onMounted(async () => {
   if (!localStorage.getItem('Preview Status')) {
     localStorage.setItem('Preview Status', 'LocalStorage');
-    byLocalStorage.value = true;
+    state.contacts.contactsPreview = 'LocalStorage'
+    // byLocalStorage.value = true;
   }
 
-  if (storedPreviewStatus === 'LocalStorage') {
-    previewStatus.value = 'LocalStorage'
-    localStorage.setItem('Preview Status', previewStatus.value);
-    byLocalStorage.value = true;
-  } else if (storedPreviewStatus === 'Server') {
-    previewStatus.value = 'Server'
-    localStorage.setItem('Preview Status', previewStatus.value);
-    byLocalStorage.value = false;
+  if (state.contacts.storedPreviewStatus == 'LocalStorage') {
+    state.contacts.contactsPreview = 'LocalStorage'
+    localStorage.setItem('Preview Status', state.contacts.contactsPreview);
+    // byLocalStorage.value = true;
+  } else if (state.contacts.storedPreviewStatus == 'Server') {
+    state.contacts.contactsPreview = 'Server'
+    localStorage.setItem('Preview Status', state.contacts.contactsPreview);
+    // byLocalStorage.value = false;
   }
   getData();
   sekeletonLoadsLocal();
@@ -117,12 +120,26 @@ function updateUsers(newValue) {
 
 
 const getData = () => {
-  if (byLocalStorage.value) {
-    const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
+  // if (byLocalStorage.value) {
+  //   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
+  //   state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...storedContacts);
+
+  // } else {
+  //   fetchUsers();
+  // }
+  
+  const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
+  switch(state.contacts.contactsPreview){
+    case 'LocalStorage' :
     state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...storedContacts);
-  } else {
+    break;
+
+    case 'Server' :
     fetchUsers();
+    break;
+
   }
+
 };
 
 const sekeletonLoadsLocal = () => {
@@ -219,17 +236,17 @@ const localStorageCondition = () => {
   if (
     state.contacts.LocalContacts.length > 0 &&
     !state.loading.skeletonLoads.LocalContacts &&
-    byLocalStorage.value
+    state.contacts.contactsPreview == 'LocalStorage'
   ) {
-    byLocalStorage.value = true;
+    state.contacts.contactsPreview = 'LocalStorage'
     return true;
   }
 };
 
 const serverCondition = () => {
-  if (users.length > 0 && !state.loading.skeletonLoads.server_1_Contacts && !byLocalStorage.value) {
-    byLocalStorage.value = false;
-    return true;
+  if (users.length > 0 && !state.loading.skeletonLoads.server_1_Contacts && state.contacts.contactsPreview == 'Server') {
+    state.contacts.contactsPreview = 'Server'
+        return true;
   }
 };
 
@@ -248,6 +265,51 @@ const noContactIconCondition = computed(() => {
 });
 
 const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
+
+const getEmojiNodata = (contactsPreview)=>{
+  switch (contactsPreview) {
+    case 'LocalStorage':
+      return '😲';
+    case 'Server':
+      return '😨';
+    case 'Database':
+      return '😎';
+    case 'Cloud':
+      return '☁️';
+    default:
+      return '❓'; // حالت پیش‌فرض
+  }
+}
+
+const savingModeData = (contactsPreview)=>{
+  switch (contactsPreview) {
+    case 'LocalStorage':
+      return 'مرورگر ';
+    case 'Server':
+      return 'سرور';
+    case 'Database':
+      return 'دیتابیس';
+    case 'Cloud':
+      return 'ابر';
+    default:
+      return 'محل نامشخص'; // حالت پیش‌فرض
+  }
+}
+
+const getTitleEmoji = (contactsPreview)=>{
+  switch (contactsPreview) {
+    case 'LocalStorage':
+      return 'mdi-web';
+    case 'Server':
+      return 'mdi-server';
+    case 'Database':
+      return 'mdi-database';
+    case 'Cloud':
+      return 'mid-cloud';
+    default:
+      return 'mdi-question-mark'; // حالت پیش‌فرض
+  }
+}
 </script>
 <template>
   <div class="w-full h-[100vh] flex items-center justify-center bg-black/20" v-if="!state.loading.loadingStatus">
@@ -257,8 +319,9 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
     <header class="titlePage overflow-hidden">
       <div class="titleText animate__animated animate__fadeInUp animate__slow">
         <h1 class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2">
-          <span :class="byLocalStorage ? 'mdi mdi-web' : 'mdi mdi-server'"></span> دفترچه
-          تلفن {{ byLocalStorage ? "مرورگر" : "سرور" }}
+          <span class="mdi" :class="getTitleEmoji(state.contacts.contactsPreview)"></span>
+           دفترچه
+          تلفن {{ savingModeData(state.contacts.contactsPreview) }}
         </h1>
       </div>
     </header>
@@ -398,8 +461,11 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
           " v-if="noContactIconCondition">
         <img src="../assets/no-data.jpg" alt="" class="w-[35rem]" />
         <p class="pb-10 text-3xl">
-          {{ byLocalStorage ? "😲" : "😨" }} هیچ مخاطبی در{{
-            byLocalStorage ? "مرورگر" : "سرور"
+          {{ getEmojiNodata(state.contacts.contactsPreview) }}
+
+           هیچ مخاطبی در
+           {{
+            savingModeData(state.contacts.contactsPreview)
           }}
           موجود نیست
         </p>
@@ -408,16 +474,17 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!state.loading.skeletonLoads.LocalContacts && byLocalStorage">
+      v-if="!state.loading.skeletonLoads.LocalContacts && state.contacts.contactsPreview == 'LocalStorage'">
       <Card v-model:dialogEditState="state.forms.edit" :currentItem="item" :MyLocalContacts="state.contacts.LocalContacts"
         :selectedContact="state.contacts.selectedContact" :all_forms_fields="item" v-for="(item, index) in state.contacts.LocalContacts"
-        :deleteServerContact="deleteServerContact" :byLocalStorage="byLocalStorage" :key="index"
+        :deleteServerContact="deleteServerContact" :contactsPreview="state.contacts.contactsPreview" :key="index"
         class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
+    
 
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!state.loading.skeletonLoads.LocalContacts && !byLocalStorage">
+      v-if="!state.loading.skeletonLoads.LocalContacts && state.contacts.contactsPreview == 'Server'">
       <Card v-model:dialogEditState="state.forms.edit" v-for="(item, index) in users" :currentItem="item"
         :MyLocalContacts="state.contacts.LocalContacts" :selectedContact="state.contacts.selectedContact" :all_forms_fields="item"
         :currentID="state.contacts.selectedContact.id" :deleteServerContact="deleteServerContact" :key="index"
@@ -434,20 +501,30 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
     </div>
 
     <div
-      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-3s animate__fadeInRight">
-      <v-btn v-if="
-        byLocalStorage
-          ? !state.loading.skeletonLoads.LocalContacts || state.contacts.LocalContacts.length <= 0
+      class="addNewContact w-full flex xl:!justify-end justify-center
+       container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0
+        animate__animated animate__slow animate__delay-3s animate__fadeInRight">
+      <v-btn v-if="!state.loading.skeletonLoads.LocalContacts && !state.loading.skeletonLoads.server_1_Contacts"
+       variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
+        ثبت مخاطب
+        <v-icon left> mdi-plus </v-icon>
+      </v-btn>
+<!-- 
+      <v-btn v-if="byLocalStorage ? !state.loading.skeletonLoads.LocalContacts || state.contacts.LocalContacts.length <= 0
           : !state.loading.skeletonLoads.server_1_Contacts || users.length <= 0
       " variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
-      </v-btn>
+      </v-btn> -->
+      <!-- <v-btn v-if="!state.loading.skeletonLoads.LocalContacts && !state.loading.skeletonLoads.server_1_Contacts">
+        ثبت مخاطب
+      </v-btn> -->
     </div>
     <div class="flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0">
       <v-skeleton-loader v-if="
-        state.loading.skeletonLoads.LocalContacts && state.contacts.LocalContacts.length > 0 && byLocalStorage
-      " type="button" color="transparent" class="w-32">
+        state.loading.skeletonLoads.LocalContacts && state.contacts.LocalContacts.length > 0 && 
+        state.contacts.contactsPreview == 'LocalStorage'"
+         type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
     <v-navigation-drawer v-model="drawer" temporary class=" select-none fixed duration-[580ms] h-[100vh] left-0 top-0 bg-[#ebf1ef]"
@@ -519,8 +596,9 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
   
             <div class="webBroweser">
               <v-btn class="text-right w-full md:w-2/3 " size="x-large"
-                :variant="byLocalStorage ? 'elevated' : 'outlined'" :color="byLocalStorage ? 'green' : 'black'"
-                @click.stop="byLocalStorage = true" prepend-icon="mdi mdi-web">مرورگر
+              :variant="state.contacts.contactsPreview == 'LocalStorage' ? 'elevated' : 'outlined'"
+              :color="state.contacts.contactsPreview == 'LocalStorage'? 'green' : 'black'"
+              @click.stop="state.contacts.contactsPreview = 'LocalStorage'" prepend-icon="mdi mdi-web">مرورگر
                 <v-tooltip activator="parent" location="top">مخاطبین در مرورگر شما ذخیره میشود و تازمانی که شما ذخیره
                   ساز محلی را پاک نکنید مخاطبین باقی میمانند</v-tooltip>
               </v-btn>
@@ -528,8 +606,9 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
             <div class="server_1">
               <v-btn
                 class="text-right w-full md:w-2/3 " size="x-large"
-                :variant="!byLocalStorage ? 'elevated' : 'outlined'" :color="!byLocalStorage ? 'green' : 'black'"
-                @click.stop="byLocalStorage = false" prepend-icon="mdi mdi-server"> سرور
+                :variant="state.contacts.contactsPreview == 'Server' ? 'elevated' : 'outlined'"
+                 :color="state.contacts.contactsPreview == 'Server'? 'green' : 'black'"
+                @click.stop="state.contacts.contactsPreview = 'Server'" prepend-icon="mdi mdi-server"> سرور
                 <v-tooltip activator="parent" location="bottom">مخاطبین در سرور شماره یک ذخیره میشوند</v-tooltip>
               </v-btn>
             </div>
@@ -549,12 +628,14 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
   <p>Current Length of Users : {{ users.length }}</p> -->
 
   <Forms v-model:modelState="state.forms.register" title="ثبت مخاطب" :registerMode="true" :getData="getData"
-    :byLocalStorage="byLocalStorage" :mainTableKey="state.mainTableKey" @update:mainTableKey="updateMainTableKey"
+    :byLocalStorage="state.contacts.contactsPreview == 'LocalStorage' ? true : false" :mainTableKey="state.mainTableKey"
+     @update:mainTableKey="updateMainTableKey"
     @update:users="updateUsers" />
   <!-- :getData="getData()" -->
 
   <Forms v-model:model-state="state.forms.edit" title="ویرایش مخاطب" :editMode="true" :currentID="state.contacts.selectedContact.id"
-    :allFormsFields="state.contacts.selectedContact" :getData="getData" :byLocalStorage="byLocalStorage"
+    :allFormsFields="state.contacts.selectedContact" :getData="getData"
+     :byLocalStorage="state.contacts.contactsPreview == 'LocalStorage' ? true : false"
     @update:mainTableKey="updateMainTableKey" :fetchUsers="fetchUsers()" />
 
   <tr v-for="(item, index) in users" :key="index"

@@ -1,28 +1,10 @@
 {
   "users": [
     {
-      "id": 1,
-      "fullname": "Hasani Barati",
-      "isCoworker": true,
-      "phoneNumber": "09928717698",
-      "skills": [
-        "aa",
-        "bb",
-        "cc"
-      ],
-      "favorites": [
-        "apple",
-        "bannana",
-        "avacado"
-      ],
-      "selectedDate": "2022-03-04",
-      "avatar": "../src/assets/background.png"
-    },
-    {
-      "id": "67ad",
-      "phoneNumber": "qweqwe",
-      "fullname": "qwewqe",
-      "selectedDate": null,
+      "id": "9b75",
+      "phoneNumber": "numb",
+      "fullname": "Servered",
+      "selectedDate": "",
       "skills": [],
       "favorites": [],
       "avatar": null,

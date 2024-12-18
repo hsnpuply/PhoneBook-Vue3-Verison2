@@ -14,7 +14,7 @@ const props = defineProps({
   currentItem:Object,
   deleteServerContact:Function,
   currentID:String,
-  byLocalStorage:Boolean,
+  contactsPreview:String
 });
 
 const myCurrentID = ref(props.currentID)
@@ -29,12 +29,13 @@ const toggleMyEditDialog = () => {
 };
 
 const deleteByMode = ()=>{
-  console.log(props.currentItem)
-  if(props.byLocalStorage){
+switch(props.contactsPreview){
+  case 'LocalStorage':
   deleteContact(props.all_forms_fields.id,props.MyLocalContacts)
-}else{
+  break;
+  case 'Server':
   props.deleteServerContact(props.currentItem.id,)
-  
+  break;
 }
 
 }
