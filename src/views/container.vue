@@ -77,8 +77,8 @@ watch(state.contacts.contactsPreview, (newValue) => {
 })
 
 
-
 onMounted(async () => {
+
   if (!localStorage.getItem('Preview Status')) {
     localStorage.setItem('Preview Status', 'LocalStorage');
     state.contacts.contactsPreview = 'LocalStorage'
@@ -114,9 +114,7 @@ onMounted(async () => {
 function updateMainTableKey(newValue) {
   state.mainTableKey = newValue;
 }
-function updateUsers(newValue) {
-  users = users + newValue;
-}
+
 
 
 const getData = () => {
@@ -226,7 +224,10 @@ const fetchUsers = async () => {
   try {
     const response = await axios.get("http://localhost:4000/users"); // Replace with your actual URL
     users = response.data;
-    console.log(users);
+    state.contacts.server_1_Contacts = response.data;
+    console.log(state.contacts.server_1_Contacts);
+    
+    // console.log(users);
   } catch (error) {
     console.error("Error fetching users:", error);
   }
@@ -252,10 +253,10 @@ const serverCondition = () => {
 
 const drawer = ref(null);
 
-const noContactIconCondition = computed(() => {
+const noContactPreview = computed(() => {
   if (state.contacts.LocalContacts.length === 0 && state.contacts.contactsPreview == 'LocalStorage') {
     return true;
-  } else if (users.length === 0 && state.contacts.contactsPreview == 'Server') {
+  } else if (state.contacts.server_1_Contacts.length === 0 && state.contacts.contactsPreview == 'Server') {
     return true;
   }
   // console.log("one of them might having having Records");
@@ -423,7 +424,7 @@ const getTitleEmoji = (contactsPreview)=>{
         </tbody>
 
         <tbody v-if="serverCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
-          <tr v-for="(item, index) in users" :key="index"
+          <tr v-for="(item, index) in state.contacts.server_1_Contacts" :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
             @dblclick="toggleEditForm(item)">
             <td>{{ index + 1 }}</td>
@@ -458,7 +459,7 @@ const getTitleEmoji = (contactsPreview)=>{
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
         :class="state.loading.preview ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''
-          " v-if="noContactIconCondition">
+          " v-if="noContactPreview">
         <img src="../assets/no-data.jpg" alt="" class="w-[35rem]" />
         <p class="pb-10 text-3xl">
           {{ getEmojiNodata(state.contacts.contactsPreview) }}
