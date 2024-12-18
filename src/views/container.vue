@@ -62,6 +62,8 @@ const state = reactive({
 const storedPreviewStatus = localStorage.getItem('Preview Status');
 
 watch(state.contacts.contactsPreview, (newValue) => {
+  alert(state.contacts.contactsPreview)
+  alert('something changed in contacts Preview')
 
   switch (newValue) {
     case 'LocalStorage':
@@ -312,6 +314,11 @@ const getTitleEmoji = (contactsPreview)=>{
     default:
       return 'mdi-question-mark'; // حالت پیش‌فرض
   }
+}
+
+const changePreviewStatus = (status)=>{
+  state.contacts.contactsPreview = status;
+  localStorage.setItem('Preview Status', status);
 }
 </script>
 <template>
@@ -601,7 +608,7 @@ const getTitleEmoji = (contactsPreview)=>{
               <v-btn class="text-right w-full md:w-2/3 " size="x-large"
               :variant="state.contacts.contactsPreview == 'LocalStorage' ? 'elevated' : 'outlined'"
               :color="state.contacts.contactsPreview == 'LocalStorage'? 'green' : 'black'"
-              @click.stop="state.contacts.contactsPreview = 'LocalStorage'" prepend-icon="mdi mdi-web">مرورگر
+              @click.stop="changePreviewStatus('LocalStorage')" prepend-icon="mdi mdi-web">مرورگر
                 <v-tooltip activator="parent" location="top">مخاطبین در مرورگر شما ذخیره میشود و تازمانی که شما ذخیره
                   ساز محلی را پاک نکنید مخاطبین باقی میمانند</v-tooltip>
               </v-btn>
@@ -611,7 +618,7 @@ const getTitleEmoji = (contactsPreview)=>{
                 class="text-right w-full md:w-2/3 " size="x-large"
                 :variant="state.contacts.contactsPreview == 'Server' ? 'elevated' : 'outlined'"
                  :color="state.contacts.contactsPreview == 'Server'? 'green' : 'black'"
-                @click.stop="state.contacts.contactsPreview = 'Server'" prepend-icon="mdi mdi-server"> سرور
+                @click.stop="changePreviewStatus('Server')" prepend-icon="mdi mdi-server"> سرور
                 <v-tooltip activator="parent" location="bottom">مخاطبین در سرور شماره یک ذخیره میشوند</v-tooltip>
               </v-btn>
             </div>
