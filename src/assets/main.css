@@ -64,3 +64,18 @@ table{
     
   }
   /* End of Drawer */
+
+
+  .tableHeadings {
+    background-color: red;
+    padding: 20px;
+  }
+  
+  .the_table {
+    filter: drop-shadow(4px 4px 5px #777575);
+    direction: rtl;
+  }
+  
+  .swal2-actions {
+    flex-direction: row-reverse !important;
+  }

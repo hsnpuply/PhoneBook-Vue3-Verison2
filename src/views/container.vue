@@ -117,7 +117,7 @@ function updateMainTableKey(newValue) {
 
 
 
-const getData = () => {
+const getData = async () => {
   // if (byLocalStorage.value) {
   //   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
   //   state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...storedContacts);
@@ -133,7 +133,7 @@ const getData = () => {
     break;
 
     case 'Server' :
-    fetchUsers();
+    await fetchUsers();
     break;
 
   }
@@ -175,7 +175,9 @@ const deleteServerContact = async (id) => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:4000/users/${id}`); // Update with your server's base URL
-        users = users.filter((user) => user.id !== id); // Update the local list of users
+        // users = users.filter((user) => user.id !== id); // Update the local list of users
+        state.contacts.server_1_Contacts  = state.contacts.server_1_Contacts.filter((contact) => contact.id !== id); // Update the local list of users
+        
         state.mainTableKey = state.mainTableKey + 1;
         // Show success notification
         const Toast = Swal.mixin({
@@ -214,9 +216,9 @@ const toggleRegisterForm = () => {
 };
 
 const UpdateStatusDataServer = ref(false);
-const UpdateDataServer = () => {
+const UpdateDataServer = async () => {
   if (UpdateStatusDataServer.value) {
-    fetchUsers();
+     await fetchUsers();
   }
 };
 
@@ -245,7 +247,7 @@ const localStorageCondition = () => {
 };
 
 const serverCondition = () => {
-  if (users.length > 0 && !state.loading.skeletonLoads.server_1_Contacts && state.contacts.contactsPreview == 'Server') {
+  if ( state.contacts.server_1_Contacts.length > 0 && !state.loading.skeletonLoads.server_1_Contacts && state.contacts.contactsPreview == 'Server') {
     state.contacts.contactsPreview = 'Server'
         return true;
   }
@@ -671,6 +673,7 @@ const getTitleEmoji = (contactsPreview)=>{
         </v-btn>
       </div>
     </td>
+    uzera
   </tr>
 </template>
 
@@ -681,18 +684,4 @@ const getTitleEmoji = (contactsPreview)=>{
 }
 </style>
 
-<style>
-.tableHeadings {
-  background-color: red;
-  padding: 20px;
-}
 
-.the_table {
-  filter: drop-shadow(4px 4px 5px #777575);
-  direction: rtl;
-}
-
-.swal2-actions {
-  flex-direction: row-reverse !important;
-}
-</style>

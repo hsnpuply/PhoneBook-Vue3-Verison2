@@ -86,7 +86,7 @@ onUpdated(() => {
     skills.value = state.form.skills;
     favorites.value = state.form.favorites;
     avatar.value = state.form.avatar;
-    console.log(phoneNumber.value);
+    // console.log(phoneNumber.value);
   }
 });
 
