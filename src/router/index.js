@@ -6,7 +6,7 @@
 
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
-import home from '@/views/container.vue'
+import home from '@/views/container/container.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

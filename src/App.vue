@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import Container from './views/container.vue';
+import Container from './views/container/container.vue';
 
 //
 </script>

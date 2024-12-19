@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import { ref, reactive, onMounted, computed, watch, watchEffect } from "vue";
 import moment from "moment-jalaali";
 import Forms from "@/components/forms.vue";
-import Card from "@/components/contact_card.vue";
+import Card from "@/views/container/components/contact_card.vue";
 import axios from "axios";
 import { HalfCircleSpinner } from "epic-spinners";
 import "animate.css";
@@ -11,7 +11,8 @@ import "animate.css";
 import {
   convertNumbersToPersian as PersianNumberConvertorX,
   deleteLocalstorageContact as DeleteLocalStorageContacts,
-} from "../utilities/functions";
+} from "../../utilities/functions";
+import ContactRecord from "./components/contactRecord.vue";
 
 const loadingPreview = ref(true);
 
@@ -399,7 +400,7 @@ const changePreviewStatus = (status)=>{
           </tr>
         </tbody>
 
-        <tbody v-if="localStorageCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
+        <!-- <tbody v-if="localStorageCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
           <tr v-for="(item, index) in state.contacts.LocalContacts" :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
             @dblclick="toggleEditForm(item)">
@@ -431,9 +432,23 @@ const changePreviewStatus = (status)=>{
               </div>
             </td>
           </tr>
-        </tbody>
+        </tbody> -->
+        <!-- Locals -->
+        <ContactRecord
+          v-if="localStorageCondition()"
+          :LocalContacts="state.contacts.LocalContacts"
+          :DeleteLocalStorageContacts="DeleteLocalStorageContacts"
+          :toggleEditForm="toggleEditForm"
+         />
 
-        <tbody v-if="serverCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
+         <!-- Server -->
+         <ContactRecord
+          v-if="serverCondition()"
+          :LocalContacts="state.contacts.server_1_Contacts"
+          :DeleteLocalStorageContacts="deleteServerContact"
+          :toggleEditForm="toggleEditForm"
+         />
+        <!-- <tbody v-if="serverCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
           <tr v-for="(item, index) in state.contacts.server_1_Contacts" :key="index"
             class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
             @dblclick="toggleEditForm(item)">
@@ -464,13 +479,13 @@ const changePreviewStatus = (status)=>{
               </div>
             </td>
           </tr>
-        </tbody>
+        </tbody> -->
       </v-table>
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
         :class="state.loading.preview ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''
           " v-if="noContactPreview">
-        <img src="../assets/no-data.jpg" alt="" class="w-[35rem]" />
+        <img src="../../assets/no-data.jpg" alt="" class="w-[35rem]" />
         <p class="pb-10 text-3xl">
           {{ getEmojiNodata(state.contacts.contactsPreview) }}
 
@@ -483,6 +498,7 @@ const changePreviewStatus = (status)=>{
       </div>
     </div>
 
+<!-- Card Of LocalContacts -->
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
       v-if="!state.loading.skeletonLoads.LocalContacts && state.contacts.contactsPreview == 'LocalStorage'">
@@ -698,7 +714,7 @@ const changePreviewStatus = (status)=>{
 
 <style scoped>
 .mainContent {
-  background-image: url(../assets/test.jpg);
+  background-image: url(../../assets/test.jpg);
   background-position: center;
 }
 </style>
