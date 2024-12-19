@@ -26,8 +26,11 @@ const emit = defineEmits([
 const toggleDrawer = ()=>{
     state.toggle.drawer= false
     emit("update:drawer", state.toggle.drawer); 
-
 }
+
+watch(() => props.contactsPreview,(newVal)=>{
+  state.contacts.contactsPreview=newVal;
+})
 </script>
 <template>
         <v-navigation-drawer v-model="props.drawer"  temporary class=" select-none fixed duration-[580ms] h-[100vh] left-0 top-0 bg-[#ebf1ef]"
