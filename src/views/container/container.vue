@@ -321,6 +321,7 @@ const getTitleEmoji = (contactsPreview)=>{
 const changePreviewStatus = (status)=>{
   state.contacts.contactsPreview = status;
   localStorage.setItem('Preview Status', status);
+  getData()
 }
 </script>
 <template>
