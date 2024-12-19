@@ -1,11 +1,14 @@
 <template>
   <v-app class="bg-gray-800">
     <v-main>
-      <router-view />
+      <!-- <router-view /> -->
+      <Container />
     </v-main>
   </v-app>
 </template>
 
 <script setup>
+import Container from './views/container.vue';
+
 //
 </script>

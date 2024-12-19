@@ -132,6 +132,7 @@ const getData = async () => {
   switch(state.contacts.contactsPreview){
     case 'LocalStorage' :
     state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...storedContacts);
+    // state.contacts.LocalContacts.push(...storedContacts)
     break;
 
     case 'Server' :
@@ -384,7 +385,7 @@ const changePreviewStatus = (status)=>{
         <!-- Skeleton of Server -->
 
         <tbody class="w-full" v-if="state.loading.skeletonLoads.server_1_Contacts">
-          <tr v-for="(item, index) in users.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
+          <tr v-for="(item, index) in state.contacts.server_1_Contacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
@@ -491,15 +492,26 @@ const changePreviewStatus = (status)=>{
         class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
     
-
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!state.loading.skeletonLoads.LocalContacts && state.contacts.contactsPreview == 'Server'">
-      <Card v-model:dialogEditState="state.forms.edit" v-for="(item, index) in users" :currentItem="item"
+      v-if="!state.loading.skeletonLoads.server_1_Contacts && state.contacts.contactsPreview == 'Server'">
+      <Card
+      v-for="(item, index) in users"
+       v-model:dialogEditState="state.forms.edit" :currentItem="item" :MyLocalContacts="state.contacts.LocalContacts"
+        :selectedContact="state.contacts.selectedContact" :all_forms_fields="item" 
+        :deleteServerContact="deleteServerContact" :contactsPreview="state.contacts.contactsPreview" :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap" />
+    </div>
+
+<!-- main content for cards -->
+   <!-- <div
+      class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
+      v-if="!state.loading.skeletonLoads.server_1_Contacts && state.contacts.contactsPreview == 'Server'">
+      <Card v-model:dialogEditState="state.forms.edit" v-for="(item, index) in state.contacts.server_1_Contacts" :currentItem="item"
         :MyLocalContacts="state.contacts.LocalContacts" :selectedContact="state.contacts.selectedContact" :all_forms_fields="item"
         :currentID="state.contacts.selectedContact.id" :deleteServerContact="deleteServerContact" :key="index"
         class="!max-w-[50%] flex-1 flex-wrap" />
-    </div>
+    </div>  -->
 
     <div
       class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
@@ -653,7 +665,7 @@ const changePreviewStatus = (status)=>{
       :registerMode="false"
     @update:mainTableKey="updateMainTableKey" :fetchUsers="fetchUsers()" />
 
-  <tr v-for="(item, index) in users" :key="index"
+  <!-- <tr v-for="(item, index) in users" :key="index"
     class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
     @dblclick="toggleEditForm(item)">
     <td>{{ index + 1 }}</td>
@@ -681,7 +693,7 @@ const changePreviewStatus = (status)=>{
       </div>
     </td>
     uzera
-  </tr>
+  </tr> -->
 </template>
 
 <style scoped>
