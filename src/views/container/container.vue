@@ -13,6 +13,7 @@ import {
   deleteLocalstorageContact as DeleteLocalStorageContacts,
 } from "../../utilities/functions";
 import ContactRecord from "./components/contactRecord.vue";
+import Drawer from "./components/drawer.vue";
 
 const loadingPreview = ref(true);
 
@@ -566,7 +567,7 @@ const changePreviewStatus = (status)=>{
          type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
-    <v-navigation-drawer v-model="drawer" temporary class=" select-none fixed duration-[580ms] h-[100vh] left-0 top-0 bg-[#ebf1ef]"
+    <!-- <v-navigation-drawer v-model="drawer" temporary class=" select-none fixed duration-[580ms] h-[100vh] left-0 top-0 bg-[#ebf1ef]"
       :width="500">
       <v-list-item class="bg-[#f2faf5] h-16  shadow-sm shadow-sky-600/20 ">
         <div class="headerDrawer    ">
@@ -597,7 +598,6 @@ const changePreviewStatus = (status)=>{
             </h3>
           </div>
           <div class="apperanceSettingsList flex items-center justify-between  ">
-            <!-- Theme Setting -->
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6">
               <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full select-none">?
 
@@ -609,7 +609,6 @@ const changePreviewStatus = (status)=>{
               <v-select :items="themeItems" class="w-28 text-right " label="رنگ" bg-color="white" variant="outlined" />
             </div>
           </div>
-          <!-- Animation -->
           <div class="animationSettings flex items-ceneter justify-between ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
               <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full select-none">
@@ -619,9 +618,8 @@ const changePreviewStatus = (status)=>{
                 ?</span>
               <span class="text-black font-semibold">انیمیشن :</span>
             </div>
-            <!-- Centered Switch Button -->
             <div class="animationSwitchButton flex justify-center items-center ">
-              <v-switch color="success" ripple class=" flex switchBtn" />
+              <v-switch color="success" ripple class=" flex switchBtn " />
             </div>
           </div>
         </div>
@@ -655,16 +653,16 @@ const changePreviewStatus = (status)=>{
         </div>
       </div>
 
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
 
-
+    <Drawer v-model="drawer" v-model:drawer="drawer" :contactsPreview="state.contacts.contactsPreview" 
+      :changePreviewStatus="changePreviewStatus"
+    />
     <v-main style="height: 250px">
       <div class="d-flex justify-center align-center h-100"></div>
     </v-main>
   </div>
 
-  <!-- <p>Current Key: {{ state.mainTableKey }}</p>
-  <p>Current Length of Users : {{ users.length }}</p> -->
 
   <Forms
     v-model:modelState="state.forms.register" title="ثبت مخاطب"
@@ -682,35 +680,7 @@ const changePreviewStatus = (status)=>{
       :registerMode="false"
     @update:mainTableKey="updateMainTableKey" :fetchUsers="fetchUsers()" />
 
-  <!-- <tr v-for="(item, index) in users" :key="index"
-    class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
-    @dblclick="toggleEditForm(item)">
-    <td>{{ index + 1 }}</td>
-    <td>
-      <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="item.avatar" />
-    </td>
-    <td>{{ item.fullname }}</td>
-    <td>{{ PersianNumberConvertorX(item.phoneNumber) }}</td>
-    <td>
-      {{ PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD")) }}
-    </td>
-    <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
-    <td>{{ item.skills ? item.skills.join(" , ") : "" }}</td>
-    <td>{{ item.favorites ? item.favorites.join(" , ") : "" }}</td>
-    <td class="">
-      <div class="actionButtonsContainer flex gap-2 items-center justify-center">
-        <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete" @click="deleteServerContact(item.id)"
-          class="bg-red-600/90 hover:bg-red-600/95">
-          حذف
-        </v-btn>
-        <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditForm(item)"
-          class="bg-sky-600/90 hover:bg-sky-600/95">
-          ویرایش
-        </v-btn>
-      </div>
-    </td>
-    uzera
-  </tr> -->
+ 
 </template>
 
 <style scoped>
