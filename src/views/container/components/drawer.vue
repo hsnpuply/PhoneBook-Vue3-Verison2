@@ -31,9 +31,29 @@ const toggleDrawer = ()=>{
 watch(() => props.contactsPreview,(newVal)=>{
   state.contacts.contactsPreview=newVal;
 })
+
+const themeChanger = (item) => {
+  switch (item) {
+    case 'سبز':
+      return 'bg-gradient-to-t from-[#ebf1ef] to-[#a8e6cf]'; // ترکیب سبز روشن و سبز ملایم
+    case 'آبی':
+      return 'bg-gradient-to-t from-[#ebf0f1] to-[#87ceeb]'; // ترکیب آبی آسمانی و آبی دریایی
+    case 'بنفش':
+      return 'bg-gradient-to-t from-[#edebf1] to-[#e1abf7]'; // ترکیب بنفش عمیق و بنفش ملایم
+    case 'زرد':
+      return 'bg-gradient-to-t from-[#fcfbfa] to-[#f7da63]'; // ترکیب زرد خورشیدی و زرد طلایی
+  }
+};
+
+const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
+
+const PickedTheme = ref('سبز')
+
+
 </script>
 <template>
-        <v-navigation-drawer v-model="props.drawer"  temporary class=" select-none fixed duration-[580ms] h-[100vh] left-0 top-0 bg-[#ebf1ef]"
+        <v-navigation-drawer v-model="props.drawer"  temporary class=" select-none fixed duration-[580ms] h-[100vh] left-0 top-0 " 
+        :class="themeChanger(PickedTheme) || 'bg-gradient-to-t from-[#ebf1ef] to-[#a8e6cf]'"
       :width="500">
       <v-list-item class="bg-[#f2faf5] h-16  shadow-sm shadow-sky-600/20 ">
         <div class="headerDrawer    ">
@@ -72,7 +92,7 @@ watch(() => props.contactsPreview,(newVal)=>{
               <span class="text-black font-semibold">انتخاب قالب :</span>
             </div>
             <div class="selectTheme">
-              <v-select :items="themeItems" class="w-28 text-right " label="رنگ" bg-color="white" variant="outlined" />
+              <v-select :items="themeItems" v-model="PickedTheme" class="w-28 text-right " label="رنگ" bg-color="white" variant="outlined" />
             </div>
           </div>
           <div class="animationSettings flex items-ceneter justify-between ">
@@ -98,7 +118,7 @@ watch(() => props.contactsPreview,(newVal)=>{
           <div class="storagesButtons flex flex-col gap-4 mt-5 ">
   
             <div class="webBroweser">
-              <v-btn class="text-right w-full md:w-2/3 " size="x-large"
+              <v-btn class="text-right w-full md:w-3/4 " size="x-large"
               :variant="state.contacts.contactsPreview == 'LocalStorage' ? 'elevated' : 'outlined'"
               :color="state.contacts.contactsPreview == 'LocalStorage'? 'green' : 'black'"
               @click.stop="props.changePreviewStatus('LocalStorage')" prepend-icon="mdi mdi-web">مرورگر
@@ -108,7 +128,7 @@ watch(() => props.contactsPreview,(newVal)=>{
             </div>
             <div class="server_1">
               <v-btn
-                class="text-right w-full md:w-2/3 " size="x-large"
+                class="text-right w-full md:w-3/4 " size="x-large"
                 :variant="state.contacts.contactsPreview == 'Server' ? 'elevated' : 'outlined'"
                  :color="state.contacts.contactsPreview == 'Server'? 'green' : 'black'"
                 @click.stop="props.changePreviewStatus('Server')" prepend-icon="mdi mdi-server"> سرور
