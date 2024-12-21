@@ -1,14 +1,3 @@
 {
-  "users": [
-    {
-      "id": "1c23",
-      "phoneNumber": "a",
-      "fullname": "a",
-      "selectedDate": "",
-      "skills": [],
-      "favorites": [],
-      "avatar": null,
-      "isCoworker": false
-    }
-  ]
+  "users": []
 }

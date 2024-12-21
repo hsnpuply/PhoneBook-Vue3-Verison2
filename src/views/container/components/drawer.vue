@@ -50,6 +50,7 @@ const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 const PickedTheme = ref(null)
 
 
+
 </script>
 <template>
         <v-navigation-drawer v-model="props.drawer"  temporary class=" select-none fixed duration-[580ms] h-[100vh] left-0 top-0 " 
@@ -92,7 +93,10 @@ const PickedTheme = ref(null)
               <span class="text-black font-semibold">انتخاب قالب :</span>
             </div>
             <div class="selectTheme">
-              <v-select  :items="themeItems"  v-model="PickedTheme" class="colorSelector w-28  " label="رنگ" bg-color="white" variant="outlined" />
+              <v-select  :items="themeItems"  v-model="PickedTheme" 
+              class="colorSelector w-28  " bg-color="white" variant="outlined" 
+               label="رنگ"
+              />
             </div>
           </div>
           <div class="animationSettings flex items-ceneter justify-between ">
@@ -138,6 +142,8 @@ const PickedTheme = ref(null)
           </div>
         </div>
       </div>
+      <h1 class="text-black text-lg">Lorem ipsum dolor sit amet.</h1>
+
 
     </v-navigation-drawer>
 

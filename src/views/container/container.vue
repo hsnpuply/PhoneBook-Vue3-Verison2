@@ -323,6 +323,10 @@ const changePreviewStatus = (status)=>{
   localStorage.setItem('Preview Status', status);
   getData()
 }
+
+import NoDataServerAnimation from '@/assets/NoDataServerAnimation.json'
+import NoDataLocalAnimation from '@/assets/NoDataLocalAnimation.json'
+
 </script>
 <template>
   <div class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30" v-if="!state.loading.loadingStatus">
@@ -331,14 +335,18 @@ const changePreviewStatus = (status)=>{
       ... در حال بارگذاری
     </h2>
   </div>
+
   <div class="mx-auto mainContent h-full bg-cover" v-if="state.loading.loadingStatus">
     <header class="titlePage overflow-hidden">
-      <div class="titleText animate__animated animate__fadeInUp animate__slow">
+      <div class="relative titleText animate__animated animate__fadeInUp animate__slow">
         <h1 class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2">
           <span class="mdi" :class="getTitleEmoji(state.contacts.contactsPreview)"></span>
            دفترچه
           تلفن {{ savingModeData(state.contacts.contactsPreview) }}
         </h1>
+        <div class="absolute right-0 top-0">
+    <AnalogClock  />
+  </div>
       </div>
     </header>
 
@@ -420,44 +428,16 @@ const changePreviewStatus = (status)=>{
           :toggleEditForm="toggleEditForm"
           
          />
-        <!-- <tbody v-if="serverCondition()" class="bg-[#dddbdb] text-[#212222] overflow-hidden">
-          <tr v-for="(item, index) in state.contacts.server_1_Contacts" :key="index"
-            class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
-            @dblclick="toggleEditForm(item)">
-            <td>{{ index + 1 }}</td>
-            <td>
-              <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="item.avatar" />
-            </td>
-            <td>{{ item.fullname }}</td>
-            <td>{{ PersianNumberConvertorX(item.phoneNumber) }}</td>
-            <td>
-              {{
-                PersianNumberConvertorX(moment(item.selectedDate).format("jYYYY/jMM/jDD"))
-              }}
-            </td>
-            <td>{{ item.isCoworker ? "بله" : "خیر" }}</td>
-            <td>{{ item.skills ? item.skills.join(" , ") : "" }}</td>
-            <td>{{ item.favorites ? item.favorites.join(" , ") : "" }}</td>
-            <td class="">
-              <div class="actionButtonsContainer flex gap-2 items-center justify-center">
-                <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete" @click="deleteServerContact(item.id)"
-                  class="bg-red-600/90 hover:bg-red-600/95">
-                  حذف
-                </v-btn>
-                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditForm(item)"
-                  class="bg-sky-600/90 hover:bg-sky-600/95">
-                  ویرایش
-                </v-btn>
-              </div>
-            </td>
-          </tr>
-        </tbody> -->
+
       </v-table>
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
         :class="state.loading.preview ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''
           " v-if="noContactPreview">
-        <img src="../../assets/no-data.jpg" alt="" class="w-[35rem]" />
+        <!-- <img src="../../assets/no-data.jpg" alt="" class="w-[35rem]" /> -->
+      <Vue3Lottie v-if="state.contacts.contactsPreview === 'Server'" :animationData="NoDataServerAnimation" :height="400" :width="400" />
+      <Vue3Lottie v-if="state.contacts.contactsPreview === 'LocalStorage'" :animationData="NoDataLocalAnimation" :height="400" :width="400" />
+        
         <p class="pb-10 text-3xl">
           {{ getEmojiNodata(state.contacts.contactsPreview) }}
 
@@ -491,15 +471,6 @@ const changePreviewStatus = (status)=>{
         class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
 
-<!-- main content for cards -->
-   <!-- <div
-      class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!state.loading.skeletonLoads.server_1_Contacts && state.contacts.contactsPreview == 'Server'">
-      <Card v-model:dialogEditState="state.forms.edit" v-for="(item, index) in state.contacts.server_1_Contacts" :currentItem="item"
-        :MyLocalContacts="state.contacts.LocalContacts" :selectedContact="state.contacts.selectedContact" :all_forms_fields="item"
-        :currentID="state.contacts.selectedContact.id" :deleteServerContact="deleteServerContact" :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap" />
-    </div>  -->
 
     <div
       class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
@@ -519,16 +490,7 @@ const changePreviewStatus = (status)=>{
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
-<!-- 
-      <v-btn v-if="byLocalStorage ? !state.loading.skeletonLoads.LocalContacts || state.contacts.LocalContacts.length <= 0
-          : !state.loading.skeletonLoads.server_1_Contacts || users.length <= 0
-      " variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
-        ثبت مخاطب
-        <v-icon left> mdi-plus </v-icon>
-      </v-btn> -->
-      <!-- <v-btn v-if="!state.loading.skeletonLoads.LocalContacts && !state.loading.skeletonLoads.server_1_Contacts">
-        ثبت مخاطب
-      </v-btn> -->
+
     </div>
     <div class="flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0">
       <v-skeleton-loader v-if="
@@ -537,93 +499,7 @@ const changePreviewStatus = (status)=>{
          type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
-    <!-- <v-navigation-drawer v-model="drawer" temporary class=" select-none fixed duration-[580ms] h-[100vh] left-0 top-0 bg-[#ebf1ef]"
-      :width="500">
-      <v-list-item class="bg-[#f2faf5] h-16  shadow-sm shadow-sky-600/20 ">
-        <div class="headerDrawer    ">
-          <div class="headerContainer flex items-center justify-between w-full ">
-            <div class="closeDrawer text-[#19a44c] bg-[#9ad7b1] font-extrabold rounded-md cursor-pointer
-               px-2 py-1 text-center text-sm select-none flex items-center justify-center text-lg"
-              @click.stop="drawer = !drawer">
-              <v-icon icon="mdi-close"></v-icon>
-
-            </div>
-            <div class="titleHeader">
-              <h2 class="text-[#38ac67] text-lg font-semibold">تنظیمات کاربری</h2>
-            </div>
-          </div>
-        </div>
-      </v-list-item>
-
-      <v-divider></v-divider>
-
-      <div class="settingsImage mt-8 mb-10 flex items-center justify-center">
-        <img src="@/assets/settingsDrawer.jpg" title="تنظیمات کاربری" class="w-[42%] rounded-lg shadow-sm shadow-black">
-      </div>
-      <div class="listSettings  py-8   flex flex-col gap-5 px-12">
-        <div class="apperanceSettings ">
-          <div class="settingsTitle text-right">
-            <h3 class="text-xl font-semibold text-[#58b97f]"><span class="text-gray-600 select-none ">__ </span> ظاهر
-              <span class=" select-none text-gray-600"> __</span>
-            </h3>
-          </div>
-          <div class="apperanceSettingsList flex items-center justify-between  ">
-            <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6">
-              <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full select-none">?
-
-                <v-tooltip activator="parent" location="top">انتخاب رنگ قالب</v-tooltip>
-              </span>
-              <span class="text-black font-semibold">انتخاب قالب :</span>
-            </div>
-            <div class="selectTheme">
-              <v-select :items="themeItems" class="w-28 text-right " label="رنگ" bg-color="white" variant="outlined" />
-            </div>
-          </div>
-          <div class="animationSettings flex items-ceneter justify-between ">
-            <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
-              <span class="text-green-700 bg-green-300 px-[.9rem] text-2xl py-1 rounded-full select-none">
-                <v-tooltip activator="parent" location="top">
-                  فعال کردن انیمیشن ها
-                </v-tooltip>
-                ?</span>
-              <span class="text-black font-semibold">انیمیشن :</span>
-            </div>
-            <div class="animationSwitchButton flex justify-center items-center ">
-              <v-switch color="success" ripple class=" flex switchBtn " />
-            </div>
-          </div>
-        </div>
-        <div class="contentSettings">
-          <div class="settingsTitle text-right">
-            <h3 class="text-xl text-[#58b97f] font-semibold"><span class="text-gray-600 select-none ">__ </span> نحوه
-              ذخیره سازی
-              مخاطبین <span class=" select-none text-gray-600"> __</span></h3>
-          </div>
-          <div class="storagesButtons flex flex-col gap-4 mt-5 ">
-  
-            <div class="webBroweser">
-              <v-btn class="text-right w-full md:w-2/3 " size="x-large"
-              :variant="state.contacts.contactsPreview == 'LocalStorage' ? 'elevated' : 'outlined'"
-              :color="state.contacts.contactsPreview == 'LocalStorage'? 'green' : 'black'"
-              @click.stop="changePreviewStatus('LocalStorage')" prepend-icon="mdi mdi-web">مرورگر
-                <v-tooltip activator="parent" location="top">مخاطبین در مرورگر شما ذخیره میشود و تازمانی که شما ذخیره
-                  ساز محلی را پاک نکنید مخاطبین باقی میمانند</v-tooltip>
-              </v-btn>
-            </div>
-            <div class="server_1">
-              <v-btn
-                class="text-right w-full md:w-2/3 " size="x-large"
-                :variant="state.contacts.contactsPreview == 'Server' ? 'elevated' : 'outlined'"
-                 :color="state.contacts.contactsPreview == 'Server'? 'green' : 'black'"
-                @click.stop="changePreviewStatus('Server')" prepend-icon="mdi mdi-server"> سرور
-                <v-tooltip activator="parent" location="bottom">مخاطبین در سرور شماره یک ذخیره میشوند</v-tooltip>
-              </v-btn>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </v-navigation-drawer> -->
+ 
 
     <Drawer v-model="drawer" v-model:drawer="drawer" :contactsPreview="state.contacts.contactsPreview" 
       :changePreviewStatus="changePreviewStatus"

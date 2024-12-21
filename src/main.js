@@ -2,6 +2,11 @@
 import { createVuetify } from 'vuetify';
 import '@mdi/font/css/materialdesignicons.min.css'
 
+import AnalogClock from "vue3-analog-clock";
+import "vue3-analog-clock/dist/style.css";
+import Vue3Lottie from 'vue3-lottie'
+
+
 const vuetify = createVuetify({
   icons: {
     defaultSet: 'mdi', // Change this if using a different icon set
@@ -42,4 +47,4 @@ app.use(Vue3PersianDatetimePicker, {
       //... And whatever you want to set as default.
       //...
     }
-  }).mount('#app')
+  }).use(AnalogClock).use(Vue3Lottie).mount('#app')
