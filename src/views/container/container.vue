@@ -7,6 +7,9 @@ import Card from "@/views/container/components/contact_card.vue";
 import axios from "axios";
 import { HalfCircleSpinner } from "epic-spinners";
 import "animate.css";
+import NoDataServerAnimation from '@/assets/NoDataServerAnimation.json'
+import NoDataLocalAnimation from '@/assets/NoDataLocalAnimation.json'
+
 
 import {
   convertNumbersToPersian as PersianNumberConvertorX,
@@ -15,9 +18,9 @@ import {
 import ContactRecord from "./components/contactRecord.vue";
 import Drawer from "./components/drawer.vue";
 
-const loadingPreview = ref(true);
+// const loadingPreview = ref(true);
 
-const byLocalStorage = ref(true);
+// const byLocalStorage = ref(true);
 // const skeletonLocalStorageLoadingState = ref(true);
 // const skeletonServerLoadingState = ref(true);
 
@@ -26,14 +29,14 @@ const byLocalStorage = ref(true);
 // const dialogRegisterState = ref(false);
 // const dialogEditState = ref(false);
 
-const MyLocalContacts = reactive([]);
+// const MyLocalContacts = reactive([]);
 // changing to const gives an error
-let users = reactive({});
+// let users = reactive({});
 
 // const loadingState = ref(false);
 
 // all in STATE
-const previewStatus = ref('LocalStorage')
+// const previewStatus = ref('LocalStorage')
 
 
 const state = reactive({
@@ -70,12 +73,10 @@ watch(state.contacts.contactsPreview, (newValue) => {
     case 'LocalStorage':
     state.contacts.contactsPreview = 'LocalStorage'
     localStorage.setItem('Preview Status', state.contacts.contactsPreview);
-    // byLocalStorage.value = true;
   break;
     case 'Server' :
     state.contacts.contactsPreview = 'Server'
     localStorage.setItem('Preview Status', state.contacts.contactsPreview);
-    // byLocalStorage.value = false;
   }
 })
 
@@ -85,17 +86,14 @@ onMounted(async () => {
   if (!localStorage.getItem('Preview Status')) {
     localStorage.setItem('Preview Status', 'LocalStorage');
     state.contacts.contactsPreview = 'LocalStorage'
-    // byLocalStorage.value = true;
   }
 
   if (state.contacts.storedPreviewStatus == 'LocalStorage') {
     state.contacts.contactsPreview = 'LocalStorage'
     localStorage.setItem('Preview Status', state.contacts.contactsPreview);
-    // byLocalStorage.value = true;
   } else if (state.contacts.storedPreviewStatus == 'Server') {
     state.contacts.contactsPreview = 'Server'
     localStorage.setItem('Preview Status', state.contacts.contactsPreview);
-    // byLocalStorage.value = false;
   }
   getData();
   sekeletonLoadsLocal();
@@ -103,12 +101,10 @@ onMounted(async () => {
   await fetchUsers();
   // set To .5s
   setTimeout(() => {
-    // loadingPreview.value = false;
     state.loading.preview = false;
     // state.loading.preview = false
   }, 4000);
   setTimeout(() => {
-    // loadingState.value = true;
     state.loading.loadingStatus = true;
     
   }, 3500);
@@ -121,13 +117,7 @@ function updateMainTableKey(newValue) {
 
 
 const getData = async () => {
-  // if (byLocalStorage.value) {
-  //   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
-  //   state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...storedContacts);
-
-  // } else {
-  //   fetchUsers();
-  // }
+ 
   
   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
   switch(state.contacts.contactsPreview){
@@ -146,13 +136,11 @@ const getData = async () => {
 
 const sekeletonLoadsLocal = () => {
   setTimeout(() => {
-    // skeletonLocalStorageLoadingState.value = false;
     state.loading.skeletonLoads.LocalContacts = false;
   }, 2000);
 };
 const sekeletonLoadsOnServer = () => {
   setTimeout(() => {
-    // skeletonServerLoadingState.value = false;
     state.loading.skeletonLoads.server_1_Contacts = false;
 
   }, 2000);
@@ -179,7 +167,6 @@ const deleteServerContact = async (id) => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:4000/users/${id}`); // Update with your server's base URL
-        // users = users.filter((user) => user.id !== id); // Update the local list of users
         state.contacts.server_1_Contacts  = state.contacts.server_1_Contacts.filter((contact) => contact.id !== id); // Update the local list of users
         
         state.mainTableKey = state.mainTableKey + 1;
@@ -229,7 +216,6 @@ const UpdateDataServer = async () => {
 const fetchUsers = async () => {
   try {
     const response = await axios.get("http://localhost:4000/users"); // Replace with your actual URL
-    users = response.data;
     state.contacts.server_1_Contacts = response.data;
     console.log(state.contacts.server_1_Contacts);
     
@@ -265,13 +251,11 @@ const noContactPreview = computed(() => {
   } else if (state.contacts.server_1_Contacts.length === 0 && state.contacts.contactsPreview == 'Server') {
     return true;
   }
-  // console.log("one of them might having having Records");
-  // console.log(users.length);
+
 
   return false;
 });
 
-// const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 
 const getEmojiNodata = (contactsPreview)=>{
   switch (contactsPreview) {
@@ -314,7 +298,7 @@ const getTitleEmoji = (contactsPreview)=>{
     case 'Cloud':
       return 'mid-cloud';
     default:
-      return 'mdi-question-mark'; // حالت پیش‌فرض
+      return 'mdi-question-mark'; 
   }
 }
 
@@ -324,8 +308,6 @@ const changePreviewStatus = (status)=>{
   getData()
 }
 
-import NoDataServerAnimation from '@/assets/NoDataServerAnimation.json'
-import NoDataLocalAnimation from '@/assets/NoDataLocalAnimation.json'
 
 const NoDataLottie = (contactPreview) => {
   switch (contactPreview) {
@@ -349,18 +331,19 @@ const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPrevi
     </h2>
   </div>
 
-  <div class="mx-auto mainContent h-full bg-cover" v-if="state.loading.loadingStatus">
+  <div class="  mx-auto mainContent h-full bg-cover" v-if="state.loading.loadingStatus">
     <header class="titlePage overflow-hidden">
-      <div class="relative titleText animate__animated animate__fadeInUp animate__slow">
+      <div class=" titleText animate__animated animate__fadeInUp animate__slow">
         <h1 class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2">
           <span class="mdi" :class="getTitleEmoji(state.contacts.contactsPreview)"></span>
            دفترچه
           تلفن {{ savingModeData(state.contacts.contactsPreview) }}
         </h1>
-        <div class="absolute right-0 top-0">
-    <AnalogClock  />
-  </div>
+        <!-- <div class="fixed top-0 right-0">
+          <AnalogClock class="scale-[.35] bg-green-500   " />
+        </div> -->
       </div>
+
     </header>
 
     <div class="container mx-auto rounded-lg">

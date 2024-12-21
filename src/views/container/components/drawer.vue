@@ -142,7 +142,6 @@ const PickedTheme = ref(null)
           </div>
         </div>
       </div>
-      <h1 class="text-black text-lg">Lorem ipsum dolor sit amet.</h1>
 
 
     </v-navigation-drawer>
