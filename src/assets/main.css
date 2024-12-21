@@ -54,6 +54,9 @@ table{
   .switchBtn{
     transform: scale(1.14);
   }
+  .v-field-label{
+    direction: rtl;
+  }
   .v-overlay__content{
     background-color: #86efac !important;
     font-size: 1.04rem !important;
@@ -63,6 +66,10 @@ table{
     text-align: center;
     
   }
+  .v-select__selection {
+    width: 100%;
+    justify-content: flex-end;
+    }
   /* End of Drawer */
 
 

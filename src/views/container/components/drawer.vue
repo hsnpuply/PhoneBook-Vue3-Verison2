@@ -47,7 +47,7 @@ const themeChanger = (item) => {
 
 const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 
-const PickedTheme = ref('سبز')
+const PickedTheme = ref(null)
 
 
 </script>
@@ -92,7 +92,7 @@ const PickedTheme = ref('سبز')
               <span class="text-black font-semibold">انتخاب قالب :</span>
             </div>
             <div class="selectTheme">
-              <v-select :items="themeItems" v-model="PickedTheme" class="w-28 text-right " label="رنگ" bg-color="white" variant="outlined" />
+              <v-select  :items="themeItems"  v-model="PickedTheme" class="colorSelector w-28  " label="رنگ" bg-color="white" variant="outlined" />
             </div>
           </div>
           <div class="animationSettings flex items-ceneter justify-between ">

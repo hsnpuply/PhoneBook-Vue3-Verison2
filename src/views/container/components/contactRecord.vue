@@ -24,7 +24,9 @@ const state=reactive({
           <tr
            v-for="(item, index) in state.contacts.LocalContacts" :key="index"
            @dblclick="props.toggleEditForm(item)"
-            class="text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
+            class=" 
+             text-right text-xl overflow-hidden even:bg-gray-200 bg-gray-400/50 cursor-pointer hover:bg-sky-900/60 hover:text-white duration-100 select-none"
+            
             >
             <td>{{ index + 1 }}</td>
             <td>

@@ -1,20 +1,10 @@
 {
   "users": [
     {
-      "id": "6fb9",
-      "phoneNumber": "ssssssssssssssssa",
-      "fullname": "asssssssss",
+      "id": "1c23",
+      "phoneNumber": "a",
+      "fullname": "a",
       "selectedDate": "",
-      "skills": [],
-      "favorites": [],
-      "avatar": null,
-      "isCoworker": false
-    },
-    {
-      "id": "7c25",
-      "phoneNumber": "w",
-      "fullname": "waaaaaa",
-      "selectedDate": null,
       "skills": [],
       "favorites": [],
       "avatar": null,

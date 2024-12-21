@@ -135,10 +135,8 @@ const handleSubmitFormClick = handleSubmit((item) => {
     // props.byLocalStorage ? submitData() : submitInServer();
     if(props.contactsPreview == 'LocalStorage'){
       submitData();
-
     }else if(props.contactsPreview == 'Server'){
       submitInServer()
-
     }
 
 
