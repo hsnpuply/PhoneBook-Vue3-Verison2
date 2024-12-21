@@ -327,6 +327,19 @@ const changePreviewStatus = (status)=>{
 import NoDataServerAnimation from '@/assets/NoDataServerAnimation.json'
 import NoDataLocalAnimation from '@/assets/NoDataLocalAnimation.json'
 
+const NoDataLottie = (contactPreview) => {
+  switch (contactPreview) {
+    case 'Server':
+      return NoDataServerAnimation
+    case 'LocalStorage':
+      return NoDataLocalAnimation
+    default:
+      return null  
+  }
+}
+
+const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPreview))
+
 </script>
 <template>
   <div class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30" v-if="!state.loading.loadingStatus">
@@ -434,9 +447,7 @@ import NoDataLocalAnimation from '@/assets/NoDataLocalAnimation.json'
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
         :class="state.loading.preview ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''
           " v-if="noContactPreview">
-        <!-- <img src="../../assets/no-data.jpg" alt="" class="w-[35rem]" /> -->
-      <Vue3Lottie v-if="state.contacts.contactsPreview === 'Server'" :animationData="NoDataServerAnimation" :height="400" :width="400" />
-      <Vue3Lottie v-if="state.contacts.contactsPreview === 'LocalStorage'" :animationData="NoDataLocalAnimation" :height="400" :width="400" />
+      <Vue3Lottie v-if="lottieAnimation" :animationData="lottieAnimation" :height="400" :width="400" />
         
         <p class="pb-10 text-3xl">
           {{ getEmojiNodata(state.contacts.contactsPreview) }}
