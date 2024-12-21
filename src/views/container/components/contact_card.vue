@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import moment from "moment-jalaali";
 import { convertNumbersToPersian,deleteContact } from "@/utilities/functions";
 
@@ -19,6 +19,8 @@ const props = defineProps({
 });
 
 const myCurrentID = ref(props.currentID)
+const vasetSelectedItems = reactive({ ...props.selectedContact })  // Create reactive copy
+console.log(vasetSelectedItems)
 
 
 const emit = defineEmits(["update:dialogEditState"]);

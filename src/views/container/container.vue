@@ -61,7 +61,6 @@ const state = reactive({
   
 });
 
-const storedPreviewStatus = localStorage.getItem('Preview Status');
 
 watch(state.contacts.contactsPreview, (newValue) => {
   alert(state.contacts.contactsPreview)
@@ -107,12 +106,12 @@ onMounted(async () => {
     // loadingPreview.value = false;
     state.loading.preview = false;
     // state.loading.preview = false
-  }, 500);
+  }, 4000);
   setTimeout(() => {
     // loadingState.value = true;
     state.loading.loadingStatus = true;
     
-  }, 500);
+  }, 3500);
 });
 
 function updateMainTableKey(newValue) {
@@ -326,8 +325,11 @@ const changePreviewStatus = (status)=>{
 }
 </script>
 <template>
-  <div class="w-full h-[100vh] flex items-center justify-center bg-black/20" v-if="!state.loading.loadingStatus">
-    <half-circle-spinner :size="100" color="green" />
+  <div class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30" v-if="!state.loading.loadingStatus">
+    <half-circle-spinner :size="100" color="green" /> 
+    <h2 class="text-xl">
+      ... در حال بارگذاری
+    </h2>
   </div>
   <div class="mx-auto mainContent h-full bg-cover" v-if="state.loading.loadingStatus">
     <header class="titlePage overflow-hidden">
@@ -678,8 +680,8 @@ const changePreviewStatus = (status)=>{
      
      :contactsPreview="state.contacts.contactsPreview"
       :registerMode="false"
-    @update:mainTableKey="updateMainTableKey" :fetchUsers="fetchUsers()" />
-
+    @update:mainTableKey="updateMainTableKey"  />
+    <!-- :fetchUsers="fetchUsers()" --> 
  
 </template>
 

@@ -21,7 +21,6 @@ const props = defineProps({
   getData: Function,
   contactsPreview: String,
   mainTableKey: Number,
-  fetchUsers: Function,
   users: Object,
 });
 const currentValue = ref(props.mainTableKey);
