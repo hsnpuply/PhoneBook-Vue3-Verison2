@@ -35,13 +35,13 @@ watch(() => props.contactsPreview,(newVal)=>{
 const themeChanger = (item) => {
   switch (item) {
     case 'سبز':
-      return 'bg-gradient-to-t from-[#ebf1ef] to-[#a8e6cf]'; // ترکیب سبز روشن و سبز ملایم
+      return 'bg-gradient-to-t from-[#ebf1ef] to-[#a8e6cf]';
     case 'آبی':
-      return 'bg-gradient-to-t from-[#ebf0f1] to-[#87ceeb]'; // ترکیب آبی آسمانی و آبی دریایی
+      return 'bg-gradient-to-t from-[#ebf0f1] to-[#87ceeb]';
     case 'بنفش':
-      return 'bg-gradient-to-t from-[#edebf1] to-[#e1abf7]'; // ترکیب بنفش عمیق و بنفش ملایم
+      return 'bg-gradient-to-t from-[#edebf1] to-[#e1abf7]';
     case 'زرد':
-      return 'bg-gradient-to-t from-[#fcfbfa] to-[#f7da63]'; // ترکیب زرد خورشیدی و زرد طلایی
+      return 'bg-gradient-to-t from-[#fcfbfa] to-[#f7da63]'; 
   }
 };
 

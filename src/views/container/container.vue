@@ -272,7 +272,7 @@ const noContactPreview = computed(() => {
   return false;
 });
 
-const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
+// const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 
 const getEmojiNodata = (contactsPreview)=>{
   switch (contactsPreview) {
@@ -514,10 +514,10 @@ const changePreviewStatus = (status)=>{
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
       v-if="!state.loading.skeletonLoads.server_1_Contacts && state.contacts.contactsPreview == 'Server'">
       <Card
-      v-for="(item, index) in users"
+      v-for="(item, index) in state.contacts.server_1_Contacts"
        v-model:dialogEditState="state.forms.edit" :currentItem="item" :MyLocalContacts="state.contacts.LocalContacts"
         :selectedContact="state.contacts.selectedContact" :all_forms_fields="item" 
-        :deleteServerContact="deleteServerContact" :contactsPreview="state.contacts.contactsPreview" :key="index"
+        :deleteServerContact="deleteServerContact" :serverUpdate="UpdateDataServer" :contactsPreview="state.contacts.contactsPreview" :key="index"
         class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
 

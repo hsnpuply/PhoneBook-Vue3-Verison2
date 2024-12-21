@@ -14,7 +14,8 @@ const props = defineProps({
   currentItem:Object,
   deleteServerContact:Function,
   currentID:String,
-  contactsPreview:String
+  contactsPreview:String,
+  serverUpdate:Function,
 });
 
 const myCurrentID = ref(props.currentID)
@@ -35,6 +36,7 @@ switch(props.contactsPreview){
   break;
   case 'Server':
   props.deleteServerContact(props.currentItem.id,)
+  props.serverUpdate()
   break;
 }
 
