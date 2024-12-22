@@ -59,13 +59,14 @@ table{
   }
   .v-overlay__content{
     background-color: #86efac !important;
-    font-size: 1.04rem !important;
+    font-size: 1rem !important;
     /* color: #15803d !important; */
     color: black !important;
     font-weight: 600 !important;
     text-align: center;
     
   }
+
   .v-select__selection {
     width: 100%;
     justify-content: flex-end;

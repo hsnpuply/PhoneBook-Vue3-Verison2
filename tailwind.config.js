@@ -11,6 +11,9 @@ export default {
         sans: ['Roboto', 'sans-serif'], // Override default sans
         vazir:['VazirPersian','sans-serif']
       },
+      colors: {
+        'drawer_primary': '#ebf1ef',
+      }
     },  },
   plugins: [],
 }

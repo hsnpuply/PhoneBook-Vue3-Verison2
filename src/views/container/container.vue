@@ -358,7 +358,7 @@ const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPrevi
       </div>
 
       <v-table :class="state.loading.preview
-        ? 'animate__animated animate__slow animate__delay-2s animate__fadeInLeft'
+        ? 'animate__animated animate__slow animate__delay-5s animate__fadeInLeft'
         : ''
         " class="the_table hidden xl:block" :key="state.mainTableKey">
         <thead class="relative">
@@ -394,7 +394,8 @@ const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPrevi
         <!-- Skeleton of Server -->
 
         <tbody class="w-full" v-if="state.loading.skeletonLoads.server_1_Contacts">
-          <tr v-for="(item, index) in state.contacts.server_1_Contacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
+          <tr v-for="(item, index) in state.contacts.server_1_Contacts.length"
+           :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
@@ -414,6 +415,7 @@ const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPrevi
           :LocalContacts="state.contacts.LocalContacts"
           :DeleteLocalStorageContacts="DeleteLocalStorageContacts"
           :toggleEditForm="toggleEditForm"
+          
          />
 
          <!-- Server -->
