@@ -104,3 +104,7 @@ table{
   .v-field__append-inner{
     grid-area: auto;
   }
+
+  .tableHavingContact{
+    --animate-duration: 3.5s;
+  }

@@ -37,7 +37,6 @@ import Drawer from "./components/drawer.vue";
 // all in STATE
 // const previewStatus = ref('LocalStorage')
 
-
 const state = reactive({
   contacts:{
   LocalContacts:[],
@@ -80,6 +79,11 @@ watch(state.contacts.contactsPreview, (newValue) => {
   }
 })
 
+watch(()=>state.loading.skeletonLoads.LocalContacts,(newValue)=>{
+  // alert(newValue)
+})
+
+
 
 onMounted(async () => {
 
@@ -96,8 +100,8 @@ onMounted(async () => {
     localStorage.setItem('Preview Status', state.contacts.contactsPreview);
   }
   getData();
-  sekeletonLoadsLocal();
-  sekeletonLoadsOnServer();
+  // sekeletonLoadsLocal();
+  // sekeletonLoadsOnServer();
   await fetchUsers();
   setTimeout(() => {
     state.loading.preview = false;
@@ -105,15 +109,15 @@ onMounted(async () => {
   }, 2400);
 
   setTimeout(() => {
-    // اضافه کردن کلاس انیمیشن
-      // state.loading.animateClass = 'animate__animated animate__slow animate__fadeInLeft';
-  }, 100);
-
-  setTimeout(() => {
     state.loading.loadingStatus = true;
     
   }, 2000);
+  setTimeout(()=>{
+    state.loading.skeletonLoads.LocalContacts = false
+  },6000)
+  // vaghti loading kamelan anjam shod
 });
+
 
 function updateMainTableKey(newValue) {
   state.mainTableKey = newValue;
@@ -140,17 +144,17 @@ const getData = async () => {
 
 };
 
-const sekeletonLoadsLocal = () => {
-  setTimeout(() => {
-    state.loading.skeletonLoads.LocalContacts = false;
-  }, 2000);
-};
-const sekeletonLoadsOnServer = () => {
-  setTimeout(() => {
-    state.loading.skeletonLoads.server_1_Contacts = false;
+// const sekeletonLoadsLocal = () => {
+//   setTimeout(() => {
+//     state.loading.skeletonLoads.LocalContacts = false;
+//   }, 2000);
+// };
+// const sekeletonLoadsOnServer = () => {
+//   setTimeout(() => {
+//     state.loading.skeletonLoads.server_1_Contacts = false;
 
-  }, 2000);
-};
+//   }, 2000);
+// };
 
 const deleteServerContact = async (id) => {
   Swal.fire({
@@ -235,7 +239,7 @@ const localStorageCondition = () => {
   if (
     state.contacts.LocalContacts.length > 0 &&
     !state.loading.skeletonLoads.LocalContacts &&
-    state.contacts.contactsPreview == 'LocalStorage'
+    state.contacts.contactsPreview == 'LocalStorage' 
   ) {
     state.contacts.contactsPreview = 'LocalStorage'
     return true;
@@ -350,14 +354,21 @@ const getNoContactAnimatedClass = computed(() => {
   }
   return '';
 });
-const getNewElementAnimatedClass = computed(() => {
-  if (state.contacts.LocalContacts.length >= 0 && !animationTriggered.value) {
-    animationTriggered2.value = true; // Ensure the animation is triggered only once
-    return 'animate__fadeInLeft animate__animated animate__slow ';
-  }
-  return ''; // Return an empty string if conditions are not met
-});
+
+const tableAnimationClass = computed(() => {
+  if (state.contacts.LocalContacts.length === 0 && !animationTriggered2.value) {
+    animationTriggered2.value = true;
+    return 'animate__animated animate__slow animate__fadeInUp';
+    } else if(state.contacts.LocalContacts.length > 0 && !animationTriggered2.value){
+      animationTriggered2.value = true;
+      return 'tableHavingContact animate__animated animate__fadeInUp';
+    }
+    return '';
+    });
 // animate__animated animate__slow animate__fadeInLeft
+
+
+
 
 </script>
 <template>
@@ -395,15 +406,15 @@ const getNewElementAnimatedClass = computed(() => {
       </div>
 
       <v-table
-       class="the_table hidden xl:block" :key="state.mainTableKey">
-        <thead class="relative">
+       class="the_table hidden xl:block" :class="tableAnimationClass" :key="state.mainTableKey">
+        <thead class="relative"  >
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
             <th class="text-right" v-for="(item,index) in tableItems" :key="index">{{ item }}</th>
           </tr>
         </thead>
 
         <!-- Skeleton of LocalStorage -->
-        <tbody class="w-full" v-if="state.loading.skeletonLoads.LocalContacts">
+        <tbody class="w-full" v-if="state.loading.skeletonLoads.LocalContacts && state.contacts.LocalContacts.length > 0">
           <tr v-for="(item, index) in state.contacts.LocalContacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
@@ -438,7 +449,7 @@ const getNewElementAnimatedClass = computed(() => {
 
         <!-- Locals -->
         <ContactRecord
-          v-if="localStorageCondition()"
+          v-if="localStorageCondition()  "
           :LocalContacts="state.contacts.LocalContacts"
           :DeleteLocalStorageContacts="DeleteLocalStorageContacts"
           :toggleEditForm="toggleEditForm"
@@ -506,20 +517,25 @@ const getNewElementAnimatedClass = computed(() => {
 
     <div
       class="addNewContact w-full flex xl:!justify-end justify-center
-       container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0
-        animate__animated animate__slow animate__delay-1s animate__fadeInRight">
-      <v-btn v-if="!state.loading.skeletonLoads.LocalContacts && !state.loading.skeletonLoads.server_1_Contacts"
+       container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-1s animate__fadeInRight
+        ">
+        <!-- animate__animated animate__slow animate__delay-1s animate__fadeInRight -->
+      <v-btn v-if="!state.loading.skeletonLoads.LocalContacts || state.contacts.LocalContacts.length == 0"
        variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
 
     </div>
-    <div class="flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0">
-      <v-skeleton-loader v-if="
-        state.loading.skeletonLoads.LocalContacts && state.contacts.LocalContacts.length > 0 && 
-        state.contacts.contactsPreview == 'LocalStorage'"
-         type="button" color="transparent" class="w-32">
+    <div 
+          v-if="
+        state.loading.skeletonLoads.LocalContacts && state.contacts.LocalContacts.length"
+     class="animate__animated animate__slow animate__fadeInUp animate__delay-2s
+     flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0">
+      <v-skeleton-loader 
+     
+
+         type="button" color="transparent" class="w-32 ">
       </v-skeleton-loader>
     </div>
  
