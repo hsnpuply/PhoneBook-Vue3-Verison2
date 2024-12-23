@@ -44,7 +44,21 @@ table{
     z-index: 0;
   }
 
+  .myAnimate {
+    position: relative;
+    animation: slideFromLeft 1s ease-out forwards;
+  }
   
+  @keyframes slideFromLeft {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
 
 
   /* Drawer */
@@ -86,4 +100,7 @@ table{
   
   .swal2-actions {
     flex-direction: row-reverse !important;
+  }
+  .v-field__append-inner{
+    grid-area: auto;
   }

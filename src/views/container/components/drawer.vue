@@ -174,7 +174,7 @@ const pagePerList = ref(10)
 
       </div>
 
-      <div class="applySettings text-center mt-24 mb-10">
+      <div class="applySettings text-center mt-[4rem] mb-10">
         <v-btn append-icon="mdi mdi-check" class="bg-[#86afb5]" height="39"  variant="flat"> اعمال تغییرات </v-btn>
       </div>
 

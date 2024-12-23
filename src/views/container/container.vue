@@ -1,7 +1,6 @@
 <script setup>
 import Swal from "sweetalert2";
-import { ref, reactive, onMounted, computed, watch, watchEffect } from "vue";
-import moment from "moment-jalaali";
+import { ref, reactive, onMounted, computed, watch } from "vue";
 import Forms from "@/components/forms.vue";
 import Card from "@/views/container/components/contact_card.vue";
 import axios from "axios";
@@ -55,9 +54,10 @@ const state = reactive({
   loading:{
     preview:true,
     loadingStatus:false,
+    animateClass:'',
     skeletonLoads:{
     LocalContacts: true,
-    server_1_Contacts: true
+    server_1_Contacts: true,
   }
   },
   mainTableKey: 0,
@@ -99,20 +99,26 @@ onMounted(async () => {
   sekeletonLoadsLocal();
   sekeletonLoadsOnServer();
   await fetchUsers();
-  // set To .5s
   setTimeout(() => {
     state.loading.preview = false;
-    // state.loading.preview = false
-  }, 4000);
+
+  }, 2400);
+
+  setTimeout(() => {
+    // اضافه کردن کلاس انیمیشن
+      // state.loading.animateClass = 'animate__animated animate__slow animate__fadeInLeft';
+  }, 100);
+
   setTimeout(() => {
     state.loading.loadingStatus = true;
     
-  }, 3500);
+  }, 2000);
 });
 
 function updateMainTableKey(newValue) {
   state.mainTableKey = newValue;
 }
+
 
 
 
@@ -257,6 +263,7 @@ const noContactPreview = computed(() => {
 });
 
 
+
 const getEmojiNodata = (contactsPreview)=>{
   switch (contactsPreview) {
     case 'LocalStorage':
@@ -322,6 +329,36 @@ const NoDataLottie = (contactPreview) => {
 
 const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPreview))
 
+const tableItems = ref([
+  'شماره',
+  'پروفایل',
+  'نام و نام خانوادگی',
+  'شماره تلفن',
+  'تاریخ تولد',
+  'همکار',
+  'مهارت ها',
+  'علاقه مندی ها',
+  'عملیات'
+])
+const animationTriggered = ref(false);
+const animationTriggered2 = ref(false);
+
+const getNoContactAnimatedClass = computed(() => {
+  if (state.contacts.LocalContacts.length === 0 && !animationTriggered.value) {
+    animationTriggered.value = true; 
+    return 'animate__animated animate__slow animate__fadeInUp'; 
+  }
+  return '';
+});
+const getNewElementAnimatedClass = computed(() => {
+  if (state.contacts.LocalContacts.length >= 0 && !animationTriggered.value) {
+    animationTriggered2.value = true; // Ensure the animation is triggered only once
+    return 'animate__fadeInLeft animate__animated animate__slow ';
+  }
+  return ''; // Return an empty string if conditions are not met
+});
+// animate__animated animate__slow animate__fadeInLeft
+
 </script>
 <template>
   <div class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30" v-if="!state.loading.loadingStatus">
@@ -357,21 +394,11 @@ const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPrevi
 
       </div>
 
-      <v-table :class="state.loading.preview
-        ? 'animate__animated animate__slow animate__delay-5s animate__fadeInLeft'
-        : ''
-        " class="the_table hidden xl:block" :key="state.mainTableKey">
+      <v-table
+       class="the_table hidden xl:block" :key="state.mainTableKey">
         <thead class="relative">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
-            <th class="text-right">شماره</th>
-            <th class="text-right">پروفایل</th>
-            <th class="text-right">نام و نام خانوادگی</th>
-            <th class="text-right">شماره تلفن</th>
-            <th class="text-right">تاریخ تولد</th>
-            <th class="text-right">همکار</th>
-            <th class="text-right">مهارت ها</th>
-            <th class="text-right">علاقه مندی ها</th>
-            <th class="text-right">عملیات</th>
+            <th class="text-right" v-for="(item,index) in tableItems" :key="index">{{ item }}</th>
           </tr>
         </thead>
 
@@ -430,8 +457,8 @@ const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPrevi
       </v-table>
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
-        :class="state.loading.preview ? 'animate__animated animate__fadeInUp  animate__delay-2s' : ''
-          " v-if="noContactPreview">
+        :class="getNoContactAnimatedClass"
+         v-if="noContactPreview">
       <Vue3Lottie v-if="lottieAnimation" :animationData="lottieAnimation" :height="400" :width="400" />
         
         <p class="pb-10 text-3xl">
@@ -480,7 +507,7 @@ const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPrevi
     <div
       class="addNewContact w-full flex xl:!justify-end justify-center
        container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0
-        animate__animated animate__slow animate__delay-3s animate__fadeInRight">
+        animate__animated animate__slow animate__delay-1s animate__fadeInRight">
       <v-btn v-if="!state.loading.skeletonLoads.LocalContacts && !state.loading.skeletonLoads.server_1_Contacts"
        variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
         ثبت مخاطب
