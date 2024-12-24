@@ -8,10 +8,20 @@ import { HalfCircleSpinner } from "epic-spinners";
 import "animate.css";
 import NoDataServerAnimation from "@/assets/NoDataServerAnimation.json";
 import NoDataLocalAnimation from "@/assets/NoDataLocalAnimation.json";
+import draggable from 'vuedraggable'
+import moment from "moment-jalaali";
 
+const myArray = ref([
+  { id:1 , name:'Hasan'},
+  { id:2 , name:'Javad'},
+  { id:3 , name:'Vahid'},
+])
+const drag=ref(false)
 import {
+  convertNumbersToPersian as PersianNumberConvertorX,
   deleteLocalstorageContact as DeleteLocalStorageContacts,
 } from "../../utilities/functions";
+
 import ContactRecord from "./components/contactRecord.vue";
 import Drawer from "./components/drawer.vue";
 
@@ -447,14 +457,48 @@ const tableAnimationClass = computed(() => {
             </td>
           </tr>
         </tbody>
+    <draggable v-model="state.contacts.LocalContacts" tag="tbody" class="text-xl bg-[#dddbdb] text-[#212222] overflow-hidden cursor-grab">
+      <template #item="{ element, index }">
+        <tr>
+              <td>{{ index + 1 }}</td>
+              <td>
+              <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="element.avatar" />
+            </td>
+            <td>{{ element.fullname }}</td>
+            <td>{{ PersianNumberConvertorX(element.phoneNumber) }}</td>
+            <td>
+              {{
+                PersianNumberConvertorX(moment(element.selectedDate).format("jYYYY/jMM/jDD"))
+              }}
+            </td>
+            <td>{{ element.isCoworker ? "بله" : "خیر" }}</td>
+            <td>{{ element.skills ? element.skills.join(" , ") : "" }}</td>
+            <td>{{ element.favorites ? element.favorites.join(" , ") : "" }}</td>
+            <td class="">
+              <div class="actionButtonsContainer flex gap-2 items-center justify-center">
+                <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete"
+                  @click="DeleteLocalStorageContacts(element.id, state.contacts.LocalContacts)"
+                  class="bg-red-600/90 hover:bg-red-600/95">
+                  حذف
+                </v-btn>
+                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditForm(element)"
+                  class="bg-sky-600/90 hover:bg-sky-600/95">
+                  ویرایش
+                </v-btn>
+              </div>
+            </td>
+            
+            </tr>
+      </template>
+    </draggable>
 
-        <!-- Locals -->
-        <ContactRecord
+            <!-- <ContactRecord
           v-if="localStorageCondition()"
           :LocalContacts="state.contacts.LocalContacts"
           :DeleteLocalStorageContacts="DeleteLocalStorageContacts"
           :toggleEditForm="toggleEditForm"
-        />
+        /> -->
+        
 
         <!-- Server -->
         <ContactRecord
@@ -610,7 +654,66 @@ const tableAnimationClass = computed(() => {
     :registerMode="false"
     @update:mainTableKey="updateMainTableKey"
   />
-  <!-- :fetchUsers="fetchUsers()" -->
+
+  <p class="text-2xl p-5 bg-black ">Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa eaque ipsa, optio, eveniet assumenda tenetur eos dolor provident esse, sunt error quibusdam ex quidem fugit? Nisi expedita quasi officiis autem.</p>
+
+    <draggable 
+  v-model="myArray" 
+  group="people" 
+  @start="drag=true" 
+  @end="drag=false" 
+  item-key="id">
+  <template #item="{element}">
+    <div class="text-2xl text-center bg-green-500 my-2 p-4">{{element.id }} : {{element.name}}</div>
+   </template>
+</draggable>
+<v-table>
+<tbody>
+<draggable 
+  v-model="state.contacts.LocalContacts" 
+  group="people" 
+  @start="drag=true" 
+  @end="drag=false" 
+  item-key="id">
+  <template #item="{element}">
+    <tr class=" ">
+    <td class="text-2xl text-center bg-green-500 my-2 p-4">
+    {{element.id }} : {{element.fullname}}
+  </td>
+  <td>{{ index + 1 }}</td>
+            <td>
+              <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="element.avatar" />
+            </td>
+            <td>{{ element.fullname }}</td>
+            <td>{{ PersianNumberConvertorX(element.phoneNumber) }}</td>
+            <td>
+              {{
+                PersianNumberConvertorX(moment(element.selectedDate).format("jYYYY/jMM/jDD"))
+              }}
+            </td>
+            <td>{{ element.isCoworker ? "بله" : "خیر" }}</td>
+            <td>{{ element.skills ? element.skills.join(" , ") : "" }}</td>
+            <td>{{ element.favorites ? element.favorites.join(" , ") : "" }}</td>
+            <td class="">
+              <div class="actionButtonsContainer flex gap-2 items-center justify-center">
+                <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete"
+                  @click="props.DeleteLocalStorageContacts(element.id, state.contacts.LocalContacts)"
+                  class="bg-red-600/90 hover:bg-red-600/95">
+                  حذف
+                </v-btn>
+                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="props.toggleEditForm(item)"
+                  class="bg-sky-600/90 hover:bg-sky-600/95">
+                  ویرایش
+                </v-btn>
+              </div>
+            </td>
+    </tr>
+   </template>
+</draggable>
+</tbody>
+</v-table>
+
+
 </template>
 
 <style scoped>
