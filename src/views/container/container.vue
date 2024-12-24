@@ -457,47 +457,14 @@ const tableAnimationClass = computed(() => {
             </td>
           </tr>
         </tbody>
-    <draggable v-model="state.contacts.LocalContacts" tag="tbody" class="text-xl bg-[#dddbdb] text-[#212222] overflow-hidden cursor-grab">
-      <template #item="{ element, index }">
-        <tr>
-              <td>{{ index + 1 }}</td>
-              <td>
-              <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="element.avatar" />
-            </td>
-            <td>{{ element.fullname }}</td>
-            <td>{{ PersianNumberConvertorX(element.phoneNumber) }}</td>
-            <td>
-              {{
-                PersianNumberConvertorX(moment(element.selectedDate).format("jYYYY/jMM/jDD"))
-              }}
-            </td>
-            <td>{{ element.isCoworker ? "بله" : "خیر" }}</td>
-            <td>{{ element.skills ? element.skills.join(" , ") : "" }}</td>
-            <td>{{ element.favorites ? element.favorites.join(" , ") : "" }}</td>
-            <td class="">
-              <div class="actionButtonsContainer flex gap-2 items-center justify-center">
-                <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete"
-                  @click="DeleteLocalStorageContacts(element.id, state.contacts.LocalContacts)"
-                  class="bg-red-600/90 hover:bg-red-600/95">
-                  حذف
-                </v-btn>
-                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditForm(element)"
-                  class="bg-sky-600/90 hover:bg-sky-600/95">
-                  ویرایش
-                </v-btn>
-              </div>
-            </td>
-            
-            </tr>
-      </template>
-    </draggable>
 
-            <!-- <ContactRecord
+
+            <ContactRecord
           v-if="localStorageCondition()"
           :LocalContacts="state.contacts.LocalContacts"
           :DeleteLocalStorageContacts="DeleteLocalStorageContacts"
           :toggleEditForm="toggleEditForm"
-        /> -->
+        />
         
 
         <!-- Server -->
