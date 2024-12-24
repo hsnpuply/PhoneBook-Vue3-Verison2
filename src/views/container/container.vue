@@ -12,14 +12,14 @@ import draggable from 'vuedraggable'
 import moment from "moment-jalaali";
 
 const myArray = ref([
-  { id:1 , name:'Hasan'},
-  { id:2 , name:'Javad'},
-  { id:3 , name:'Vahid'},
+  { id: 1, name: 'Hasan' },
+  { id: 2, name: 'Javad' },
+  { id: 3, name: 'Vahid' },
 ])
-const drag=ref(false)
+const drag = ref(false)
 import {
   convertNumbersToPersian as PersianNumberConvertorX,
-  deleteLocalstorageContact as DeleteLocalStorageContacts,
+  deleteLocalstorageContact as DeleteContacts,
 } from "../../utilities/functions";
 
 import ContactRecord from "./components/contactRecord.vue";
@@ -213,7 +213,6 @@ const localStorageCondition = () => {
 const serverCondition = () => {
   if (
     state.contacts.server_1_Contacts.length > 0 &&
-    !state.loading.skeletonLoads.server_1_Contacts &&
     state.contacts.contactsPreview == "Server"
   ) {
     state.contacts.contactsPreview = "Server";
@@ -265,7 +264,7 @@ const savingModeData = (contactsPreview) => {
     case "Cloud":
       return "ابر";
     default:
-      return "محل نامشخص";  
+      return "محل نامشخص";
   }
 };
 
@@ -342,27 +341,17 @@ const tableAnimationClass = computed(() => {
 });
 </script>
 <template>
-  <div
-    class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30"
-    v-if="!state.loading.loadingStatus"
-  >
+  <div class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30"
+    v-if="!state.loading.loadingStatus">
     <half-circle-spinner :size="100" color="green" />
     <h2 class="text-xl">... در حال بارگذاری</h2>
   </div>
 
-  <div
-    class="mx-auto mainContent h-full bg-cover"
-    v-if="state.loading.loadingStatus"
-  >
+  <div class="mx-auto mainContent h-full bg-cover" v-if="state.loading.loadingStatus">
     <header class="titlePage overflow-hidden">
       <div class="titleText animate__animated animate__fadeInUp animate__slow">
-        <h1
-          class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2"
-        >
-          <span
-            class="mdi"
-            :class="getTitleEmoji(state.contacts.contactsPreview)"
-          ></span>
+        <h1 class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2">
+          <span class="mdi" :class="getTitleEmoji(state.contacts.contactsPreview)"></span>
           دفترچه تلفن {{ savingModeData(state.contacts.contactsPreview) }}
         </h1>
         <!-- <div class="fixed top-0 right-0">
@@ -372,58 +361,34 @@ const tableAnimationClass = computed(() => {
     </header>
 
     <div class="container mx-auto rounded-lg">
-      <div
-        class="px-4 my-2 text-center lg:!text-left animate__animated animate__slow animate__fadeInLeft"
-      >
+      <div class="px-4 my-2 text-center lg:!text-left animate__animated animate__slow animate__fadeInLeft">
         <div class="setting">
           <span
             class="cursor-pointer mdi mdi-cog text-3xl text-black inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
-            @click.stop="drawer = !drawer"
-          />
+            @click.stop="drawer = !drawer" />
         </div>
       </div>
 
-      <v-table
-        class="the_table hidden xl:block"
-        :class="tableAnimationClass"
-        :key="state.mainTableKey"
-      >
+      <v-table class="the_table hidden xl:block" :class="tableAnimationClass" :key="state.mainTableKey">
         <thead class="relative">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
-            <th
-              class="text-right"
-              v-for="(item, index) in tableItems"
-              :key="index"
-            >
+            <th class="text-right" v-for="(item, index) in tableItems" :key="index">
               {{ item }}
             </th>
           </tr>
         </thead>
 
         <!-- Skeleton of LocalStorage -->
-        <tbody
-          class="w-full"
-          v-if="
-            state.loading.skeletonLoads.LocalContacts &&
-            state.contacts.LocalContacts.length > 0
-          "
-        >
-          <tr
-            v-for="(item, index) in state.contacts.LocalContacts.length"
-            :key="index"
-            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
-          >
+        <tbody class="w-full" v-if="localStorageCondition() && !state.contacts.LocalContacts?.length">
+          <tr v-for="(item, index) in state.contacts.LocalContacts.length" :key="index"
+            class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
             </td>
             <td class="min-w-48">
               <div class="w-full px-8">
-                <v-skeleton-loader
-                  type="button,button"
-                  color="transparent"
-                  class=" "
-                >
+                <v-skeleton-loader type="button,button" color="transparent" class=" ">
                 </v-skeleton-loader>
               </div>
             </td>
@@ -432,26 +397,16 @@ const tableAnimationClass = computed(() => {
 
         <!-- Skeleton of Server -->
 
-        <tbody
-          class="w-full"
-          v-if="state.loading.skeletonLoads.server_1_Contacts"
-        >
-          <tr
-            v-for="(item, index) in state.contacts.server_1_Contacts.length"
-            :key="index"
-            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
-          >
+        <tbody class="w-full" v-if="serverCondition() && state.contacts.server_1_Contacts.length == 0">
+          <tr v-for="(item, index) in state.contacts.server_1_Contacts.length" :key="index"
+            class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
             </td>
             <td class="min-w-48">
               <div class="w-full px-8">
-                <v-skeleton-loader
-                  type="button,button"
-                  color="transparent"
-                  class=" "
-                >
+                <v-skeleton-loader type="button,button" color="transparent" class=" ">
                 </v-skeleton-loader>
               </div>
             </td>
@@ -459,33 +414,18 @@ const tableAnimationClass = computed(() => {
         </tbody>
 
 
-            <ContactRecord
-          v-if="localStorageCondition()"
-          :LocalContacts="state.contacts.LocalContacts"
-          :DeleteLocalStorageContacts="DeleteLocalStorageContacts"
-          :toggleEditForm="toggleEditForm"
-        />
-        
+        <ContactRecord v-if="localStorageCondition()" :data="state.contacts.LocalContacts"
+          :DeleteContacts="DeleteContacts" :toggleEditForm="toggleEditForm" />
+
 
         <!-- Server -->
-        <ContactRecord
-          v-if="serverCondition()"
-          :LocalContacts="state.contacts.server_1_Contacts"
-          :DeleteLocalStorageContacts="deleteServerContact"
-          :toggleEditForm="toggleEditForm"
-        />
+        <ContactRecord v-if="serverCondition()" :data="state.contacts.server_1_Contacts"
+          :DeleteContacts="deleteServerContact" :toggleEditForm="toggleEditForm" />
       </v-table>
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
-        :class="getNoContactAnimatedClass"
-        v-if="noContactPreview"
-      >
-        <Vue3Lottie
-          v-if="lottieAnimation"
-          :animationData="lottieAnimation"
-          :height="400"
-          :width="400"
-        />
+        :class="getNoContactAnimatedClass" v-if="noContactPreview">
+        <Vue3Lottie v-if="lottieAnimation" :animationData="lottieAnimation" :height="400" :width="400" />
 
         <p class="pb-10 text-3xl">
           {{ getEmojiNodata(state.contacts.contactsPreview) }}
@@ -503,20 +443,12 @@ const tableAnimationClass = computed(() => {
       v-if="
         !state.loading.skeletonLoads.LocalContacts &&
         state.contacts.contactsPreview == 'LocalStorage'
-      "
-    >
-      <Card
-        v-model:dialogEditState="state.forms.edit"
-        :currentItem="item"
-        :MyLocalContacts="state.contacts.LocalContacts"
-        :selectedContact="state.contacts.selectedContact"
-        :all_forms_fields="item"
-        v-for="(item, index) in state.contacts.LocalContacts"
-        :deleteServerContact="deleteServerContact"
-        :contactsPreview="state.contacts.contactsPreview"
-        :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap"
-      />
+      ">
+      <Card v-model:dialogEditState="state.forms.edit" :currentItem="item"
+        :MyLocalContacts="state.contacts.LocalContacts" :selectedContact="state.contacts.selectedContact"
+        :all_forms_fields="item" v-for="(item, index) in state.contacts.LocalContacts"
+        :deleteServerContact="deleteServerContact" :contactsPreview="state.contacts.contactsPreview" :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
 
     <div
@@ -524,130 +456,78 @@ const tableAnimationClass = computed(() => {
       v-if="
         !state.loading.skeletonLoads.server_1_Contacts &&
         state.contacts.contactsPreview == 'Server'
-      "
-    >
-      <Card
-        v-for="(item, index) in state.contacts.server_1_Contacts"
-        v-model:dialogEditState="state.forms.edit"
-        :currentItem="item"
-        :MyLocalContacts="state.contacts.LocalContacts"
-        :selectedContact="state.contacts.selectedContact"
-        :all_forms_fields="item"
-        :deleteServerContact="deleteServerContact"
-        :serverUpdate="UpdateDataServer"
-        :contactsPreview="state.contacts.contactsPreview"
-        :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap"
-      />
+      ">
+      <Card v-for="(item, index) in state.contacts.server_1_Contacts" v-model:dialogEditState="state.forms.edit"
+        :currentItem="item" :MyLocalContacts="state.contacts.LocalContacts"
+        :selectedContact="state.contacts.selectedContact" :all_forms_fields="item"
+        :deleteServerContact="deleteServerContact" :serverUpdate="UpdateDataServer"
+        :contactsPreview="state.contacts.contactsPreview" :key="index" class="!max-w-[50%] flex-1 flex-wrap" />
     </div>
 
     <div
       class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
-      v-if="state.loading.skeletonLoads.LocalContacts"
-    >
-      <v-skeleton-loader
-        v-for="(item, index) in state.contacts.LocalContacts"
-        :key="index"
-        min-height="540"
-        elevation="24"
-        type="	image , text, paragraph , article  , button , button"
-        class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard"
-      >
+      v-if="state.loading.skeletonLoads.LocalContacts">
+      <v-skeleton-loader v-for="(item, index) in state.contacts.LocalContacts" :key="index" min-height="540"
+        elevation="24" type="	image , text, paragraph , article  , button , button"
+        class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard">
       </v-skeleton-loader>
     </div>
 
     <div
-      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-1s animate__fadeInRight"
-    >
+      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-1s animate__fadeInRight">
       <!-- animate__animated animate__slow animate__delay-1s animate__fadeInRight -->
-      <v-btn
-        v-if="
-          !state.loading.skeletonLoads.LocalContacts ||
-          state.contacts.LocalContacts.length == 0
-        "
-        variant="elevated"
-        elevation="3"
-        color="green"
-        size="large"
-        @click="toggleRegisterForm"
-      >
+      <v-btn v-if="
+        !state.loading.skeletonLoads.LocalContacts ||
+        state.contacts.LocalContacts.length == 0
+      " variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
     </div>
-    <div
-      v-if="
-        state.loading.skeletonLoads.LocalContacts &&
-        state.contacts.LocalContacts.length
-      "
-      class="animate__animated animate__slow animate__fadeInUp animate__delay-2s flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0"
-    >
+    <div v-if="
+      state.loading.skeletonLoads.LocalContacts &&
+      state.contacts.LocalContacts.length
+    "
+      class="animate__animated animate__slow animate__fadeInUp animate__delay-2s flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0">
       <v-skeleton-loader type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
 
-    <Drawer
-      v-model="drawer"
-      v-model:drawer="drawer"
-      :contactsPreview="state.contacts.contactsPreview"
-      :changePreviewStatus="changePreviewStatus"
-    />
+    <Drawer v-model="drawer" v-model:drawer="drawer" :contactsPreview="state.contacts.contactsPreview"
+      :changePreviewStatus="changePreviewStatus" />
     <v-main style="height: 250px">
       <div class="d-flex justify-center align-center h-100"></div>
     </v-main>
   </div>
 
-  <Forms
-    v-model:modelState="state.forms.register"
-    title="ثبت مخاطب"
-    :registerMode="true"
-    :editMode="false"
-    :getData="getData"
-    :mainTableKey="state.mainTableKey"
-    @update:mainTableKey="updateMainTableKey"
-    :contactsPreview="state.contacts.contactsPreview"
-    @update:users="updateUsers"
-  />
+  <Forms v-model:modelState="state.forms.register" title="ثبت مخاطب" :registerMode="true" :editMode="false"
+    :getData="getData" :mainTableKey="state.mainTableKey" @update:mainTableKey="updateMainTableKey"
+    :contactsPreview="state.contacts.contactsPreview" @update:users="updateUsers" />
   <!-- :getData="getData()" -->
 
-  <Forms
-    v-model:model-state="state.forms.edit"
-    title="ویرایش مخاطب"
-    :editMode="true"
-    :currentID="state.contacts.selectedContact.id"
-    :allFormsFields="state.contacts.selectedContact"
-    :getData="getData"
-    :contactsPreview="state.contacts.contactsPreview"
-    :registerMode="false"
-    @update:mainTableKey="updateMainTableKey"
-  />
+  <Forms v-model:model-state="state.forms.edit" title="ویرایش مخاطب" :editMode="true"
+    :currentID="state.contacts.selectedContact.id" :allFormsFields="state.contacts.selectedContact" :getData="getData"
+    :contactsPreview="state.contacts.contactsPreview" :registerMode="false" @update:mainTableKey="updateMainTableKey" />
 
-  <p class="text-2xl p-5 bg-black ">Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa eaque ipsa, optio, eveniet assumenda tenetur eos dolor provident esse, sunt error quibusdam ex quidem fugit? Nisi expedita quasi officiis autem.</p>
+  <p class="text-2xl p-5 bg-black ">Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa eaque ipsa, optio,
+    eveniet assumenda tenetur eos dolor provident esse, sunt error quibusdam ex quidem fugit? Nisi expedita quasi
+    officiis autem.</p>
 
-    <draggable 
-  v-model="myArray" 
-  group="people" 
-  @start="drag=true" 
-  @end="drag=false" 
-  item-key="id">
-  <template #item="{element}">
-    <div class="text-2xl text-center bg-green-500 my-2 p-4">{{element.id }} : {{element.name}}</div>
-   </template>
-</draggable>
-<v-table>
-<tbody>
-<draggable 
-  v-model="state.contacts.LocalContacts" 
-  group="people" 
-  @start="drag=true" 
-  @end="drag=false" 
-  item-key="id">
-  <template #item="{element}">
-    <tr class=" ">
-    <td class="text-2xl text-center bg-green-500 my-2 p-4">
-    {{element.id }} : {{element.fullname}}
-  </td>
-  <td>{{ index + 1 }}</td>
+  <draggable v-model="myArray" group="people" @start="drag = true" @end="drag = false" item-key="id">
+    <template #item="{ element }">
+      <div class="text-2xl text-center bg-green-500 my-2 p-4">{{ element.id }} : {{ element.name }}</div>
+    </template>
+  </draggable>
+  <v-table>
+    <tbody>
+      <draggable v-model="state.contacts.LocalContacts" group="people" @start="drag = true" @end="drag = false"
+        item-key="id">
+        <template #item="{ element }">
+          <tr class=" ">
+            <td class="text-2xl text-center bg-green-500 my-2 p-4">
+              {{ element.id }} : {{ element.fullname }}
+            </td>
+            <td>{{ index + 1 }}</td>
             <td>
               <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="element.avatar" />
             </td>
@@ -664,7 +544,7 @@ const tableAnimationClass = computed(() => {
             <td class="">
               <div class="actionButtonsContainer flex gap-2 items-center justify-center">
                 <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete"
-                  @click="props.DeleteLocalStorageContacts(element.id, state.contacts.LocalContacts)"
+                  @click="props.DeleteContacts(element.id, state.contacts.LocalContacts)"
                   class="bg-red-600/90 hover:bg-red-600/95">
                   حذف
                 </v-btn>
@@ -674,11 +554,11 @@ const tableAnimationClass = computed(() => {
                 </v-btn>
               </div>
             </td>
-    </tr>
-   </template>
-</draggable>
-</tbody>
-</v-table>
+          </tr>
+        </template>
+      </draggable>
+    </tbody>
+  </v-table>
 
 
 </template>
