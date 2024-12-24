@@ -111,7 +111,6 @@ const pagePerList = ref(10)
               <span class=" select-none text-gray-600 pr-2"> __</span></h3>
           </div>
 
-
           <!-- ! -->
           <div class="apperanceSettingsList flex items-center justify-between  ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-lg my-2">

@@ -6,155 +6,106 @@ import Card from "@/views/container/components/contact_card.vue";
 import axios from "axios";
 import { HalfCircleSpinner } from "epic-spinners";
 import "animate.css";
-import NoDataServerAnimation from '@/assets/NoDataServerAnimation.json'
-import NoDataLocalAnimation from '@/assets/NoDataLocalAnimation.json'
-
+import NoDataServerAnimation from "@/assets/NoDataServerAnimation.json";
+import NoDataLocalAnimation from "@/assets/NoDataLocalAnimation.json";
 
 import {
-  convertNumbersToPersian as PersianNumberConvertorX,
   deleteLocalstorageContact as DeleteLocalStorageContacts,
 } from "../../utilities/functions";
 import ContactRecord from "./components/contactRecord.vue";
 import Drawer from "./components/drawer.vue";
 
-// const loadingPreview = ref(true);
-
-// const byLocalStorage = ref(true);
-// const skeletonLocalStorageLoadingState = ref(true);
-// const skeletonServerLoadingState = ref(true);
-
-// const selectedContact = reactive({});
-
-// const dialogRegisterState = ref(false);
-// const dialogEditState = ref(false);
-
-// const MyLocalContacts = reactive([]);
-// changing to const gives an error
-// let users = reactive({});
-
-// const loadingState = ref(false);
-
-// all in STATE
-// const previewStatus = ref('LocalStorage')
-
 const state = reactive({
-  contacts:{
-  LocalContacts:[],
-  server_1_Contacts:[],
-  contactsPreview:'LocalStorage',
-  storedPreviewStatus:localStorage.getItem('Preview Status'),
-    
-  selectedContact:{},
+  contacts: {
+    LocalContacts: [],
+    server_1_Contacts: [],
+    contactsPreview: "LocalStorage",
+    storedPreviewStatus: localStorage.getItem("Preview Status"),
+
+    selectedContact: {},
   },
-  forms:{
-    register:false,
-    edit:false,
+  forms: {
+    register: false,
+    edit: false,
   },
-  loading:{
-    preview:true,
-    loadingStatus:false,
-    animateClass:'',
-    skeletonLoads:{
-    LocalContacts: true,
-    server_1_Contacts: true,
-  }
+  loading: {
+    preview: true,
+    loadingStatus: false,
+    animateClass: "",
+    skeletonLoads: {
+      LocalContacts: true,
+      server_1_Contacts: true,
+    },
   },
   mainTableKey: 0,
-  
 });
 
-
 watch(state.contacts.contactsPreview, (newValue) => {
-  alert(state.contacts.contactsPreview)
-  alert('something changed in contacts Preview')
+  alert(state.contacts.contactsPreview);
+  alert("something changed in contacts Preview");
 
   switch (newValue) {
-    case 'LocalStorage':
-    state.contacts.contactsPreview = 'LocalStorage'
-    localStorage.setItem('Preview Status', state.contacts.contactsPreview);
-  break;
-    case 'Server' :
-    state.contacts.contactsPreview = 'Server'
-    localStorage.setItem('Preview Status', state.contacts.contactsPreview);
+    case "LocalStorage":
+      state.contacts.contactsPreview = "LocalStorage";
+      localStorage.setItem("Preview Status", state.contacts.contactsPreview);
+      break;
+    case "Server":
+      state.contacts.contactsPreview = "Server";
+      localStorage.setItem("Preview Status", state.contacts.contactsPreview);
   }
-})
-
-watch(()=>state.loading.skeletonLoads.LocalContacts,(newValue)=>{
-  // alert(newValue)
-})
+});
 
 
 
 onMounted(async () => {
-
-  if (!localStorage.getItem('Preview Status')) {
-    localStorage.setItem('Preview Status', 'LocalStorage');
-    state.contacts.contactsPreview = 'LocalStorage'
+  if (!localStorage.getItem("Preview Status")) {
+    localStorage.setItem("Preview Status", "LocalStorage");
+    state.contacts.contactsPreview = "LocalStorage";
   }
 
-  if (state.contacts.storedPreviewStatus == 'LocalStorage') {
-    state.contacts.contactsPreview = 'LocalStorage'
-    localStorage.setItem('Preview Status', state.contacts.contactsPreview);
-  } else if (state.contacts.storedPreviewStatus == 'Server') {
-    state.contacts.contactsPreview = 'Server'
-    localStorage.setItem('Preview Status', state.contacts.contactsPreview);
+  if (state.contacts.storedPreviewStatus == "LocalStorage") {
+    state.contacts.contactsPreview = "LocalStorage";
+    localStorage.setItem("Preview Status", state.contacts.contactsPreview);
+  } else if (state.contacts.storedPreviewStatus == "Server") {
+    state.contacts.contactsPreview = "Server";
+    localStorage.setItem("Preview Status", state.contacts.contactsPreview);
   }
   getData();
-  // sekeletonLoadsLocal();
-  // sekeletonLoadsOnServer();
+
   await fetchUsers();
   setTimeout(() => {
     state.loading.preview = false;
-
   }, 2400);
 
   setTimeout(() => {
     state.loading.loadingStatus = true;
-    
   }, 2000);
-  setTimeout(()=>{
-    state.loading.skeletonLoads.LocalContacts = false
-  },6000)
-  // vaghti loading kamelan anjam shod
+  setTimeout(() => {
+    state.loading.skeletonLoads.LocalContacts = false;
+  }, 6000);
 });
-
 
 function updateMainTableKey(newValue) {
   state.mainTableKey = newValue;
 }
 
-
-
-
 const getData = async () => {
- 
-  
   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
-  switch(state.contacts.contactsPreview){
-    case 'LocalStorage' :
-    state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...storedContacts);
-    // state.contacts.LocalContacts.push(...storedContacts)
-    break;
+  switch (state.contacts.contactsPreview) {
+    case "LocalStorage":
+      state.contacts.LocalContacts.splice(
+        0,
+        state.contacts.LocalContacts.length,
+        ...storedContacts
+      );
+      break;
 
-    case 'Server' :
-    await fetchUsers();
-    break;
-
+    case "Server":
+      await fetchUsers();
+      break;
   }
-
 };
 
-// const sekeletonLoadsLocal = () => {
-//   setTimeout(() => {
-//     state.loading.skeletonLoads.LocalContacts = false;
-//   }, 2000);
-// };
-// const sekeletonLoadsOnServer = () => {
-//   setTimeout(() => {
-//     state.loading.skeletonLoads.server_1_Contacts = false;
-
-//   }, 2000);
-// };
 
 const deleteServerContact = async (id) => {
   Swal.fire({
@@ -177,8 +128,11 @@ const deleteServerContact = async (id) => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:4000/users/${id}`); // Update with your server's base URL
-        state.contacts.server_1_Contacts  = state.contacts.server_1_Contacts.filter((contact) => contact.id !== id); // Update the local list of users
-        
+        state.contacts.server_1_Contacts =
+          state.contacts.server_1_Contacts.filter(
+            (contact) => contact.id !== id
+          ); // Update the local list of users
+
         state.mainTableKey = state.mainTableKey + 1;
         // Show success notification
         const Toast = Swal.mixin({
@@ -219,7 +173,7 @@ const toggleRegisterForm = () => {
 const UpdateStatusDataServer = ref(false);
 const UpdateDataServer = async () => {
   if (UpdateStatusDataServer.value) {
-     await fetchUsers();
+    await fetchUsers();
   }
 };
 
@@ -228,7 +182,7 @@ const fetchUsers = async () => {
     const response = await axios.get("http://localhost:4000/users"); // Replace with your actual URL
     state.contacts.server_1_Contacts = response.data;
     console.log(state.contacts.server_1_Contacts);
-    
+
     // console.log(users);
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -239,190 +193,227 @@ const localStorageCondition = () => {
   if (
     state.contacts.LocalContacts.length > 0 &&
     !state.loading.skeletonLoads.LocalContacts &&
-    state.contacts.contactsPreview == 'LocalStorage' 
+    state.contacts.contactsPreview == "LocalStorage"
   ) {
-    state.contacts.contactsPreview = 'LocalStorage'
+    state.contacts.contactsPreview = "LocalStorage";
     return true;
   }
 };
 
 const serverCondition = () => {
-  if ( state.contacts.server_1_Contacts.length > 0 && !state.loading.skeletonLoads.server_1_Contacts && state.contacts.contactsPreview == 'Server') {
-    state.contacts.contactsPreview = 'Server'
-        return true;
+  if (
+    state.contacts.server_1_Contacts.length > 0 &&
+    !state.loading.skeletonLoads.server_1_Contacts &&
+    state.contacts.contactsPreview == "Server"
+  ) {
+    state.contacts.contactsPreview = "Server";
+    return true;
   }
 };
 
 const drawer = ref(null);
 
 const noContactPreview = computed(() => {
-  if (state.contacts.LocalContacts.length === 0 && state.contacts.contactsPreview == 'LocalStorage') {
+  if (
+    state.contacts.LocalContacts.length === 0 &&
+    state.contacts.contactsPreview == "LocalStorage"
+  ) {
     return true;
-  } else if (state.contacts.server_1_Contacts.length === 0 && state.contacts.contactsPreview == 'Server') {
+  } else if (
+    state.contacts.server_1_Contacts.length === 0 &&
+    state.contacts.contactsPreview == "Server"
+  ) {
     return true;
   }
-
 
   return false;
 });
 
-
-
-const getEmojiNodata = (contactsPreview)=>{
+const getEmojiNodata = (contactsPreview) => {
   switch (contactsPreview) {
-    case 'LocalStorage':
-      return '😲';
-    case 'Server':
-      return '😨';
-    case 'Database':
-      return '😎';
-    case 'Cloud':
-      return '☁️';
+    case "LocalStorage":
+      return "😲";
+    case "Server":
+      return "😨";
+    case "Database":
+      return "😎";
+    case "Cloud":
+      return "☁️";
     default:
-      return '❓'; // حالت پیش‌فرض
+      return "❓"; // حالت پیش‌فرض
   }
-}
+};
 
-const savingModeData = (contactsPreview)=>{
+const savingModeData = (contactsPreview) => {
   switch (contactsPreview) {
-    case 'LocalStorage':
-      return 'مرورگر ';
-    case 'Server':
-      return 'سرور';
-    case 'Database':
-      return 'دیتابیس';
-    case 'Cloud':
-      return 'ابر';
+    case "LocalStorage":
+      return "مرورگر ";
+    case "Server":
+      return "سرور";
+    case "Database":
+      return "دیتابیس";
+    case "Cloud":
+      return "ابر";
     default:
-      return 'محل نامشخص'; // حالت پیش‌فرض
+      return "محل نامشخص";  
   }
-}
+};
 
-const getTitleEmoji = (contactsPreview)=>{
+const getTitleEmoji = (contactsPreview) => {
   switch (contactsPreview) {
-    case 'LocalStorage':
-      return 'mdi-web';
-    case 'Server':
-      return 'mdi-server';
-    case 'Database':
-      return 'mdi-database';
-    case 'Cloud':
-      return 'mid-cloud';
+    case "LocalStorage":
+      return "mdi-web";
+    case "Server":
+      return "mdi-server";
+    case "Database":
+      return "mdi-database";
+    case "Cloud":
+      return "mid-cloud";
     default:
-      return 'mdi-question-mark'; 
+      return "mdi-question-mark";
   }
-}
+};
 
-const changePreviewStatus = (status)=>{
+const changePreviewStatus = (status) => {
   state.contacts.contactsPreview = status;
-  localStorage.setItem('Preview Status', status);
-  getData()
-}
-
+  localStorage.setItem("Preview Status", status);
+  getData();
+};
 
 const NoDataLottie = (contactPreview) => {
   switch (contactPreview) {
-    case 'Server':
-      return NoDataServerAnimation
-    case 'LocalStorage':
-      return NoDataLocalAnimation
+    case "Server":
+      return NoDataServerAnimation;
+    case "LocalStorage":
+      return NoDataLocalAnimation;
     default:
-      return null  
+      return null;
   }
-}
+};
 
-const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPreview))
+const lottieAnimation = computed(() =>
+  NoDataLottie(state.contacts.contactsPreview)
+);
 
 const tableItems = ref([
-  'شماره',
-  'پروفایل',
-  'نام و نام خانوادگی',
-  'شماره تلفن',
-  'تاریخ تولد',
-  'همکار',
-  'مهارت ها',
-  'علاقه مندی ها',
-  'عملیات'
-])
+  "شماره",
+  "پروفایل",
+  "نام و نام خانوادگی",
+  "شماره تلفن",
+  "تاریخ تولد",
+  "همکار",
+  "مهارت ها",
+  "علاقه مندی ها",
+  "عملیات",
+]);
 const animationTriggered = ref(false);
 const animationTriggered2 = ref(false);
 
 const getNoContactAnimatedClass = computed(() => {
   if (state.contacts.LocalContacts.length === 0 && !animationTriggered.value) {
-    animationTriggered.value = true; 
-    return 'animate__animated animate__slow animate__fadeInUp'; 
+    animationTriggered.value = true;
+    return "animate__animated animate__slow animate__fadeInUp";
   }
-  return '';
+  return "";
 });
 
 const tableAnimationClass = computed(() => {
   if (state.contacts.LocalContacts.length === 0 && !animationTriggered2.value) {
     animationTriggered2.value = true;
-    return 'animate__animated animate__slow animate__fadeInUp';
-    } else if(state.contacts.LocalContacts.length > 0 && !animationTriggered2.value){
-      animationTriggered2.value = true;
-      return 'tableHavingContact animate__animated animate__fadeInUp';
-    }
-    return '';
-    });
-// animate__animated animate__slow animate__fadeInLeft
-
-
-
-
+    return "animate__animated animate__slow animate__fadeInUp";
+  } else if (
+    state.contacts.LocalContacts.length > 0 &&
+    !animationTriggered2.value
+  ) {
+    animationTriggered2.value = true;
+    return "tableHavingContact animate__animated animate__fadeInUp";
+  }
+  return "";
+});
 </script>
 <template>
-  <div class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30" v-if="!state.loading.loadingStatus">
-    <half-circle-spinner :size="100" color="green" /> 
-    <h2 class="text-xl">
-      ... در حال بارگذاری
-    </h2>
+  <div
+    class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30"
+    v-if="!state.loading.loadingStatus"
+  >
+    <half-circle-spinner :size="100" color="green" />
+    <h2 class="text-xl">... در حال بارگذاری</h2>
   </div>
 
-  <div class="  mx-auto mainContent h-full bg-cover" v-if="state.loading.loadingStatus">
+  <div
+    class="mx-auto mainContent h-full bg-cover"
+    v-if="state.loading.loadingStatus"
+  >
     <header class="titlePage overflow-hidden">
-      <div class=" titleText animate__animated animate__fadeInUp animate__slow">
-        <h1 class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2">
-          <span class="mdi" :class="getTitleEmoji(state.contacts.contactsPreview)"></span>
-           دفترچه
-          تلفن {{ savingModeData(state.contacts.contactsPreview) }}
+      <div class="titleText animate__animated animate__fadeInUp animate__slow">
+        <h1
+          class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2"
+        >
+          <span
+            class="mdi"
+            :class="getTitleEmoji(state.contacts.contactsPreview)"
+          ></span>
+          دفترچه تلفن {{ savingModeData(state.contacts.contactsPreview) }}
         </h1>
         <!-- <div class="fixed top-0 right-0">
           <AnalogClock class="scale-[.35] bg-green-500   " />
         </div> -->
       </div>
-
     </header>
 
     <div class="container mx-auto rounded-lg">
-      <div class="  px-4 my-2 text-center lg:!text-left 
-         animate__animated animate__slow animate__fadeInLeft ">
-        <div class="setting ">
+      <div
+        class="px-4 my-2 text-center lg:!text-left animate__animated animate__slow animate__fadeInLeft"
+      >
+        <div class="setting">
           <span
-            class=" cursor-pointer mdi mdi-cog text-3xl text-black inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
-            @click.stop="drawer = !drawer" />
+            class="cursor-pointer mdi mdi-cog text-3xl text-black inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
+            @click.stop="drawer = !drawer"
+          />
         </div>
-
       </div>
 
       <v-table
-       class="the_table hidden xl:block" :class="tableAnimationClass" :key="state.mainTableKey">
-        <thead class="relative"  >
+        class="the_table hidden xl:block"
+        :class="tableAnimationClass"
+        :key="state.mainTableKey"
+      >
+        <thead class="relative">
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
-            <th class="text-right" v-for="(item,index) in tableItems" :key="index">{{ item }}</th>
+            <th
+              class="text-right"
+              v-for="(item, index) in tableItems"
+              :key="index"
+            >
+              {{ item }}
+            </th>
           </tr>
         </thead>
 
         <!-- Skeleton of LocalStorage -->
-        <tbody class="w-full" v-if="state.loading.skeletonLoads.LocalContacts && state.contacts.LocalContacts.length > 0">
-          <tr v-for="(item, index) in state.contacts.LocalContacts.length" :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
+        <tbody
+          class="w-full"
+          v-if="
+            state.loading.skeletonLoads.LocalContacts &&
+            state.contacts.LocalContacts.length > 0
+          "
+        >
+          <tr
+            v-for="(item, index) in state.contacts.LocalContacts.length"
+            :key="index"
+            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
+          >
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
             </td>
             <td class="min-w-48">
               <div class="w-full px-8">
-                <v-skeleton-loader type="button,button" color="transparent" class=" ">
+                <v-skeleton-loader
+                  type="button,button"
+                  color="transparent"
+                  class=" "
+                >
                 </v-skeleton-loader>
               </div>
             </td>
@@ -431,16 +422,26 @@ const tableAnimationClass = computed(() => {
 
         <!-- Skeleton of Server -->
 
-        <tbody class="w-full" v-if="state.loading.skeletonLoads.server_1_Contacts">
-          <tr v-for="(item, index) in state.contacts.server_1_Contacts.length"
-           :key="index" class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
+        <tbody
+          class="w-full"
+          v-if="state.loading.skeletonLoads.server_1_Contacts"
+        >
+          <tr
+            v-for="(item, index) in state.contacts.server_1_Contacts.length"
+            :key="index"
+            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
+          >
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
             </td>
             <td class="min-w-48">
               <div class="w-full px-8">
-                <v-skeleton-loader type="button,button" color="transparent" class=" ">
+                <v-skeleton-loader
+                  type="button,button"
+                  color="transparent"
+                  class=" "
+                >
                 </v-skeleton-loader>
               </div>
             </td>
@@ -449,98 +450,135 @@ const tableAnimationClass = computed(() => {
 
         <!-- Locals -->
         <ContactRecord
-          v-if="localStorageCondition()  "
+          v-if="localStorageCondition()"
           :LocalContacts="state.contacts.LocalContacts"
           :DeleteLocalStorageContacts="DeleteLocalStorageContacts"
           :toggleEditForm="toggleEditForm"
-          
-         />
+        />
 
-         <!-- Server -->
-         <ContactRecord
+        <!-- Server -->
+        <ContactRecord
           v-if="serverCondition()"
           :LocalContacts="state.contacts.server_1_Contacts"
           :DeleteLocalStorageContacts="deleteServerContact"
           :toggleEditForm="toggleEditForm"
-          
-         />
-
+        />
       </v-table>
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
         :class="getNoContactAnimatedClass"
-         v-if="noContactPreview">
-      <Vue3Lottie v-if="lottieAnimation" :animationData="lottieAnimation" :height="400" :width="400" />
-        
+        v-if="noContactPreview"
+      >
+        <Vue3Lottie
+          v-if="lottieAnimation"
+          :animationData="lottieAnimation"
+          :height="400"
+          :width="400"
+        />
+
         <p class="pb-10 text-3xl">
           {{ getEmojiNodata(state.contacts.contactsPreview) }}
 
-           هیچ مخاطبی در
-           {{
-            savingModeData(state.contacts.contactsPreview)
-          }}
+          هیچ مخاطبی در
+          {{ savingModeData(state.contacts.contactsPreview) }}
           موجود نیست
         </p>
       </div>
     </div>
 
-<!-- Card Of LocalContacts -->
+    <!-- Card Of LocalContacts -->
     <div
       class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!state.loading.skeletonLoads.LocalContacts && state.contacts.contactsPreview == 'LocalStorage'">
-      <Card v-model:dialogEditState="state.forms.edit" :currentItem="item" :MyLocalContacts="state.contacts.LocalContacts"
-        :selectedContact="state.contacts.selectedContact" :all_forms_fields="item" v-for="(item, index) in state.contacts.LocalContacts"
-        :deleteServerContact="deleteServerContact" :contactsPreview="state.contacts.contactsPreview" :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap" />
-    </div>
-    
-    <div
-      class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
-      v-if="!state.loading.skeletonLoads.server_1_Contacts && state.contacts.contactsPreview == 'Server'">
+      v-if="
+        !state.loading.skeletonLoads.LocalContacts &&
+        state.contacts.contactsPreview == 'LocalStorage'
+      "
+    >
       <Card
-      v-for="(item, index) in state.contacts.server_1_Contacts"
-       v-model:dialogEditState="state.forms.edit" :currentItem="item" :MyLocalContacts="state.contacts.LocalContacts"
-        :selectedContact="state.contacts.selectedContact" :all_forms_fields="item" 
-        :deleteServerContact="deleteServerContact" :serverUpdate="UpdateDataServer" :contactsPreview="state.contacts.contactsPreview" :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap" />
+        v-model:dialogEditState="state.forms.edit"
+        :currentItem="item"
+        :MyLocalContacts="state.contacts.LocalContacts"
+        :selectedContact="state.contacts.selectedContact"
+        :all_forms_fields="item"
+        v-for="(item, index) in state.contacts.LocalContacts"
+        :deleteServerContact="deleteServerContact"
+        :contactsPreview="state.contacts.contactsPreview"
+        :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap"
+      />
     </div>
 
+    <div
+      class="test_card mx-4 md:!mx-auto md:container w-full flex flex-row-reverse flex-wrap xl:hidden items-stretch justify-center gap-8 cursor-pointer"
+      v-if="
+        !state.loading.skeletonLoads.server_1_Contacts &&
+        state.contacts.contactsPreview == 'Server'
+      "
+    >
+      <Card
+        v-for="(item, index) in state.contacts.server_1_Contacts"
+        v-model:dialogEditState="state.forms.edit"
+        :currentItem="item"
+        :MyLocalContacts="state.contacts.LocalContacts"
+        :selectedContact="state.contacts.selectedContact"
+        :all_forms_fields="item"
+        :deleteServerContact="deleteServerContact"
+        :serverUpdate="UpdateDataServer"
+        :contactsPreview="state.contacts.contactsPreview"
+        :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap"
+      />
+    </div>
 
     <div
       class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
-      v-if="state.loading.skeletonLoads.LocalContacts">
-      <v-skeleton-loader v-for="(item, index) in state.contacts.LocalContacts" :key="index" min-height="540" elevation="24"
+      v-if="state.loading.skeletonLoads.LocalContacts"
+    >
+      <v-skeleton-loader
+        v-for="(item, index) in state.contacts.LocalContacts"
+        :key="index"
+        min-height="540"
+        elevation="24"
         type="	image , text, paragraph , article  , button , button"
-        class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard">
+        class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard"
+      >
       </v-skeleton-loader>
     </div>
 
     <div
-      class="addNewContact w-full flex xl:!justify-end justify-center
-       container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-1s animate__fadeInRight
-        ">
-        <!-- animate__animated animate__slow animate__delay-1s animate__fadeInRight -->
-      <v-btn v-if="!state.loading.skeletonLoads.LocalContacts || state.contacts.LocalContacts.length == 0"
-       variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
+      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-1s animate__fadeInRight"
+    >
+      <!-- animate__animated animate__slow animate__delay-1s animate__fadeInRight -->
+      <v-btn
+        v-if="
+          !state.loading.skeletonLoads.LocalContacts ||
+          state.contacts.LocalContacts.length == 0
+        "
+        variant="elevated"
+        elevation="3"
+        color="green"
+        size="large"
+        @click="toggleRegisterForm"
+      >
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
-
     </div>
-    <div 
-          v-if="
-        state.loading.skeletonLoads.LocalContacts && state.contacts.LocalContacts.length"
-     class="animate__animated animate__slow animate__fadeInUp animate__delay-2s
-     flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0">
-      <v-skeleton-loader 
-     
-
-         type="button" color="transparent" class="w-32 ">
+    <div
+      v-if="
+        state.loading.skeletonLoads.LocalContacts &&
+        state.contacts.LocalContacts.length
+      "
+      class="animate__animated animate__slow animate__fadeInUp animate__delay-2s flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0"
+    >
+      <v-skeleton-loader type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
- 
 
-    <Drawer v-model="drawer" v-model:drawer="drawer" :contactsPreview="state.contacts.contactsPreview" 
+    <Drawer
+      v-model="drawer"
+      v-model:drawer="drawer"
+      :contactsPreview="state.contacts.contactsPreview"
       :changePreviewStatus="changePreviewStatus"
     />
     <v-main style="height: 250px">
@@ -548,24 +586,31 @@ const tableAnimationClass = computed(() => {
     </v-main>
   </div>
 
-
   <Forms
-    v-model:modelState="state.forms.register" title="ثبت مخاطب"
-    :registerMode="true" :editMode="false" :getData="getData"
-     :mainTableKey="state.mainTableKey"
+    v-model:modelState="state.forms.register"
+    title="ثبت مخاطب"
+    :registerMode="true"
+    :editMode="false"
+    :getData="getData"
+    :mainTableKey="state.mainTableKey"
     @update:mainTableKey="updateMainTableKey"
     :contactsPreview="state.contacts.contactsPreview"
-    @update:users="updateUsers" />
+    @update:users="updateUsers"
+  />
   <!-- :getData="getData()" -->
 
-  <Forms v-model:model-state="state.forms.edit" title="ویرایش مخاطب" :editMode="true" :currentID="state.contacts.selectedContact.id"
-    :allFormsFields="state.contacts.selectedContact" :getData="getData"
-     
-     :contactsPreview="state.contacts.contactsPreview"
-      :registerMode="false"
-    @update:mainTableKey="updateMainTableKey"  />
-    <!-- :fetchUsers="fetchUsers()" --> 
- 
+  <Forms
+    v-model:model-state="state.forms.edit"
+    title="ویرایش مخاطب"
+    :editMode="true"
+    :currentID="state.contacts.selectedContact.id"
+    :allFormsFields="state.contacts.selectedContact"
+    :getData="getData"
+    :contactsPreview="state.contacts.contactsPreview"
+    :registerMode="false"
+    @update:mainTableKey="updateMainTableKey"
+  />
+  <!-- :fetchUsers="fetchUsers()" -->
 </template>
 
 <style scoped>
@@ -574,5 +619,3 @@ const tableAnimationClass = computed(() => {
   background-position: center;
 }
 </style>
-
-
