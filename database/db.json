@@ -1,40 +1,10 @@
 {
   "users": [
     {
-      "id": "f83a",
-      "phoneNumber": "eewe",
-      "fullname": "sdfef",
+      "id": "f4ac",
+      "phoneNumber": "a",
+      "fullname": "aqweqwe",
       "selectedDate": null,
-      "skills": [],
-      "favorites": [],
-      "avatar": null,
-      "isCoworker": false
-    },
-    {
-      "id": "4489",
-      "phoneNumber": "r",
-      "fullname": "dgr",
-      "selectedDate": null,
-      "skills": [],
-      "favorites": [],
-      "avatar": null,
-      "isCoworker": false
-    },
-    {
-      "id": "3dca",
-      "phoneNumber": "grg",
-      "fullname": "gdfg",
-      "selectedDate": null,
-      "skills": [],
-      "favorites": [],
-      "avatar": null,
-      "isCoworker": false
-    },
-    {
-      "id": "676c",
-      "phoneNumber": "455",
-      "fullname": "wer34",
-      "selectedDate": "",
       "skills": [],
       "favorites": [],
       "avatar": null,

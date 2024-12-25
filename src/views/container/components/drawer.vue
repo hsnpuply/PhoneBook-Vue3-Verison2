@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 const props = defineProps({
   drawer: Boolean,
   contactsPreview: String,
@@ -9,12 +9,14 @@ const props = defineProps({
 
 })
 
+
 const state = reactive({
   contacts: {
     contactsPreview: props.contactsPreview
   },
   toggle: {
-    drawer: props.drawer
+    drawer: props.drawer,
+    guide_activation:null
   }
 })
 
@@ -36,15 +38,65 @@ watch(() => props.contactsPreview, (newVal) => {
 const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
 const NumberItems = ref([10, 25, 30, 35])
 
-const PickedTheme = ref('سبز')
+const PickedTheme = ref('')
 const pagePerList = ref(10)
 
 
+const themeChanger = (item) => {
+  switch (item) {
+    case 'سبز':
+      return 'bg-gradient-to-t from-[#ebf1ef] to-[#a8e6cf]';
+    case 'آبی':
+      return 'bg-gradient-to-t from-[#ebf0f1] to-[#87ceeb]';
+    case 'بنفش':
+      return 'bg-gradient-to-t from-[#edebf1] to-[#e1abf7]';
+    case 'زرد':
+      return 'bg-gradient-to-t from-[#fcfbfa] to-[#f7da63]'; 
+  }
+};
+onMounted(()=>{
+  if(!localStorage.getItem("Guide_Activation")){
+    localStorage.setItem("Guide_Activation", state.toggle.guide_activation);
+    state.toggle.guide_activation = true
+  }
+
+  if(!localStorage.getItem("Theme Color")){
+    localStorage.setItem("Theme Color", 'سبز')
+    PickedTheme.value = 'سبز'
+   }else {
+    const storedTheme = localStorage.getItem("Theme Color");
+    if (themeItems.value.includes(storedTheme)) {
+      PickedTheme.value = storedTheme;
+    } else {
+      localStorage.setItem("Theme Color", 'سبز');
+      PickedTheme.value = 'سبز';
+    }
+  }
+  })
+
+watch(PickedTheme,(newVal)=>{
+  localStorage.setItem("Theme Color", newVal)
+})
+const syncTheme = (event) => {
+  if (event.key === "Theme Color") {
+    const newTheme = event.newValue;
+    if (themeItems.value.includes(newTheme)) {
+      PickedTheme.value = newTheme;
+    }
+  }
+};
+window.addEventListener('storage', syncTheme);
+
+
+watch(()=> state.toggle.guide_activation,(newValue)=>{
+  localStorage.setItem("Guide_Activation",newValue)
+})
 
 </script>
 <template>
   <v-navigation-drawer v-model="props.drawer" temporary
-    class="h-[100vh] bg-drawer_primary select-none fixed duration-[580ms] h-[100vh] left-0 top-0 " :width="500">
+    class="h-[100vh]  bg-drawer_primary select-none fixed duration-[580ms] h-[100vh] left-0 top-0 " :width="500"
+    :class="themeChanger(PickedTheme) || 'bg-gradient-to-t from-[#ebf1ef] to-[#a8e6cf]'">
     <div class="navigation w-full  ">
       <v-list-item class="bg-[#f2faf5] h-[3.5rem]  shadow-sm shadow-sky-600/20 ">
         <div class="headerDrawer    ">
@@ -78,25 +130,29 @@ const pagePerList = ref(10)
           </div>
           <div class="apperanceSettingsList flex items-center justify-between  ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-lg my-2">
-              <span class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">?
+              <span class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none"
+                v-if="state.toggle.guide_activation"
+              >?
 
                 <v-tooltip activator="parent" class="" location="top">انتخاب رنگ قالب</v-tooltip>
               </span>
-              <span class="text-black font-semibold text-lg">انتخاب قالب :</span>
+              <span class="text-black font-semibold text-base lg:text-lg">انتخاب قالب :</span>
             </div>
             <div class="selectTheme">
-              <v-select hide-details :items="themeItems" v-model="PickedTheme" class="colorSelector w-26 "
+              <v-select hide-details :items="themeItems"
+               v-model="PickedTheme" class="colorSelector w-26 scale-[.95]"
                 bg-color="white" variant="outlined" />
             </div>
           </div>
           <div class="animationSettings flex items-ceneter justify-between ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
-              <span class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
+              <span v-if="state.toggle.guide_activation"
+               class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
                 <v-tooltip activator="parent" location="top">
                   فعال کردن انیمیشن ها
                 </v-tooltip>
                 ?</span>
-              <span class="text-black font-semibold">انیمیشن :</span>
+              <span class="text-black font-semibold text-base lg:text-lg">انیمیشن :</span>
             </div>
             <div class="animationSwitchButton flex justify-center items-center ">
               <v-switch color="success" ripple class=" flex switchBtn " />
@@ -115,29 +171,34 @@ const pagePerList = ref(10)
           <!-- ! -->
           <div class="apperanceSettingsList flex items-center justify-between  ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-lg my-2">
-              <span class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">?
+              <span class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none"
+              v-if="state.toggle.guide_activation"
+              >?
 
                 <v-tooltip activator="parent" class="" location="top">تعداد لیست هر صفحه</v-tooltip>
               </span>
-              <span class="text-black font-semibold text-lg">تعداد لیست هر صفحه :</span>
+              <span class="text-black font-semibold text-base ">تعداد لیست هر صفحه :</span>
             </div>
             <div class="selectTheme">
-              <v-select :items="NumberItems" v-model="pagePerList" class="colorSelector w-26" bg-color="white"
+              <v-select :items="NumberItems" v-model="pagePerList"
+               class="colorSelector w-26 scale-[.95]" bg-color="white"
                 variant="outlined" hide-details />
             </div>
           </div>
           <div class="animationSettings flex items-ceneter justify-between ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
-              <span class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
+              <span 
+              v-if="state.toggle.guide_activation"
+              class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
                 <v-tooltip activator="parent" location="top">
                   نمایش راهنما
                 </v-tooltip>
                 ?</span>
-              <span class="text-black font-semibold text-lg"> نمایش راهنما
+              <span class="text-black font-semibold text-base lg:text-lg"> نمایش راهنما
                 :</span>
             </div>
             <div class="animationSwitchButton flex justify-center items-center ">
-              <v-switch   color="success" ripple class=" flex switchBtn " />
+              <v-switch v-model="state.toggle.guide_activation"  color="success" ripple class=" flex switchBtn " />
             </div>
           </div>
         </div>
@@ -147,7 +208,7 @@ const pagePerList = ref(10)
 
         <div class="generalSettings">
           <div class="settingsTitle text-right">
-            <h3 class="text-xl text-[#58b97f] font-semibold"><span class="text-gray-600 select-none pl-2">__ </span>
+            <h3 class="text-lg  text-[#58b97f] font-semibold"><span class="text-gray-600 select-none pl-2">__ </span>
               تنظیمات
               <span class=" select-none text-gray-600 pr-2"> __</span>
             </h3>
@@ -155,12 +216,14 @@ const pagePerList = ref(10)
 
           <div class="animationSettings flex items-ceneter justify-between ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
-              <span class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
+              <span 
+              v-if="state.toggle.guide_activation"
+              class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
                 <v-tooltip activator="parent" location="top">
                   تغییرات به صورت آنی اجرا شوند
                 </v-tooltip>
                 ?</span>
-              <span class="text-black font-semibold text-lg">
+              <span class="text-black font-semibold text-base lg:text-lg">
                 اعمال سریع تغییرات
                 :</span>
             </div>

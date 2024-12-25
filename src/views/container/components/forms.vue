@@ -202,11 +202,12 @@ const submitData = async () => {
 
   // Update the last used ID in localStorage
   localStorage.setItem("lastId", newId);
-  props.getData();
-  incrementValue();
+ 
   setTimeout(() => {
     emit("update:modelState", false);
     emit("update:mainTableKey", currentValue.value + 10);
+    props.getData();
+    incrementValue();
   }, 1200);
 
   setTimeout(() => {
@@ -289,12 +290,13 @@ const submitInServer = async () => {
       timerProgressBar: true,
     });
 
-    // Call the getData function to refresh data
-    props.getData();
+  
     // Close the dialog and reset the form
     setTimeout(() => {
       emit("update:modelState", false);
       emit("update:mainTableKey", currentValue.value + 1);
+      // Call the getData function to refresh data
+      props.getData();
     }, 1200);
 
     setTimeout(() => {
@@ -385,6 +387,8 @@ const UpdateDialog = async () => {
 
   setTimeout(() => {
     emit("update:modelState", false);
+  props.getData();
+
   }, 1500);
 
   setTimeout(() => {
@@ -402,7 +406,6 @@ const UpdateDialog = async () => {
     state.loading = false;
     dataPassPermission.value = true;
   }, 1700);
-  props.getData();
 };
 
 const updateInServer = async () => {
@@ -460,13 +463,14 @@ const updateInServer = async () => {
       color: "green",
     });
 
-    // Refresh the data in the parent component
-    props.getData();
+
 
     // Close the dialog and reset the form
     setTimeout(() => {
       emit("update:modelState", false);
       emit("update:mainTableKey", 202);
+      // Refresh the data in the parent component
+      props.getData();
     }, 1200);
 
     setTimeout(() => {

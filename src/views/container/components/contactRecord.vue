@@ -34,14 +34,14 @@ const props = defineProps({
         <td class="">
           <div class="actionButtonsContainer flex gap-2 items-center justify-center">
             <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete" @click="
-              DeleteContacts(
+              props.DeleteContacts(
                 element.id,
-                state.contacts.data
+                props.data
               )
               " class="bg-red-600/90 hover:bg-red-600/95">
               حذف
             </v-btn>
-            <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="toggleEditForm(element)"
+            <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="props.toggleEditForm(element)"
               class="bg-sky-600/90 hover:bg-sky-600/95">
               ویرایش
             </v-btn>

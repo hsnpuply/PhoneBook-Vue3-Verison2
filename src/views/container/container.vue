@@ -1,7 +1,7 @@
 <script setup>
 import Swal from "sweetalert2";
 import { ref, reactive, onMounted, computed, watch } from "vue";
-import Forms from "@/components/forms.vue";
+import Forms from "@/views/container/components/forms.vue";
 import Card from "@/views/container/components/contact_card.vue";
 import axios from "axios";
 import { HalfCircleSpinner } from "epic-spinners";
@@ -25,11 +25,12 @@ import {
 import ContactRecord from "./components/contactRecord.vue";
 import Drawer from "./components/drawer.vue";
 
+
 const state = reactive({
   contacts: {
     LocalContacts: [],
     server_1_Contacts: [],
-    contactsPreview: "LocalStorage",
+    contactsPreview: "",
     storedPreviewStatus: localStorage.getItem("Preview Status"),
 
     selectedContact: {},
@@ -50,6 +51,11 @@ const state = reactive({
   mainTableKey: 0,
 });
 
+
+
+
+
+
 watch(state.contacts.contactsPreview, (newValue) => {
   alert(state.contacts.contactsPreview);
   alert("something changed in contacts Preview");
@@ -65,10 +71,16 @@ watch(state.contacts.contactsPreview, (newValue) => {
   }
 });
 
+function handleStorageChange(e) {
+  if (e.key === 'Preview Status') {
+    // alert(`Preview Status changed to: ${e.newValue}`);
+    state.contacts.contactsPreview = e.newValue;
+  }}
 
-
+window.addEventListener('storage', handleStorageChange);
 onMounted(async () => {
-  if (!localStorage.getItem("Preview Status")) {
+
+  if (!localStorage.getItem("Preview Status")  && state.contacts.contactsPreview == '' ) {
     localStorage.setItem("Preview Status", "LocalStorage");
     state.contacts.contactsPreview = "LocalStorage";
   }
@@ -262,7 +274,7 @@ const savingModeData = (contactsPreview) => {
     case "Database":
       return "دیتابیس";
     case "Cloud":
-      return "ابر";
+      return "فضای ابری";
     default:
       return "محل نامشخص";
   }
@@ -339,6 +351,37 @@ const tableAnimationClass = computed(() => {
   }
   return "";
 });
+
+const isContact_on_current_mode = (contactsPreview) => {
+  switch (contactsPreview) {
+    case 'LocalStorage':
+      return "در حالت مرورگر";
+    case 'Server':
+      return "در حالت سرور";
+    case 'Database':
+      return "در حالت دیتابیس";
+    case 'Cloud':
+      return "در حالت ابر";
+    default:
+      return false;
+  }
+};
+
+const showRegisterButton = (previewStatus) => {
+  if(previewStatus){
+    return (
+    isContact_on_current_mode(previewStatus) !== false
+    // !state.loading.skeletonLoads.LocalContacts ||
+    // (state.contacts.LocalContacts.length === 0 && !savingModeData("محل نامشخص"))
+  ) 
+  }else{
+    return false
+  }
+}
+const back_to_default_status = ()=>{
+  state.contacts.contactsPreview = 'LocalStorage'
+  localStorage.setItem("Preview Status", state.contacts.contactsPreview);
+}
 </script>
 <template>
   <div class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30"
@@ -476,12 +519,17 @@ const tableAnimationClass = computed(() => {
     <div
       class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-1s animate__fadeInRight">
       <!-- animate__animated animate__slow animate__delay-1s animate__fadeInRight -->
-      <v-btn v-if="
-        !state.loading.skeletonLoads.LocalContacts ||
-        state.contacts.LocalContacts.length == 0
-      " variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
+      <v-btn v-if="showRegisterButton(state.contacts.contactsPreview)"
+        
+         variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
+      </v-btn>
+      <v-btn v-else  variant="elevated" elevation="3" size="large" class="w-full bg-yellow-400 text-black" 
+      @click="back_to_default_status()"
+
+       >
+        بازگشت به تنظیمات اولیه
       </v-btn>
     </div>
     <div v-if="
@@ -502,7 +550,7 @@ const tableAnimationClass = computed(() => {
 
   <Forms v-model:modelState="state.forms.register" title="ثبت مخاطب" :registerMode="true" :editMode="false"
     :getData="getData" :mainTableKey="state.mainTableKey" @update:mainTableKey="updateMainTableKey"
-    :contactsPreview="state.contacts.contactsPreview" @update:users="updateUsers" />
+    :contactsPreview="state.contacts.contactsPreview"  />
   <!-- :getData="getData()" -->
 
   <Forms v-model:model-state="state.forms.edit" title="ویرایش مخاطب" :editMode="true"
