@@ -16,7 +16,7 @@ const state = reactive({
   },
   toggle: {
     drawer: props.drawer,
-    guide_activation:null
+    guide_activation:false
   }
 })
 
@@ -56,9 +56,12 @@ const themeChanger = (item) => {
 };
 onMounted(()=>{
   if(!localStorage.getItem("Guide_Activation")){
-    localStorage.setItem("Guide_Activation", state.toggle.guide_activation);
+    localStorage.setItem("Guide_Activation", true);
     state.toggle.guide_activation = true
+  }else{
+    localStorage.getItem("Guide_Activation") == 'true' ? state.toggle.guide_activation = true : (state.toggle.guide_activation = false , localStorage.setItem("Guide_Activation",false))
   }
+
 
   if(!localStorage.getItem("Theme Color")){
     localStorage.setItem("Theme Color", 'سبز')
@@ -77,20 +80,33 @@ onMounted(()=>{
 watch(PickedTheme,(newVal)=>{
   localStorage.setItem("Theme Color", newVal)
 })
-const syncTheme = (event) => {
+const syncSettings = (event) => {
   if (event.key === "Theme Color") {
     const newTheme = event.newValue;
     if (themeItems.value.includes(newTheme)) {
       PickedTheme.value = newTheme;
     }
   }
+  if(event.key === "Guide_Activation"){
+    state.toggle.guide_activation = event.newValue === 'true' 
+    ? true 
+    : (console.log('Invalid value detected. Resetting to false.'), false);
+    }
+
 };
-window.addEventListener('storage', syncTheme);
+window.addEventListener('storage', syncSettings);
 
 
 watch(()=> state.toggle.guide_activation,(newValue)=>{
   localStorage.setItem("Guide_Activation",newValue)
+  state.toggle.guide_activation = newValue
 })
+const toggleGuideActivation= ()=>{
+  state.toggle.guide_activation = !state.toggle.guide_activation
+  localStorage.setItem("Guide_Activation",state.toggle.guide_activation)
+}
+
+
 
 </script>
 <template>
@@ -198,7 +214,8 @@ watch(()=> state.toggle.guide_activation,(newValue)=>{
                 :</span>
             </div>
             <div class="animationSwitchButton flex justify-center items-center ">
-              <v-switch v-model="state.toggle.guide_activation"  color="success" ripple class=" flex switchBtn " />
+              <v-switch v-model="state.toggle.guide_activation"
+              @click="toggleGuideActivation()"  color="success" ripple class=" flex switchBtn " />
             </div>
           </div>
         </div>

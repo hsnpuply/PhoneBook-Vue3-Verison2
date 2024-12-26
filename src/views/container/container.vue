@@ -71,13 +71,12 @@ watch(state.contacts.contactsPreview, (newValue) => {
   }
 });
 
-function handleStorageChange(e) {
-  if (e.key === 'Preview Status') {
-    // alert(`Preview Status changed to: ${e.newValue}`);
-    state.contacts.contactsPreview = e.newValue;
-  }}
+// function handleStorageChange(e) {
+//   if (e.key === 'Preview Status') {
+//     state.contacts.contactsPreview = e.newValue;
+//   }}
 
-window.addEventListener('storage', handleStorageChange);
+// window.addEventListener('storage', handleStorageChange);
 onMounted(async () => {
 
   if (!localStorage.getItem("Preview Status")  && state.contacts.contactsPreview == '' ) {
@@ -91,6 +90,9 @@ onMounted(async () => {
   } else if (state.contacts.storedPreviewStatus == "Server") {
     state.contacts.contactsPreview = "Server";
     localStorage.setItem("Preview Status", state.contacts.contactsPreview);
+  }else{
+    localStorage.setItem("Preview Status", "LocalStorage");
+    state.contacts.contactsPreview = "LocalStorage";
   }
   getData();
 
@@ -378,10 +380,42 @@ const showRegisterButton = (previewStatus) => {
     return false
   }
 }
-const back_to_default_status = ()=>{
-  state.contacts.contactsPreview = 'LocalStorage'
-  localStorage.setItem("Preview Status", state.contacts.contactsPreview);
+
+// Factory user maker
+
+const userMaking = ()=>{
+
+//   const randomNames = ["علی رضایی", "سارا احمدی", "رضا نیکو", "نرگس محمدی", "امید کاظمی", "زهرا عباسی", "کیان شریفی", "یاسمین فرهادی"];
+//   const randomNumbers = ["09121234567", "09351112233", "09905556677", "09032223344", "09147896543", "09378945612", "09223334455"];
+//   const randomDates = ["1375/07/10", "1368/03/05", "1380/09/22", "1372/01/15", "1379/11/30", "1384/04/17"];
+//   const randomAvatars = [
+//   "https://picsum.photos/150?random=1",
+//   "https://picsum.photos/150?random=2",
+//   "https://picsum.photos/150?random=3",
+//   "https://picsum.photos/150?random=4",
+//   "https://picsum.photos/150?random=5",
+// ];
+//   const skillsList = ["Vue.js", "React", "Node.js", "CSS", "HTML", "JavaScript", "Python"];
+//   const interestsList = ["موسیقی", "ورزش", "کدنویسی", "فیلم", "عکاسی", "طبیعت گردی"];
+
+//   const contacts = Array.from({ length: 5 }, (_, index) => ({
+//     id: index + 1,
+//     phoneNumber: randomNumbers[Math.floor(Math.random() * randomNumbers.length)],
+//     fullname: randomNames[Math.floor(Math.random() * randomNames.length)],
+//     selectedDate: randomDates[Math.floor(Math.random() * randomDates.length)],
+//     isCoworker: Math.random() > 0.5,
+//     skills: skillsList.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 1),
+//     favorites: interestsList.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 3) + 1),
+//     avatar: randomAvatars[Math.floor(Math.random() * randomAvatars.length)],
+//   }));
+
+//   localStorage.setItem("contacts", JSON.stringify(contacts));
+//   state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...contacts);
+
+// // Call this function to generate and store the contacts
+// getData();
 }
+
 </script>
 <template>
   <div class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30"
@@ -525,12 +559,13 @@ const back_to_default_status = ()=>{
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
-      <v-btn v-else  variant="elevated" elevation="3" size="large" class="w-full bg-yellow-400 text-black" 
-      @click="back_to_default_status()"
+      <v-btn v-if="showRegisterButton(state.contacts.contactsPreview)"
+        
+        variant="elevated" elevation="3" color="green" size="large" @click="userMaking">
+       Randoms
+       <v-icon left> mdi-plus </v-icon>
+     </v-btn>
 
-       >
-        بازگشت به تنظیمات اولیه
-      </v-btn>
     </div>
     <div v-if="
       state.loading.skeletonLoads.LocalContacts &&
