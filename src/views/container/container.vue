@@ -415,6 +415,9 @@ const userMaking = ()=>{
 // // Call this function to generate and store the contacts
 // getData();
 }
+const updateContactsPreview = (newPreview) => {
+  state.contacts.contactsPreview = newPreview;
+};
 
 </script>
 <template>
@@ -577,6 +580,8 @@ const userMaking = ()=>{
     </div>
 
     <Drawer v-model="drawer" v-model:drawer="drawer" :contactsPreview="state.contacts.contactsPreview"
+    @changePreviewStatus="updateContactsPreview"
+
       :changePreviewStatus="changePreviewStatus" />
     <v-main style="height: 250px">
       <div class="d-flex justify-center align-center h-100"></div>

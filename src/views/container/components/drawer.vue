@@ -6,13 +6,16 @@ const props = defineProps({
   changePreviewStatus: Function,
   server_1_Contacts: Array,
   localContacts: Array
-
 })
 
 
 const state = reactive({
   contacts: {
-    contactsPreview: props.contactsPreview
+    contactsPreview: props.contactsPreview,
+    data_saving_mode:[
+      { Mode : 'LocalStorage',Label:'مرورگر'},
+      { Mode : 'Server',Label:'سرور'},
+    ]
   },
   toggle: {
     drawer: props.drawer,
@@ -21,13 +24,19 @@ const state = reactive({
 })
 
 const emit = defineEmits([
-  "update:drawer",
+  "update:drawer","changeStatusPreview"
 
 ]);
+
+
 
 const toggleDrawer = () => {
   state.toggle.drawer = false
   emit("update:drawer", state.toggle.drawer);
+}
+
+const changeStatusPreviewtoggle=()=>{
+  
 }
 
 watch(() => props.contactsPreview, (newVal) => {
@@ -147,23 +156,21 @@ const toggleGuideActivation= ()=>{
           <div class="apperanceSettingsList flex items-center justify-between  ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-lg my-2">
               <span class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none"
-                v-if="state.toggle.guide_activation"
-              >?
+                v-if="state.toggle.guide_activation">?
 
                 <v-tooltip activator="parent" class="" location="top">انتخاب رنگ قالب</v-tooltip>
               </span>
               <span class="text-black font-semibold text-base lg:text-lg">انتخاب قالب :</span>
             </div>
             <div class="selectTheme">
-              <v-select hide-details :items="themeItems"
-               v-model="PickedTheme" class="colorSelector w-26 scale-[.95]"
+              <v-select hide-details :items="themeItems" v-model="PickedTheme" class="colorSelector w-26 scale-[.95]"
                 bg-color="white" variant="outlined" />
             </div>
           </div>
           <div class="animationSettings flex items-ceneter justify-between ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
               <span v-if="state.toggle.guide_activation"
-               class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
+                class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
                 <v-tooltip activator="parent" location="top">
                   فعال کردن انیمیشن ها
                 </v-tooltip>
@@ -188,24 +195,21 @@ const toggleGuideActivation= ()=>{
           <div class="apperanceSettingsList flex items-center justify-between  ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-lg my-2">
               <span class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none"
-              v-if="state.toggle.guide_activation"
-              >?
+                v-if="state.toggle.guide_activation">?
 
                 <v-tooltip activator="parent" class="" location="top">تعداد لیست هر صفحه</v-tooltip>
               </span>
               <span class="text-black font-semibold text-base ">تعداد لیست هر صفحه :</span>
             </div>
             <div class="selectTheme">
-              <v-select :items="NumberItems" v-model="pagePerList"
-               class="colorSelector w-26 scale-[.95]" bg-color="white"
-                variant="outlined" hide-details />
+              <v-select :items="NumberItems" v-model="pagePerList" class="colorSelector w-26 scale-[.95]"
+                bg-color="white" variant="outlined" hide-details />
             </div>
           </div>
           <div class="animationSettings flex items-ceneter justify-between ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
-              <span 
-              v-if="state.toggle.guide_activation"
-              class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
+              <span v-if="state.toggle.guide_activation"
+                class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
                 <v-tooltip activator="parent" location="top">
                   نمایش راهنما
                 </v-tooltip>
@@ -214,10 +218,38 @@ const toggleGuideActivation= ()=>{
                 :</span>
             </div>
             <div class="animationSwitchButton flex justify-center items-center ">
-              <v-switch v-model="state.toggle.guide_activation"
-              @click="toggleGuideActivation()"  color="success" ripple class=" flex switchBtn " />
+              <v-switch v-model="state.toggle.guide_activation" @click="toggleGuideActivation()" color="success" ripple
+                class=" flex switchBtn " />
             </div>
           </div>
+        </div>
+
+
+        <div class="contentSettings">
+          <div class="settingsTitle text-right">
+            <h3 class="text-xl text-[#58b97f] font-semibold"><span class="text-gray-600 select-none pl-2">__ </span>
+              محتوا
+              <span class=" select-none text-gray-600 pr-2"> __</span>
+            </h3>
+          </div>
+
+          <!-- ! -->
+          <div class="apperanceSettingsList flex items-center justify-between  ">
+            <div class="themeSettings flex items-center  justify-start gap-4 text-lg my-2">
+              <span class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none"
+                v-if="state.toggle.guide_activation">?
+
+                <v-tooltip activator="parent" class="" location="top">نحوه نمایش مخاطبین</v-tooltip>
+              </span>
+              <span class="text-black font-semibold text-base ">نحوه ذخیره سازی :</span>
+            </div>
+            <div class="selectTheme">
+              <v-select :items="state.contacts.data_saving_mode" v-model="state.contacts.contactsPreview"
+                class="colorSelector w-26 scale-[.95]" bg-color="white" variant="outlined" hide-details
+                item-title="Label" item-value="Mode" />
+            </div>
+          </div>
+
         </div>
 
 
@@ -233,9 +265,8 @@ const toggleGuideActivation= ()=>{
 
           <div class="animationSettings flex items-ceneter justify-between ">
             <div class="themeSettings flex items-center  justify-start gap-4 text-xl my-6 ">
-              <span 
-              v-if="state.toggle.guide_activation"
-              class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
+              <span v-if="state.toggle.guide_activation"
+                class="text-green-700 bg-green-300 px-[.9rem] text-lg py-1 rounded-full select-none">
                 <v-tooltip activator="parent" location="top">
                   تغییرات به صورت آنی اجرا شوند
                 </v-tooltip>
