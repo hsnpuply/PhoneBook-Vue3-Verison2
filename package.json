@@ -22,6 +22,7 @@
     "moment": "^2.30.1",
     "persianjs": "^0.4.0",
     "roboto-fontface": "*",
+    "sortablejs": "^1.15.6",
     "sweetalert2": "^11.14.5",
     "vee-validate": "^4.14.7",
     "vue": "^3.4.31",

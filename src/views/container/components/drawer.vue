@@ -3,7 +3,6 @@ import { onMounted, reactive, ref, watch } from 'vue'
 const props = defineProps({
   drawer: Boolean,
   contactsPreview: String,
-  changePreviewStatus: Function,
   server_1_Contacts: Array,
   localContacts: Array
 })
@@ -24,7 +23,7 @@ const state = reactive({
 })
 
 const emit = defineEmits([
-  "update:drawer","changeStatusPreview"
+  "update:drawer","changePreviewStatus"
 
 ]);
 
@@ -35,12 +34,11 @@ const toggleDrawer = () => {
   emit("update:drawer", state.toggle.drawer);
 }
 
-const changeStatusPreviewtoggle=()=>{
-  
-}
 
-watch(() => props.contactsPreview, (newVal) => {
-  state.contacts.contactsPreview = newVal;
+watch(() => state.contacts.contactsPreview, (newVal) => {
+  emit("changePreviewStatus", newVal);
+
+  
 })
 
 
@@ -163,7 +161,11 @@ const toggleGuideActivation= ()=>{
               <span class="text-black font-semibold text-base lg:text-lg">انتخاب قالب :</span>
             </div>
             <div class="selectTheme">
-              <v-select hide-details :items="themeItems" v-model="PickedTheme" class="colorSelector w-26 scale-[.95]"
+              <v-select
+               hide-details
+                :items="themeItems"
+                v-model="PickedTheme"
+                class="colorSelector w-26 scale-[.95]"
                 bg-color="white" variant="outlined" />
             </div>
           </div>
@@ -244,9 +246,14 @@ const toggleGuideActivation= ()=>{
               <span class="text-black font-semibold text-base ">نحوه ذخیره سازی :</span>
             </div>
             <div class="selectTheme">
-              <v-select :items="state.contacts.data_saving_mode" v-model="state.contacts.contactsPreview"
-                class="colorSelector w-26 scale-[.95]" bg-color="white" variant="outlined" hide-details
-                item-title="Label" item-value="Mode" />
+              <v-select 
+              :items="state.contacts.data_saving_mode"
+               v-model="state.contacts.contactsPreview"
+                bg-color="white" variant="outlined"
+                class="colorSelector w-26 scale-[.95]" 
+                 hide-details
+                item-title="Label" item-value="Mode" 
+                />
             </div>
           </div>
 

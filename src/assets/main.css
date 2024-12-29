@@ -108,3 +108,16 @@ table{
   .tableHavingContact{
     --animate-duration: 3.5s;
   }
+
+
+
+
+  /* Table Filter  */
+
+  
+
+.ghost {
+  opacity: 0.5 !important;
+  transition: all .5s ease-in-out !important;
+}
+

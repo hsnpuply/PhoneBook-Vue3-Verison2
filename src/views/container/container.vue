@@ -8,15 +8,17 @@ import { HalfCircleSpinner } from "epic-spinners";
 import "animate.css";
 import NoDataServerAnimation from "@/assets/NoDataServerAnimation.json";
 import NoDataLocalAnimation from "@/assets/NoDataLocalAnimation.json";
-import draggable from 'vuedraggable'
+import draggable from "vuedraggable";
 import moment from "moment-jalaali";
+import Sortable from "sortablejs/modular/sortable.complete.esm.js";
+const col_filter = ref(false);
 
 const myArray = ref([
-  { id: 1, name: 'Hasan' },
-  { id: 2, name: 'Javad' },
-  { id: 3, name: 'Vahid' },
-])
-const drag = ref(false)
+  { id: 1, name: "Hasan" },
+  { id: 2, name: "Javad" },
+  { id: 3, name: "Vahid" },
+]);
+const drag = ref(false);
 import {
   convertNumbersToPersian as PersianNumberConvertorX,
   deleteLocalstorageContact as DeleteContacts,
@@ -24,7 +26,6 @@ import {
 
 import ContactRecord from "./components/contactRecord.vue";
 import Drawer from "./components/drawer.vue";
-
 
 const state = reactive({
   contacts: {
@@ -51,11 +52,6 @@ const state = reactive({
   mainTableKey: 0,
 });
 
-
-
-
-
-
 watch(state.contacts.contactsPreview, (newValue) => {
   alert(state.contacts.contactsPreview);
   alert("something changed in contacts Preview");
@@ -71,15 +67,33 @@ watch(state.contacts.contactsPreview, (newValue) => {
   }
 });
 
-// function handleStorageChange(e) {
-//   if (e.key === 'Preview Status') {
-//     state.contacts.contactsPreview = e.newValue;
-//   }}
+function handleStorageChange(e) {
+  if (e.key === "Preview Status") {
+    state.contacts.contactsPreview = "LocalStorage";
+    localStorage.setItem("Preview Status", "LocalStorage");
+  }
+}
 
-// window.addEventListener('storage', handleStorageChange);
+window.addEventListener("storage", handleStorageChange);
+const handlePreviewChange = (newVal) => {
+  switch (newVal) {
+    case "Server":
+      state.contacts.contactsPreview = "Server";
+      getData();
+      break;
+    case "LocalStorage":
+      state.contacts.contactsPreview = "LocalStorage";
+      getData();
+      break;
+    default:
+      console.warn("Invalid selection:", newVal);
+  }
+};
 onMounted(async () => {
-
-  if (!localStorage.getItem("Preview Status")  && state.contacts.contactsPreview == '' ) {
+  if (
+    !localStorage.getItem("Preview Status") &&
+    state.contacts.contactsPreview == ""
+  ) {
     localStorage.setItem("Preview Status", "LocalStorage");
     state.contacts.contactsPreview = "LocalStorage";
   }
@@ -90,7 +104,7 @@ onMounted(async () => {
   } else if (state.contacts.storedPreviewStatus == "Server") {
     state.contacts.contactsPreview = "Server";
     localStorage.setItem("Preview Status", state.contacts.contactsPreview);
-  }else{
+  } else {
     localStorage.setItem("Preview Status", "LocalStorage");
     state.contacts.contactsPreview = "LocalStorage";
   }
@@ -129,7 +143,6 @@ const getData = async () => {
       break;
   }
 };
-
 
 const deleteServerContact = async (id) => {
   Swal.fire({
@@ -356,13 +369,13 @@ const tableAnimationClass = computed(() => {
 
 const isContact_on_current_mode = (contactsPreview) => {
   switch (contactsPreview) {
-    case 'LocalStorage':
+    case "LocalStorage":
       return "در حالت مرورگر";
-    case 'Server':
+    case "Server":
       return "در حالت سرور";
-    case 'Database':
+    case "Database":
       return "در حالت دیتابیس";
-    case 'Cloud':
+    case "Cloud":
       return "در حالت ابر";
     default:
       return false;
@@ -370,68 +383,73 @@ const isContact_on_current_mode = (contactsPreview) => {
 };
 
 const showRegisterButton = (previewStatus) => {
-  if(previewStatus){
+  if (previewStatus) {
     return (
-    isContact_on_current_mode(previewStatus) !== false
-    // !state.loading.skeletonLoads.LocalContacts ||
-    // (state.contacts.LocalContacts.length === 0 && !savingModeData("محل نامشخص"))
-  ) 
-  }else{
-    return false
+      isContact_on_current_mode(previewStatus) !== false
+      // !state.loading.skeletonLoads.LocalContacts ||
+      // (state.contacts.LocalContacts.length === 0 && !savingModeData("محل نامشخص"))
+    );
+  } else {
+    return false;
   }
-}
+};
 
 // Factory user maker
 
-const userMaking = ()=>{
-
-//   const randomNames = ["علی رضایی", "سارا احمدی", "رضا نیکو", "نرگس محمدی", "امید کاظمی", "زهرا عباسی", "کیان شریفی", "یاسمین فرهادی"];
-//   const randomNumbers = ["09121234567", "09351112233", "09905556677", "09032223344", "09147896543", "09378945612", "09223334455"];
-//   const randomDates = ["1375/07/10", "1368/03/05", "1380/09/22", "1372/01/15", "1379/11/30", "1384/04/17"];
-//   const randomAvatars = [
-//   "https://picsum.photos/150?random=1",
-//   "https://picsum.photos/150?random=2",
-//   "https://picsum.photos/150?random=3",
-//   "https://picsum.photos/150?random=4",
-//   "https://picsum.photos/150?random=5",
-// ];
-//   const skillsList = ["Vue.js", "React", "Node.js", "CSS", "HTML", "JavaScript", "Python"];
-//   const interestsList = ["موسیقی", "ورزش", "کدنویسی", "فیلم", "عکاسی", "طبیعت گردی"];
-
-//   const contacts = Array.from({ length: 5 }, (_, index) => ({
-//     id: index + 1,
-//     phoneNumber: randomNumbers[Math.floor(Math.random() * randomNumbers.length)],
-//     fullname: randomNames[Math.floor(Math.random() * randomNames.length)],
-//     selectedDate: randomDates[Math.floor(Math.random() * randomDates.length)],
-//     isCoworker: Math.random() > 0.5,
-//     skills: skillsList.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 1),
-//     favorites: interestsList.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 3) + 1),
-//     avatar: randomAvatars[Math.floor(Math.random() * randomAvatars.length)],
-//   }));
-
-//   localStorage.setItem("contacts", JSON.stringify(contacts));
-//   state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...contacts);
-
-// // Call this function to generate and store the contacts
-// getData();
-}
+const userMaking = () => {
+    const randomNames = ["علی رضایی", "سارا احمدی", "رضا نیکو", "نرگس محمدی", "امید کاظمی", "زهرا عباسی", "کیان شریفی", "یاسمین فرهادی"];
+    const randomNumbers = ["09121234567", "09351112233", "09905556677", "09032223344", "09147896543", "09378945612", "09223334455"];
+    const randomDates = ["1375/07/10", "1368/03/05", "1380/09/22", "1372/01/15", "1379/11/30", "1384/04/17"];
+    const randomAvatars = [
+    "https://picsum.photos/150?random=1",
+    "https://picsum.photos/150?random=2",
+    "https://picsum.photos/150?random=3",
+    "https://picsum.photos/150?random=4",
+    "https://picsum.photos/150?random=5",
+  ];
+    const skillsList = ["Vue.js", "React", "Node.js", "CSS", "HTML", "JavaScript", "Python"];
+    const interestsList = ["موسیقی", "ورزش", "کدنویسی", "فیلم", "عکاسی", "طبیعت گردی"];
+    const contacts = Array.from({ length: 5 }, (_, index) => ({
+      id: index + 1,
+      phoneNumber: randomNumbers[Math.floor(Math.random() * randomNumbers.length)],
+      fullname: randomNames[Math.floor(Math.random() * randomNames.length)],
+      selectedDate: randomDates[Math.floor(Math.random() * randomDates.length)],
+      isCoworker: Math.random() > 0.5,
+      skills: skillsList.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 1),
+      favorites: interestsList.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 3) + 1),
+      avatar: randomAvatars[Math.floor(Math.random() * randomAvatars.length)],
+    }));
+    localStorage.setItem("contacts", JSON.stringify(contacts));
+    state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...contacts);
+  // Call this function to generate and store the contacts
+  getData();
+};
 const updateContactsPreview = (newPreview) => {
   state.contacts.contactsPreview = newPreview;
 };
-
 </script>
 <template>
-  <div class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30"
-    v-if="!state.loading.loadingStatus">
+  <div
+    class="w-full h-[100vh] flex flex-col gap-8 items-center justify-center bg-black/30"
+    v-if="!state.loading.loadingStatus"
+  >
     <half-circle-spinner :size="100" color="green" />
     <h2 class="text-xl">... در حال بارگذاری</h2>
   </div>
 
-  <div class="mx-auto mainContent h-full bg-cover" v-if="state.loading.loadingStatus">
+  <div
+    class="mx-auto mainContent h-full bg-cover"
+    v-if="state.loading.loadingStatus"
+  >
     <header class="titlePage overflow-hidden">
       <div class="titleText animate__animated animate__fadeInUp animate__slow">
-        <h1 class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2">
-          <span class="mdi" :class="getTitleEmoji(state.contacts.contactsPreview)"></span>
+        <h1
+          class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2"
+        >
+          <span
+            class="mdi"
+            :class="getTitleEmoji(state.contacts.contactsPreview)"
+          ></span>
           دفترچه تلفن {{ savingModeData(state.contacts.contactsPreview) }}
         </h1>
         <!-- <div class="fixed top-0 right-0">
@@ -441,34 +459,60 @@ const updateContactsPreview = (newPreview) => {
     </header>
 
     <div class="container mx-auto rounded-lg">
-      <div class="px-4 my-2 text-center lg:!text-left animate__animated animate__slow animate__fadeInLeft">
+      <div
+        class="px-4 my-2 text-center lg:!text-left animate__animated animate__slow animate__fadeInLeft"
+      >
         <div class="setting">
           <span
             class="cursor-pointer mdi mdi-cog text-3xl text-black inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
-            @click.stop="drawer = !drawer" />
+            @click.stop="drawer = !drawer"
+          />
         </div>
       </div>
 
-      <v-table class="the_table hidden xl:block" :class="tableAnimationClass" :key="state.mainTableKey">
-        <thead class="relative">
+      <v-table
+        class="the_table hidden xl:block"
+        :class="tableAnimationClass"
+        :key="state.mainTableKey"
+      >
+        <thead class="relative bg-transparent">
+          <v-btn class="bg-gray-600" size="large" @click="col_filter = true"
+            >ترتیب ستون ها</v-btn
+          >
           <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
-            <th class="text-right" v-for="(item, index) in tableItems" :key="index">
+            <th
+              class="text-right"
+              v-for="(item, index) in tableItems"
+              :key="index"
+            >
               {{ item }}
             </th>
           </tr>
         </thead>
 
         <!-- Skeleton of LocalStorage -->
-        <tbody class="w-full" v-if="localStorageCondition() && !state.contacts.LocalContacts?.length">
-          <tr v-for="(item, index) in state.contacts.LocalContacts.length" :key="index"
-            class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
+        <tbody
+          class="w-full"
+          v-if="
+            localStorageCondition() && !state.contacts.LocalContacts?.length
+          "
+        >
+          <tr
+            v-for="(item, index) in state.contacts.LocalContacts.length"
+            :key="index"
+            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
+          >
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
             </td>
             <td class="min-w-48">
               <div class="w-full px-8">
-                <v-skeleton-loader type="button,button" color="transparent" class=" ">
+                <v-skeleton-loader
+                  type="button,button"
+                  color="transparent"
+                  class=" "
+                >
                 </v-skeleton-loader>
               </div>
             </td>
@@ -477,35 +521,62 @@ const updateContactsPreview = (newPreview) => {
 
         <!-- Skeleton of Server -->
 
-        <tbody class="w-full" v-if="serverCondition() && state.contacts.server_1_Contacts.length == 0">
-          <tr v-for="(item, index) in state.contacts.server_1_Contacts.length" :key="index"
-            class="bg-[#bcbfc5] even:bg-[#e5e7eb]">
+        <tbody
+          class="w-full"
+          v-if="
+            serverCondition() && state.contacts.server_1_Contacts.length == 0
+          "
+        >
+          <tr
+            v-for="(item, index) in state.contacts.server_1_Contacts.length"
+            :key="index"
+            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
+          >
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
             </td>
             <td class="min-w-48">
               <div class="w-full px-8">
-                <v-skeleton-loader type="button,button" color="transparent" class=" ">
+                <v-skeleton-loader
+                  type="button,button"
+                  color="transparent"
+                  class=" "
+                >
                 </v-skeleton-loader>
               </div>
             </td>
           </tr>
         </tbody>
 
-
-        <ContactRecord v-if="localStorageCondition()" :data="state.contacts.LocalContacts"
-          :DeleteContacts="DeleteContacts" :toggleEditForm="toggleEditForm" />
-
+        <ContactRecord
+          v-if="localStorageCondition()"
+          :data="state.contacts.LocalContacts"
+          :DeleteContacts="DeleteContacts"
+          :toggleEditForm="toggleEditForm"
+          :getData="getData"
+        />
 
         <!-- Server -->
-        <ContactRecord v-if="serverCondition()" :data="state.contacts.server_1_Contacts"
-          :DeleteContacts="deleteServerContact" :toggleEditForm="toggleEditForm" />
+        <ContactRecord
+          v-if="serverCondition()"
+          :data="state.contacts.server_1_Contacts"
+          :DeleteContacts="deleteServerContact"
+          :toggleEditForm="toggleEditForm"
+          :getData="getData"
+        />
       </v-table>
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
-        :class="getNoContactAnimatedClass" v-if="noContactPreview">
-        <Vue3Lottie v-if="lottieAnimation" :animationData="lottieAnimation" :height="400" :width="400" />
+        :class="getNoContactAnimatedClass"
+        v-if="noContactPreview"
+      >
+        <Vue3Lottie
+          v-if="lottieAnimation"
+          :animationData="lottieAnimation"
+          :height="400"
+          :width="400"
+        />
 
         <p class="pb-10 text-3xl">
           {{ getEmojiNodata(state.contacts.contactsPreview) }}
@@ -523,12 +594,20 @@ const updateContactsPreview = (newPreview) => {
       v-if="
         !state.loading.skeletonLoads.LocalContacts &&
         state.contacts.contactsPreview == 'LocalStorage'
-      ">
-      <Card v-model:dialogEditState="state.forms.edit" :currentItem="item"
-        :MyLocalContacts="state.contacts.LocalContacts" :selectedContact="state.contacts.selectedContact"
-        :all_forms_fields="item" v-for="(item, index) in state.contacts.LocalContacts"
-        :deleteServerContact="deleteServerContact" :contactsPreview="state.contacts.contactsPreview" :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap" />
+      "
+    >
+      <Card
+        v-model:dialogEditState="state.forms.edit"
+        :currentItem="item"
+        :MyLocalContacts="state.contacts.LocalContacts"
+        :selectedContact="state.contacts.selectedContact"
+        :all_forms_fields="item"
+        v-for="(item, index) in state.contacts.LocalContacts"
+        :deleteServerContact="deleteServerContact"
+        :contactsPreview="state.contacts.contactsPreview"
+        :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap"
+      />
     </div>
 
     <div
@@ -536,80 +615,163 @@ const updateContactsPreview = (newPreview) => {
       v-if="
         !state.loading.skeletonLoads.server_1_Contacts &&
         state.contacts.contactsPreview == 'Server'
-      ">
-      <Card v-for="(item, index) in state.contacts.server_1_Contacts" v-model:dialogEditState="state.forms.edit"
-        :currentItem="item" :MyLocalContacts="state.contacts.LocalContacts"
-        :selectedContact="state.contacts.selectedContact" :all_forms_fields="item"
-        :deleteServerContact="deleteServerContact" :serverUpdate="UpdateDataServer"
-        :contactsPreview="state.contacts.contactsPreview" :key="index" class="!max-w-[50%] flex-1 flex-wrap" />
+      "
+    >
+      <Card
+        v-for="(item, index) in state.contacts.server_1_Contacts"
+        v-model:dialogEditState="state.forms.edit"
+        :currentItem="item"
+        :MyLocalContacts="state.contacts.LocalContacts"
+        :selectedContact="state.contacts.selectedContact"
+        :all_forms_fields="item"
+        :deleteServerContact="deleteServerContact"
+        :serverUpdate="UpdateDataServer"
+        :contactsPreview="state.contacts.contactsPreview"
+        :key="index"
+        class="!max-w-[50%] flex-1 flex-wrap"
+      />
     </div>
 
     <div
       class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
-      v-if="state.loading.skeletonLoads.LocalContacts">
-      <v-skeleton-loader v-for="(item, index) in state.contacts.LocalContacts" :key="index" min-height="540"
-        elevation="24" type="	image , text, paragraph , article  , button , button"
-        class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard">
+      v-if="state.loading.skeletonLoads.LocalContacts"
+    >
+      <v-skeleton-loader
+        v-for="(item, index) in state.contacts.LocalContacts"
+        :key="index"
+        min-height="540"
+        elevation="24"
+        type="	image , text, paragraph , article  , button , button"
+        class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard"
+      >
       </v-skeleton-loader>
     </div>
 
     <div
-      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-1s animate__fadeInRight">
+      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-1s animate__fadeInRight"
+    >
       <!-- animate__animated animate__slow animate__delay-1s animate__fadeInRight -->
-      <v-btn v-if="showRegisterButton(state.contacts.contactsPreview)"
-        
-         variant="elevated" elevation="3" color="green" size="large" @click="toggleRegisterForm">
+      <v-btn
+        v-if="showRegisterButton(state.contacts.contactsPreview)"
+        variant="elevated"
+        elevation="3"
+        color="green"
+        size="large"
+        @click="toggleRegisterForm"
+      >
         ثبت مخاطب
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
-      <v-btn v-if="showRegisterButton(state.contacts.contactsPreview)"
-        
-        variant="elevated" elevation="3" color="green" size="large" @click="userMaking">
-       Randoms
-       <v-icon left> mdi-plus </v-icon>
-     </v-btn>
-
+      <v-btn
+        v-if="showRegisterButton(state.contacts.contactsPreview)"
+        variant="elevated"
+        elevation="3"
+        color="green"
+        size="large"
+        @click="userMaking"
+      >
+        Randoms
+        <v-icon left> mdi-plus </v-icon>
+      </v-btn>
     </div>
-    <div v-if="
-      state.loading.skeletonLoads.LocalContacts &&
-      state.contacts.LocalContacts.length
-    "
-      class="animate__animated animate__slow animate__fadeInUp animate__delay-2s flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0">
+    <div
+      v-if="
+        state.loading.skeletonLoads.LocalContacts &&
+        state.contacts.LocalContacts.length
+      "
+      class="animate__animated animate__slow animate__fadeInUp animate__delay-2s flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0"
+    >
       <v-skeleton-loader type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
     </div>
 
-    <Drawer v-model="drawer" v-model:drawer="drawer" :contactsPreview="state.contacts.contactsPreview"
-    @changePreviewStatus="updateContactsPreview"
-
-      :changePreviewStatus="changePreviewStatus" />
+    <Drawer
+      v-model="drawer"
+      v-model:drawer="drawer"
+      :contactsPreview="state.contacts.contactsPreview"
+      @changePreviewStatus="handlePreviewChange"
+      :changePreviewStatus="changePreviewStatus"
+    />
     <v-main style="height: 250px">
       <div class="d-flex justify-center align-center h-100"></div>
     </v-main>
   </div>
 
-  <Forms v-model:modelState="state.forms.register" title="ثبت مخاطب" :registerMode="true" :editMode="false"
-    :getData="getData" :mainTableKey="state.mainTableKey" @update:mainTableKey="updateMainTableKey"
-    :contactsPreview="state.contacts.contactsPreview"  />
+  <Forms
+    v-model:modelState="state.forms.register"
+    title="ثبت مخاطب"
+    :registerMode="true"
+    :editMode="false"
+    :getData="getData"
+    :mainTableKey="state.mainTableKey"
+    @update:mainTableKey="updateMainTableKey"
+    :contactsPreview="state.contacts.contactsPreview"
+  />
   <!-- :getData="getData()" -->
 
-  <Forms v-model:model-state="state.forms.edit" title="ویرایش مخاطب" :editMode="true"
-    :currentID="state.contacts.selectedContact.id" :allFormsFields="state.contacts.selectedContact" :getData="getData"
-    :contactsPreview="state.contacts.contactsPreview" :registerMode="false" @update:mainTableKey="updateMainTableKey" />
+  <Forms
+    v-model:model-state="state.forms.edit"
+    title="ویرایش مخاطب"
+    :editMode="true"
+    :currentID="state.contacts.selectedContact.id"
+    :allFormsFields="state.contacts.selectedContact"
+    :getData="getData"
+    :contactsPreview="state.contacts.contactsPreview"
+    :registerMode="false"
+    @update:mainTableKey="updateMainTableKey"
+  />
 
-  <p class="text-2xl p-5 bg-black ">Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa eaque ipsa, optio,
-    eveniet assumenda tenetur eos dolor provident esse, sunt error quibusdam ex quidem fugit? Nisi expedita quasi
-    officiis autem.</p>
+  <v-dialog v-model="col_filter" width="550" persistent>
+    <v-card title="ترتیب ستون ها">
+      <div class="columns  flex flex-col gap-4 items-center justify-center">
+        <draggable
+          v-model="tableItems"
+          item-key="id"
+          tag="transition-group"
+          class=""
 
-  <draggable v-model="myArray" group="people" @start="drag = true" @end="drag = false" item-key="id">
+        >
+          <template  #item="{ element }">
+            <div class="col w-[300px] rounded-lg cursor-move select-none py-2 bg-gray-500 odd:bg-gray-300 text-black">{{ element }}</div>
+          </template>
+        </draggable>
+      </div>
+      <template v-slot:actions>
+      <div class="w-full my-2">
+        <v-btn class=" bg-green-500 px-9" text="اعمال" @click="col_filter = false"></v-btn>
+      </div>
+      </template>
+    </v-card>
+  </v-dialog>
+
+  <p class="text-2xl p-5 bg-black">
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa eaque ipsa,
+    optio, eveniet assumenda tenetur eos dolor provident esse, sunt error
+    quibusdam ex quidem fugit? Nisi expedita quasi officiis autem.
+  </p>
+
+  <draggable
+    v-model="myArray"
+    group="people"
+    @start="drag = true"
+    @end="drag = false"
+    item-key="id"
+  >
     <template #item="{ element }">
-      <div class="text-2xl text-center bg-green-500 my-2 p-4">{{ element.id }} : {{ element.name }}</div>
+      <div class="text-2xl text-center bg-green-500 my-2 p-4">
+        {{ element.id }} : {{ element.name }}
+      </div>
     </template>
   </draggable>
   <v-table>
     <tbody>
-      <draggable v-model="state.contacts.LocalContacts" group="people" @start="drag = true" @end="drag = false"
-        item-key="id">
+      <draggable
+        v-model="state.contacts.LocalContacts"
+        group="people"
+        @start="drag = true"
+        @end="drag = false"
+        item-key="id"
+      >
         <template #item="{ element }">
           <tr class=" ">
             <td class="text-2xl text-center bg-green-500 my-2 p-4">
@@ -617,27 +779,51 @@ const updateContactsPreview = (newPreview) => {
             </td>
             <td>{{ index + 1 }}</td>
             <td>
-              <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="element.avatar" />
+              <v-avatar
+                variant="elevated"
+                class="!h-20 !w-20 my-2"
+                :image="element.avatar"
+              />
             </td>
             <td>{{ element.fullname }}</td>
             <td>{{ PersianNumberConvertorX(element.phoneNumber) }}</td>
             <td>
               {{
-                PersianNumberConvertorX(moment(element.selectedDate).format("jYYYY/jMM/jDD"))
+                PersianNumberConvertorX(
+                  moment(element.selectedDate).format("jYYYY/jMM/jDD")
+                )
               }}
             </td>
             <td>{{ element.isCoworker ? "بله" : "خیر" }}</td>
             <td>{{ element.skills ? element.skills.join(" , ") : "" }}</td>
-            <td>{{ element.favorites ? element.favorites.join(" , ") : "" }}</td>
+            <td>
+              {{ element.favorites ? element.favorites.join(" , ") : "" }}
+            </td>
             <td class="">
-              <div class="actionButtonsContainer flex gap-2 items-center justify-center">
-                <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete"
-                  @click="props.DeleteContacts(element.id, state.contacts.LocalContacts)"
-                  class="bg-red-600/90 hover:bg-red-600/95">
+              <div
+                class="actionButtonsContainer flex gap-2 items-center justify-center"
+              >
+                <v-btn
+                  variant="elevated"
+                  elevation="2"
+                  prepend-icon="mdi-delete"
+                  @click="
+                    props.DeleteContacts(
+                      element.id,
+                      state.contacts.LocalContacts
+                    )
+                  "
+                  class="bg-red-600/90 hover:bg-red-600/95"
+                >
                   حذف
                 </v-btn>
-                <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="props.toggleEditForm(item)"
-                  class="bg-sky-600/90 hover:bg-sky-600/95">
+                <v-btn
+                  variant="elevated"
+                  color="blue"
+                  prepend-icon="mdi-account"
+                  @click="props.toggleEditForm(item)"
+                  class="bg-sky-600/90 hover:bg-sky-600/95"
+                >
                   ویرایش
                 </v-btn>
               </div>
@@ -647,8 +833,6 @@ const updateContactsPreview = (newPreview) => {
       </draggable>
     </tbody>
   </v-table>
-
-
 </template>
 
 <style scoped>
