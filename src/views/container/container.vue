@@ -560,7 +560,7 @@ const updateContactsPreview = (newPreview) => {
 
         <!-- Server -->
         <ContactRecord
-        :columnOrder="tableItems"
+        :columnOrder="tableItems" 
           v-if="serverCondition()"
           :data="state.contacts.server_1_Contacts"
           :DeleteContacts="deleteServerContact"
