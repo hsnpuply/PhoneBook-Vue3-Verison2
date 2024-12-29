@@ -48,7 +48,7 @@ watch(localData, (newValue) => {
 </script>
 <template>
 
-  <draggable v-model="localData" group="allContacts" tag="tbody" class="text-xl bg-[#dddbdb] text-[#212222] cursor-grab">
+  <draggable v-model="localData" group="allContacts" tag="tbody" class="select-none text-xl bg-[#dddbdb] text-[#212222] cursor-grab">
     <template #item="{ element, index }">
       <tr class="text-right even:bg-gray-200 bg-gray-400/50 hover:bg-sky-900/60">
         <td v-for="(col, i) in columnOrder" :key="i">
