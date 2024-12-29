@@ -550,6 +550,7 @@ const updateContactsPreview = (newPreview) => {
         </tbody>
 
         <ContactRecord
+         :columnOrder="tableItems"
           v-if="localStorageCondition()"
           :data="state.contacts.LocalContacts"
           :DeleteContacts="DeleteContacts"
@@ -559,6 +560,7 @@ const updateContactsPreview = (newPreview) => {
 
         <!-- Server -->
         <ContactRecord
+        :columnOrder="tableItems"
           v-if="serverCondition()"
           :data="state.contacts.server_1_Contacts"
           :DeleteContacts="deleteServerContact"

@@ -245,7 +245,15 @@ const submitInServer = async () => {
   emit("update:mainTableKey", 102);
 
   // If avatar is updated, convert it to Base64
+
   let avatarBase64 = state.form.avatar;
+
+// If the avatar is null or undefined, use a random or default avatar
+if (!avatarBase64) {
+  const defaultAvatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRXrLfkPut6EaXDD0RpaHBzeqgScyncU5dkw&s";
+  avatarBase64 =defaultAvatar;
+}
+
   if (avatar.value instanceof File) {
     try {
       avatarBase64 = await convertToBase64(avatar.value); // Convert to Base64 if a new avatar is selected
