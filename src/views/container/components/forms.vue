@@ -107,10 +107,43 @@
   //   selectedDate: yup.string().required("وارد کردن تاریخ تولد الزامیست"),
   // });
 
+  // const schema = yup.object({
+  //   fullname: yup.string(),
+  //   phoneNumber: yup.string(),
+  // });
+
   const schema = yup.object({
-    fullname: yup.string(),
-    phoneNumber: yup.string(),
-  });
+  fullname: yup
+    .string()
+    .required("نوشتن نام و نام خانوادگی الزامیست")
+    .min(6, "کمترین مقدار 6 حرف میباشد")
+    .max(36, "بیشترین مقدار 36 کارکتر میباشد"),
+  phoneNumber: yup
+    .string()
+    .required("وارد کردن شماره تلفن الزامیست")
+    .matches(/^09[0-9]{9}$/, "شماره تلفن باید با 09 شروع شده و شامل 11 رقم باشد"),
+  selectedDate: yup.string().required("وارد کردن تاریخ تولد الزامیست"),
+  
+  // New Fields for Validation
+  skills: yup
+    .array()
+    .min(1, "حداقل یک مهارت باید انتخاب شود")
+    .required("انتخاب مهارت الزامیست"),
+  
+    avatar: yup
+  .mixed()
+  .required("آپلود تصویر پروفایل الزامی است")
+  .test('fileFormat', "از این فرمت برای پروفایل پشتیبانی نمیشود  فرمت های مورد تایید  : JPG-BMP-PNG ", 
+    value => {
+      if (!value) return true;
+      const acceptedFormats = ['image/jpeg', 'image/png', 'image/bmp'];
+      return acceptedFormats.includes(value.type);
+    }
+  ).test('fileSize', "اندازه تصویر نباید از 2MB بیشتر باشد", 
+    value => !value || (value.size / 1024 / 1024 < 2)  // 2MB limit
+  )
+});
+
   const { handleSubmit, resetForm } = useForm({
     validationSchema: schema,
     initialValues: state.form,
@@ -527,6 +560,8 @@
   const searchQuery = ref("")
 const suggestions = ref([])
 
+
+// it goes through api and fetch that  and code after this function fetching all users then use filter on it 
 // const fetchSuggestions = async (query) => {
 //   if (!query || query.length < 3) {
 //     suggestions.value = []
@@ -578,18 +613,18 @@ watch( searchQuery, (newVal) => {
     alert("TEST SEARCH AVTIVATEd" + newVal);
     console.log(newVal + " \n test Search");
   });
-  const itemsq = ref([
-  { name: 'Vue.js', id: 1 },
-  { name: 'React', id: 2 },
-  { name: 'Angular', id: 3 },
-  { name: 'Svelte', id: 4 }
-])
-const onSearch = (val) => {
-  console.log("User is typing: ", val)
-  // searchQuery.value += val
-  fetchSuggestions(val)
+//   const itemsq = ref([
+//   { name: 'Vue.js', id: 1 },
+//   { name: 'React', id: 2 },
+//   { name: 'Angular', id: 3 },
+//   { name: 'Svelte', id: 4 }
+// ])
+// const onSearch = (val) => {
+//   console.log("User is typing: ", val)
+//   // searchQuery.value += val
+//   fetchSuggestions(val)
 
-}
+// }
 
 
   </script>
@@ -609,14 +644,15 @@ const onSearch = (val) => {
       >
         <v-card-text class="text-right w-full mt-2">
           <v-stepper
+            prev-text="مرحله قـبـل"
+            next-text=" مرحله بـعـد"
             alt-labels
-            prev-text="قـبـل"
-            next-text="بـعـد"
             editable
-            :items="['1', '2', '3', '4', '5', '6', 'q']"
+            :items="['1', '2', '3', '4']"
           >
+          
             <template v-slot:item.1>
-              <v-card title="اطلاعات پایه">
+              <v-card title="اطلاعات پایه" class="mb-4">
                 <div class="flex flex-col items-end w-full">
                   <v-text-field
                     autofocus
@@ -644,11 +680,6 @@ const onSearch = (val) => {
                     class="text-red-500 text-center pb-4 -pt-8"
                   ></error-message>
                 </div>
-              </v-card>
-            </template>
-
-            <template v-slot:item.2>
-              <v-card title="تاریخ">
                 <div class="flex flex-col items-end w-full">
                   <date-picker
                     append-to="body"
@@ -667,8 +698,8 @@ const onSearch = (val) => {
               </v-card>
             </template>
 
-            <template v-slot:item.3>
-              <v-card title="پروفایل">
+            <template v-slot:item.2>
+              <v-card title="اطلاعات شخصی">
                 <div class="flex flex-col items-end w-full mt-6">
                   <v-file-input
                     v-model="avatar"
@@ -678,12 +709,26 @@ const onSearch = (val) => {
                     prepend-icon="mdi-camera"
                     class="w-full"
                   />
+                  <error-message
+                    name="avatar"
+                    class="text-red-500 text-center pb-4 -pt-8"
+                  ></error-message>
                 </div>
-              </v-card>
+                </v-card>
+                <v-card title="وضعیت همکاری">
+                <div class="flex w-full items-end justify-end pt-4">
+                  <v-switch v-model="state.form.isCoworker" color="primary">
+                    <template #label>
+                      <span class="text-gray-100 text-lg font-bold">همکار</span>
+                    </template>
+                  </v-switch>
+                </div>
+                </v-card>
+
             </template>
 
-            <template v-slot:item.4>
-              <v-card title="مهارت ها">
+            <template v-slot:item.3>
+              <v-card title="مهارت ها و علاقمندی ها">
                 <div class="flex flex-col items-end w-full mt-4">
                   <v-combobox
                     chips
@@ -696,11 +741,6 @@ const onSearch = (val) => {
                     class="w-full !text-2xl"
                   />
                 </div>
-              </v-card>
-            </template>
-
-            <template v-slot:item.5>
-              <v-card title="علاقمندی ها">
                 <div class="flex flex-col items-end w-full">
                   <v-autocomplete
                     clearable
@@ -715,52 +755,29 @@ const onSearch = (val) => {
               </v-card>
             </template>
 
-            <template v-slot:item.6>
-              <v-card title="وضعیت همکاری">
-                <div class="flex w-full items-end justify-end pt-4">
-                  <v-switch v-model="state.form.isCoworker" color="primary">
-                    <template #label>
-                      <span class="text-gray-100 text-lg font-bold">همکار</span>
-                    </template>
-                  </v-switch>
-                </div>
-              </v-card>
-            </template>
-            <template v-slot:item.7>
-              <v-card title="وضعیت همکاری">
-                <div class="flex w-full items-end justify-end pt-4">
-                  <v-switch v-model="state.form.isCoworker" color="primary">
-                    <template #label>
-                      <span class="text-gray-100 text-lg font-bold">همکار</span>
-                    </template>
-                  </v-switch>
-                </div>
-                <p>Lorem ipsum dolor sit.</p>
 
-                <!-- <v-autocomplete
-                  v-model="searchQuery"
-                  :items="suggestions"
-                  item-title="fullname"
-                  item-value="fullname"
-                  return-object
-                  label="Search Users"
-                  placeholder="Type a name..."
-                  :search="testSerach"
-                  clearable
-                /> -->
+
+            <template v-slot:item.4>
+              <v-card title="سرچ اسم از دیتابیس">
+
                 <v-autocomplete 
                 v-model="selectedID"
       :search="searchQuery"
       v-model:search="searchQuery"
       :items="suggestions"
       item-title="fullname"
-      item-value="id"
+      item-value="phoneNumber"
       return-object
-      label="Search Users"
-      placeholder="Type a name..."
+      label="جست و جوی مخاطب"
       clearable
     />
-                  <v-text-field v-model="searchQuery" label="سرچ" clearable></v-text-field>
+    <div v-if="selectedID" class="p-4 bg-green-500 text-black font-semibold text-center">
+    <h3>  {{  selectedID.id }}  : آیدی </h3>
+    <h3>  {{  selectedID.phoneNumber }}  : شماره تلفن </h3>
+    </div>
+    <div v-else class="p-4 bg-red-500 text-black font-semibold text-center">
+      <h3>هیچ مخاطبی انتخاب نشده</h3>
+    </div>
                 
               </v-card>
             </template>

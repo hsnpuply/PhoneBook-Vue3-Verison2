@@ -67,14 +67,14 @@ watch(state.contacts.contactsPreview, (newValue) => {
   }
 });
 
-function handleStorageChange(e) {
-  if (e.key === "Preview Status") {
-    state.contacts.contactsPreview = "LocalStorage";
-    localStorage.setItem("Preview Status", "LocalStorage");
-  }
-}
+// function handleStorageChange(e) {
+//   if (e.key === "Preview Status") {
+//     state.contacts.contactsPreview = "LocalStorage";
+//     localStorage.setItem("Preview Status", "LocalStorage");
+//   }
+// }
 
-window.addEventListener("storage", handleStorageChange);
+// window.addEventListener("storage", handleStorageChange);
 const handlePreviewChange = (newVal) => {
   switch (newVal) {
     case "Server":
