@@ -740,7 +740,7 @@ const updateContactsPreview = (newPreview) => {
       </div>
       <template v-slot:actions>
       <div class="w-full my-2">
-        <v-btn class=" bg-green-500 px-9" text="اعمال" @click="col_filter = false"></v-btn>
+        <v-btn class=" bg-green-500 px-9" text="تایید" @click="col_filter = false"></v-btn>
       </div>
       </template>
     </v-card>

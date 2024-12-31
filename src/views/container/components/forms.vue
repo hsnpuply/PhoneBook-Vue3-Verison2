@@ -523,33 +523,75 @@
     }
   };
   const testSerach = ref("");
-  const searchQuery = ref("");
-  const suggestions = ref([]);
+  const selectedID=ref("")
+  const searchQuery = ref("")
+const suggestions = ref([])
 
-  const fetchSuggestions = async (query) => {
-    if (!query || query.length < 3) {
-      suggestions.value = [];
-      return;
-    }
-    try {
-      const response = await fetch(
-        `http://localhost:4000/users?fullname_like=${query}`
-      );
-      const data = await response.json();
-      suggestions.value = data;
-    } catch (error) {
-      console.error("Error fetching suggestions:", error);
-    }
-  };
+// const fetchSuggestions = async (query) => {
+//   if (!query || query.length < 3) {
+//     suggestions.value = []
+//     return
+//   }
+//   try {
+//     const response = await fetch(
+//       `http://localhost:4000/users?fullname=${query}`
+//     )
+//     console.log(response);
+    
+//     const data = await response.json()
+//     console.log(data);
 
-  watch(searchQuery, (newVal) => {
-    fetchSuggestions(newVal);
-    console.log(newVal + " \n Feteched search");
-  });
+//     suggestions.value = data
+//   } catch (error) {
+//     console.error("Error fetching suggestions:", error)
+//   }
+// }
+
+const fetchSuggestions = async (query) => {
+  if (!query || query.length < 3) {
+    suggestions.value = []
+    return
+  }
+  try {
+    // Fetch all users from the backend
+    const response = await fetch('http://localhost:4000/users');
+    console.log(response);
+
+    const data = await response.json();
+    console.log(data);
+
+    // Filter users whose fullname includes the query substring (case-insensitive)
+    suggestions.value = data.filter(user => 
+      user.fullname.toLowerCase().includes(query.toLowerCase())
+    );
+  } catch (error) {
+    console.error("Error fetching suggestions:", error);
+  }
+};
+
+
+// واکنش به تغییرات جستجو
+watch( searchQuery, (newVal) => {
+  fetchSuggestions(newVal)
+})
   watch(testSerach, (newVal) => {
     alert("TEST SEARCH AVTIVATEd" + newVal);
     console.log(newVal + " \n test Search");
   });
+  const itemsq = ref([
+  { name: 'Vue.js', id: 1 },
+  { name: 'React', id: 2 },
+  { name: 'Angular', id: 3 },
+  { name: 'Svelte', id: 4 }
+])
+const onSearch = (val) => {
+  console.log("User is typing: ", val)
+  // searchQuery.value += val
+  fetchSuggestions(val)
+
+}
+
+
   </script>
   <template>
     <v-dialog
@@ -695,7 +737,7 @@
                 </div>
                 <p>Lorem ipsum dolor sit.</p>
 
-                <v-autocomplete
+                <!-- <v-autocomplete
                   v-model="searchQuery"
                   :items="suggestions"
                   item-title="fullname"
@@ -705,17 +747,20 @@
                   placeholder="Type a name..."
                   :search="testSerach"
                   clearable
-                />
-                <v-text-field
-                  v-model="searchQuery"
-                  label="جستجو"
-                  placeholder="شروع به تایپ کنید..."
-                  clearable
-                  append-icon="mdi-magnify"
-                  class="search-input"
-                  outlined
-                />
-
+                /> -->
+                <v-autocomplete 
+                v-model="selectedID"
+      :search="searchQuery"
+      v-model:search="searchQuery"
+      :items="suggestions"
+      item-title="fullname"
+      item-value="id"
+      return-object
+      label="Search Users"
+      placeholder="Type a name..."
+      clearable
+    />
+                  <v-text-field v-model="searchQuery" label="سرچ" clearable></v-text-field>
                 
               </v-card>
             </template>
