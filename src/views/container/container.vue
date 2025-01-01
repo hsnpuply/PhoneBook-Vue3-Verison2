@@ -475,6 +475,12 @@ const userMaking = () => {
 const updateContactsPreview = (newPreview) => {
   state.contacts.contactsPreview = newPreview;
 };
+
+const animatedItems = ref(new Set());
+
+const handleAnimationEnd = (item) => {
+  animatedItems.value.add(item);
+};
 </script>
 <template>
   <div
@@ -482,7 +488,7 @@ const updateContactsPreview = (newPreview) => {
     v-if="!state.loading.loadingStatus"
   >
     <half-circle-spinner :size="100" color="green" />
-    <h2 class="text-xl">... در حال بارگذاری</h2>
+    <h2 class="text-xl loading_text">... در حال بارگذاری</h2>
   </div>
 
   <div
@@ -512,7 +518,7 @@ const updateContactsPreview = (newPreview) => {
       >
         <div class="setting">
           <span
-            class="cursor-pointer mdi mdi-cog text-3xl text-white hover:scale-[.9]  inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
+            class="cursor-pointer mdi mdi-cog text-3xl text-white hover:scale-[.9] inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
             @click.stop="drawer = !drawer"
           />
         </div>
@@ -527,7 +533,9 @@ const updateContactsPreview = (newPreview) => {
           <v-btn class="bg-[#2c3e50]" size="large" @click="col_filter = true"
             >ترتیب ستون ها</v-btn
           >
-          <tr class="text-right bg-[#f9fafc] bg-[#2c3e50] text-[#627080] text-white text-lg">
+          <tr
+            class="text-right !bg-[#2c3e50] text-[#627080] text-white text-lg"
+          >
             <th
               class="text-right"
               v-for="(item, index) in tableItems"
@@ -541,13 +549,17 @@ const updateContactsPreview = (newPreview) => {
         <!-- Skeleton of LocalStorage -->
         <tbody
           class="w-full"
-          v-if="state.loading.skeletonLoads.LocalContacts && state.contacts.contactsPreview == 'LocalStorage'" >
+          v-if="
+            state.loading.skeletonLoads.LocalContacts &&
+            state.contacts.contactsPreview == 'LocalStorage'
+          "
+        >
           <tr
             v-for="(item, index) in state.contacts.LocalContacts.length"
             :key="index"
             class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
           >
-            <td v-for="(item) in 8" :key="item" class="!h-28">
+            <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
             </td>
@@ -568,9 +580,12 @@ const updateContactsPreview = (newPreview) => {
 
         <tbody
           class="w-full"
-          v-if="state.loading.skeletonLoads.LocalContacts && state.contacts.contactsPreview == 'Server'" >
-
+          v-if="
+            state.loading.skeletonLoads.LocalContacts &&
+            state.contacts.contactsPreview == 'Server'
+          "
         >
+          >
           <tr
             v-for="(item, index) in state.contacts.server_1_Contacts.length"
             :key="index"
@@ -694,29 +709,34 @@ const updateContactsPreview = (newPreview) => {
     </div>
 
     <div
-      v-if="!state.loading.skeletonLoads.LocalContacts || !state.loading.skeletonLoads.server_1_Contacts "
-      class="addNewContact   flex-wrap   flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10  animate__animated animate__slow animate__delay-1s animate__fadeInRight"
+      v-if="
+        !state.loading.skeletonLoads.LocalContacts ||
+        !state.loading.skeletonLoads.server_1_Contacts
+      "
+      class="addNewContact flex-wrap flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 animate__animated animate__slow animate__delay-1s animate__fadeInRight"
     >
       <!-- animate__animated animate__slow animate__delay-1s animate__fadeInRight -->
       <v-btn
         v-if="showRegisterButton(state.contacts.contactsPreview)"
         variant="elevated"
         elevation="3"
-        color="green"
         size="large"
         @click="toggleRegisterForm"
+        class="bg-[#295687] hover:bg-[#3a6ea5]"
       >
         ثبت مخاطب
-        <v-icon left class="pl-3" > mdi-plus </v-icon>
+        <v-icon left class="pl-3"> mdi-plus </v-icon>
       </v-btn>
       <v-btn
-        v-if="showRegisterButton(state.contacts.contactsPreview) && state.contacts.contactsPreview == 'LocalStorage'"
+        v-if="
+          showRegisterButton(state.contacts.contactsPreview) &&
+          state.contacts.contactsPreview == 'LocalStorage'
+        "
         variant="elevated"
         elevation="3"
-        color="green"
+        class="bg-[#cd9732] hover:bg-[#cfa353] ml-5"
         size="large"
         @click="userMaking"
-        class="ml-5"
       >
         مخاطبین تصادفی
         <v-icon left class="pl-3"> mdi-clock </v-icon>
@@ -769,8 +789,8 @@ const updateContactsPreview = (newPreview) => {
     @update:mainTableKey="updateMainTableKey"
   />
 
-  <v-dialog v-model="col_filter" width="550" persistent>
-    <v-card title="ترتیب ستون ها">
+  <v-dialog v-model="col_filter" width="550" persistent class="column_order">
+    <v-card title="ترتیب ستون ها" class="rounded-xl">
       <div class="columns flex flex-col gap-4 items-center justify-center">
         <draggable
           v-model="tableItems"
@@ -778,9 +798,18 @@ const updateContactsPreview = (newPreview) => {
           tag="transition-group"
           class=""
         >
-          <template #item="{ element }">
+          <template #item="{ element, index }">
             <div
-              class="col w-[300px] rounded-lg cursor-move select-none py-2 bg-gray-500 odd:bg-gray-300 odd:!bg-[#e0c083] text-black"
+              v-if="true"
+              :key="element"
+              :style="{
+                animationDelay: `${index * 0.3}s !important`,
+              }"
+              class="hover:!bg-[#4c749f] even:bg-[#f8f1e5] col w-[300px] rounded-lg cursor-move select-none py-2 bg-gray-500 odd:bg-gray-300 odd:!bg-[#e0c083] text-black"
+              :class="{
+                test_animate: !animatedItems.has(element),
+              }"
+              @animationend="handleAnimationEnd(element)"
             >
               {{ element }}
             </div>
@@ -790,7 +819,7 @@ const updateContactsPreview = (newPreview) => {
       <template v-slot:actions>
         <div class="w-full my-2">
           <v-btn
-            class="bg-green-500 px-9"
+            class="test_animate bg-[#295687] hover:bg-[#3a6ea5] px-9"
             text="تایید"
             @click="col_filter = false"
           ></v-btn>
@@ -806,7 +835,22 @@ const updateContactsPreview = (newPreview) => {
   background-position: center;
   background-size: cover;
 }
-.title_header{
+.title_header {
   filter: drop-shadow(2px 3px 4px #000);
+}
+.test_animate {
+  animation: testAnimate 1s 1s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes testAnimate {
+  from {
+    opacity: 0;
+    transform: translateX(200px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0px);
+  }
 }
 </style>
