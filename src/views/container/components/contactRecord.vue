@@ -64,7 +64,7 @@ const saveOrderLocal = ()=>{
   tag="tbody"
    class="select-none text-xl bg-[#dddbdb] text-[#212222] cursor-grab">
     <template #item="{ element, index }">
-      <tr class="text-right even:bg-gray-200 bg-gray-400/50 hover:bg-sky-900/60">
+      <tr class="text-right even:bg-gray-200 even:bg-[#e0c083] bg-gray-400/50 bg-[#f8f1e5] hover:bg-sky-900/60">
         <td v-for="(col, i) in columnOrder" :key="i">
           <template v-if="fieldsMapping[col] === 'index'">
             {{ index + 1 }}

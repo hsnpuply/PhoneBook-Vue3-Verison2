@@ -1,5 +1,5 @@
 <template>
-  <v-app class="">
+  <v-app class="bg-gray-700">
     <v-main>
       <!-- <router-view /> -->
       <Container />

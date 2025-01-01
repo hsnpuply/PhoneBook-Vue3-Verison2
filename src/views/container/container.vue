@@ -492,7 +492,7 @@ const updateContactsPreview = (newPreview) => {
     <header class="titlePage overflow-hidden">
       <div class="titleText animate__animated animate__fadeInUp animate__slow">
         <h1
-          class="text-center py-8 text-3xl text-black font-semibold flex items-center justify-center gap-2"
+          class="text-center py-8 text-3xl text-white title_header font-semibold flex items-center justify-center gap-2"
         >
           <span
             class="mdi"
@@ -512,7 +512,7 @@ const updateContactsPreview = (newPreview) => {
       >
         <div class="setting">
           <span
-            class="cursor-pointer mdi mdi-cog text-3xl text-black inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
+            class="cursor-pointer mdi mdi-cog text-3xl text-white hover:scale-[.9]  inline-flex duration-700 ease-in-out hover:rotate-[180deg] origin-center"
             @click.stop="drawer = !drawer"
           />
         </div>
@@ -524,10 +524,10 @@ const updateContactsPreview = (newPreview) => {
         :key="state.mainTableKey"
       >
         <thead class="relative bg-transparent">
-          <v-btn class="bg-gray-600" size="large" @click="col_filter = true"
+          <v-btn class="bg-[#2c3e50]" size="large" @click="col_filter = true"
             >ترتیب ستون ها</v-btn
           >
-          <tr class="text-right bg-[#f9fafc] text-[#627080] text-lg">
+          <tr class="text-right bg-[#f9fafc] bg-[#2c3e50] text-[#627080] text-white text-lg">
             <th
               class="text-right"
               v-for="(item, index) in tableItems"
@@ -568,9 +568,8 @@ const updateContactsPreview = (newPreview) => {
 
         <tbody
           class="w-full"
-          v-if="
-            serverCondition() && state.contacts.server_1_Contacts.length == 0
-          "
+          v-if="state.loading.skeletonLoads.LocalContacts && state.contacts.contactsPreview == 'Server'" >
+
         >
           <tr
             v-for="(item, index) in state.contacts.server_1_Contacts.length"
@@ -708,7 +707,7 @@ const updateContactsPreview = (newPreview) => {
         @click="toggleRegisterForm"
       >
         ثبت مخاطب
-        <v-icon left> mdi-plus </v-icon>
+        <v-icon left class="pl-3" > mdi-plus </v-icon>
       </v-btn>
       <v-btn
         v-if="showRegisterButton(state.contacts.contactsPreview) && state.contacts.contactsPreview == 'LocalStorage'"
@@ -720,7 +719,7 @@ const updateContactsPreview = (newPreview) => {
         class="ml-5"
       >
         مخاطبین تصادفی
-        <v-icon left> mdi-plus </v-icon>
+        <v-icon left class="pl-3"> mdi-clock </v-icon>
       </v-btn>
     </div>
     <div
@@ -781,7 +780,7 @@ const updateContactsPreview = (newPreview) => {
         >
           <template #item="{ element }">
             <div
-              class="col w-[300px] rounded-lg cursor-move select-none py-2 bg-gray-500 odd:bg-gray-300 text-black"
+              class="col w-[300px] rounded-lg cursor-move select-none py-2 bg-gray-500 odd:bg-gray-300 odd:!bg-[#e0c083] text-black"
             >
               {{ element }}
             </div>
@@ -803,7 +802,11 @@ const updateContactsPreview = (newPreview) => {
 
 <style scoped>
 .mainContent {
-  background-image: url(../../assets/test.jpg);
+  background-image: url(../../assets/images/backgrounds/localstorage/a.jpg);
   background-position: center;
+  background-size: cover;
+}
+.title_header{
+  filter: drop-shadow(2px 3px 4px #000);
 }
 </style>

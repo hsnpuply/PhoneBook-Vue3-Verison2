@@ -21,6 +21,7 @@ tr > th , tr > td{
 
 table{
     direction: rtl;
+    border:2px solid #d1ccc0;
 }
 
 
