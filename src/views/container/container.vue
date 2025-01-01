@@ -819,9 +819,16 @@ const handleAnimationEnd = (item) => {
       <template v-slot:actions>
         <div class="w-full my-2">
           <v-btn
-            class="test_animate bg-[#295687] hover:bg-[#3a6ea5] px-9"
+            class=" bg-[#295687] hover:bg-[#3a6ea5] px-9"
             text="تایید"
             @click="col_filter = false"
+            :style="{
+                animationDelay: `3s !important`,
+              }"
+                          :class="{
+                test_animate: !animatedItems.has(element),
+              }"
+              @animationend="handleAnimationEnd(element)"
           ></v-btn>
         </div>
       </template>
