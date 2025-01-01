@@ -397,30 +397,78 @@ const showRegisterButton = (previewStatus) => {
 // Factory user maker
 
 const userMaking = () => {
-    const randomNames = ["علی رضایی", "سارا احمدی", "رضا نیکو", "نرگس محمدی", "امید کاظمی", "زهرا عباسی", "کیان شریفی", "یاسمین فرهادی"];
-    const randomNumbers = ["09121234567", "09351112233", "09905556677", "09032223344", "09147896543", "09378945612", "09223334455"];
-    const randomDates = ["1375/07/10", "1368/03/05", "1380/09/22", "1372/01/15", "1379/11/30", "1384/04/17"];
-    const randomAvatars = [
+  const randomNames = [
+    "علی رضایی",
+    "سارا احمدی",
+    "رضا نیکو",
+    "نرگس محمدی",
+    "امید کاظمی",
+    "زهرا عباسی",
+    "کیان شریفی",
+    "یاسمین فرهادی",
+  ];
+  const randomNumbers = [
+    "09121234567",
+    "09351112233",
+    "09905556677",
+    "09032223344",
+    "09147896543",
+    "09378945612",
+    "09223334455",
+  ];
+  const randomDates = [
+    "1375/07/10",
+    "1368/03/05",
+    "1380/09/22",
+    "1372/01/15",
+    "1379/11/30",
+    "1384/04/17",
+  ];
+  const randomAvatars = [
     "https://picsum.photos/150?random=1",
     "https://picsum.photos/150?random=2",
     "https://picsum.photos/150?random=3",
     "https://picsum.photos/150?random=4",
     "https://picsum.photos/150?random=5",
   ];
-    const skillsList = ["Vue.js", "React", "Node.js", "CSS", "HTML", "JavaScript", "Python"];
-    const interestsList = ["موسیقی", "ورزش", "کدنویسی", "فیلم", "عکاسی", "طبیعت گردی"];
-    const contacts = Array.from({ length: 5 }, (_, index) => ({
-      id: index + 1,
-      phoneNumber: randomNumbers[Math.floor(Math.random() * randomNumbers.length)],
-      fullname: randomNames[Math.floor(Math.random() * randomNames.length)],
-      selectedDate: randomDates[Math.floor(Math.random() * randomDates.length)],
-      isCoworker: Math.random() > 0.5,
-      skills: skillsList.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 1),
-      favorites: interestsList.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 3) + 1),
-      avatar: randomAvatars[Math.floor(Math.random() * randomAvatars.length)],
-    }));
-    localStorage.setItem("contacts", JSON.stringify(contacts));
-    state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length, ...contacts);
+  const skillsList = [
+    "Vue.js",
+    "React",
+    "Node.js",
+    "CSS",
+    "HTML",
+    "JavaScript",
+    "Python",
+  ];
+  const interestsList = [
+    "موسیقی",
+    "ورزش",
+    "کدنویسی",
+    "فیلم",
+    "عکاسی",
+    "طبیعت گردی",
+  ];
+  const contacts = Array.from({ length: 5 }, (_, index) => ({
+    id: index + 1,
+    phoneNumber:
+      randomNumbers[Math.floor(Math.random() * randomNumbers.length)],
+    fullname: randomNames[Math.floor(Math.random() * randomNames.length)],
+    selectedDate: randomDates[Math.floor(Math.random() * randomDates.length)],
+    isCoworker: Math.random() > 0.5,
+    skills: skillsList
+      .sort(() => 0.5 - Math.random())
+      .slice(0, Math.floor(Math.random() * 4) + 1),
+    favorites: interestsList
+      .sort(() => 0.5 - Math.random())
+      .slice(0, Math.floor(Math.random() * 3) + 1),
+    avatar: randomAvatars[Math.floor(Math.random() * randomAvatars.length)],
+  }));
+  localStorage.setItem("contacts", JSON.stringify(contacts));
+  state.contacts.LocalContacts.splice(
+    0,
+    state.contacts.LocalContacts.length,
+    ...contacts
+  );
   // Call this function to generate and store the contacts
   getData();
 };
@@ -493,16 +541,13 @@ const updateContactsPreview = (newPreview) => {
         <!-- Skeleton of LocalStorage -->
         <tbody
           class="w-full"
-          v-if="
-            localStorageCondition() && !state.contacts.LocalContacts?.length
-          "
-        >
+          v-if="state.loading.skeletonLoads.LocalContacts && state.contacts.contactsPreview == 'LocalStorage'" >
           <tr
             v-for="(item, index) in state.contacts.LocalContacts.length"
             :key="index"
             class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
           >
-            <td v-for="item in 8" :key="item" class="!h-28">
+            <td v-for="(item) in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
               </v-skeleton-loader>
             </td>
@@ -550,7 +595,7 @@ const updateContactsPreview = (newPreview) => {
         </tbody>
 
         <ContactRecord
-         :columnOrder="tableItems"
+          :columnOrder="tableItems"
           v-if="localStorageCondition()"
           :data="state.contacts.LocalContacts"
           :DeleteContacts="DeleteContacts"
@@ -560,7 +605,7 @@ const updateContactsPreview = (newPreview) => {
 
         <!-- Server -->
         <ContactRecord
-        :columnOrder="tableItems" 
+          :columnOrder="tableItems"
           v-if="serverCondition()"
           :data="state.contacts.server_1_Contacts"
           :DeleteContacts="deleteServerContact"
@@ -650,7 +695,8 @@ const updateContactsPreview = (newPreview) => {
     </div>
 
     <div
-      class="addNewContact w-full flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 xl:px-0 animate__animated animate__slow animate__delay-1s animate__fadeInRight"
+      v-if="!state.loading.skeletonLoads.LocalContacts || !state.loading.skeletonLoads.server_1_Contacts "
+      class="addNewContact   flex-wrap   flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10  animate__animated animate__slow animate__delay-1s animate__fadeInRight"
     >
       <!-- animate__animated animate__slow animate__delay-1s animate__fadeInRight -->
       <v-btn
@@ -665,14 +711,15 @@ const updateContactsPreview = (newPreview) => {
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
       <v-btn
-        v-if="showRegisterButton(state.contacts.contactsPreview)"
+        v-if="showRegisterButton(state.contacts.contactsPreview) && state.contacts.contactsPreview == 'LocalStorage'"
         variant="elevated"
         elevation="3"
         color="green"
         size="large"
         @click="userMaking"
+        class="ml-5"
       >
-        Randoms
+        مخاطبین تصادفی
         <v-icon left> mdi-plus </v-icon>
       </v-btn>
     </div>
@@ -681,7 +728,7 @@ const updateContactsPreview = (newPreview) => {
         state.loading.skeletonLoads.LocalContacts &&
         state.contacts.LocalContacts.length
       "
-      class="animate__animated animate__slow animate__fadeInUp animate__delay-2s flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0"
+      class="mt-5 animate__animated animate__slow animate__fadeInUp animate__delay-2s flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0"
     >
       <v-skeleton-loader type="button" color="transparent" class="w-32">
       </v-skeleton-loader>
@@ -725,29 +772,33 @@ const updateContactsPreview = (newPreview) => {
 
   <v-dialog v-model="col_filter" width="550" persistent>
     <v-card title="ترتیب ستون ها">
-      <div class="columns  flex flex-col gap-4 items-center justify-center">
+      <div class="columns flex flex-col gap-4 items-center justify-center">
         <draggable
           v-model="tableItems"
           item-key="id"
           tag="transition-group"
           class=""
-
         >
-          <template  #item="{ element }">
-            <div class="col w-[300px] rounded-lg cursor-move select-none py-2 bg-gray-500 odd:bg-gray-300 text-black">{{ element }}</div>
+          <template #item="{ element }">
+            <div
+              class="col w-[300px] rounded-lg cursor-move select-none py-2 bg-gray-500 odd:bg-gray-300 text-black"
+            >
+              {{ element }}
+            </div>
           </template>
         </draggable>
       </div>
       <template v-slot:actions>
-      <div class="w-full my-2">
-        <v-btn class=" bg-green-500 px-9" text="تایید" @click="col_filter = false"></v-btn>
-      </div>
+        <div class="w-full my-2">
+          <v-btn
+            class="bg-green-500 px-9"
+            text="تایید"
+            @click="col_filter = false"
+          ></v-btn>
+        </div>
       </template>
     </v-card>
   </v-dialog>
-
-
-  
 </template>
 
 <style scoped>

@@ -107,42 +107,42 @@
   //   selectedDate: yup.string().required("وارد کردن تاریخ تولد الزامیست"),
   // });
 
-  // const schema = yup.object({
-  //   fullname: yup.string(),
-  //   phoneNumber: yup.string(),
-  // });
-
   const schema = yup.object({
-  fullname: yup
-    .string()
-    .required("نوشتن نام و نام خانوادگی الزامیست")
-    .min(6, "کمترین مقدار 6 حرف میباشد")
-    .max(36, "بیشترین مقدار 36 کارکتر میباشد"),
-  phoneNumber: yup
-    .string()
-    .required("وارد کردن شماره تلفن الزامیست")
-    .matches(/^09[0-9]{9}$/, "شماره تلفن باید با 09 شروع شده و شامل 11 رقم باشد"),
-  selectedDate: yup.string().required("وارد کردن تاریخ تولد الزامیست"),
+    fullname: yup.string(),
+    phoneNumber: yup.string(),
+  });
+
+//   const schema = yup.object({
+//   fullname: yup
+//     .string()
+//     .required("نوشتن نام و نام خانوادگی الزامیست")
+//     .min(6, "کمترین مقدار 6 حرف میباشد")
+//     .max(36, "بیشترین مقدار 36 کارکتر میباشد"),
+//   phoneNumber: yup
+//     .string()
+//     .required("وارد کردن شماره تلفن الزامیست")
+//     .matches(/^09[0-9]{9}$/, "شماره تلفن باید با 09 شروع شده و شامل 11 رقم باشد"),
+//   selectedDate: yup.string().required("وارد کردن تاریخ تولد الزامیست"),
   
-  // New Fields for Validation
-  skills: yup
-    .array()
-    .min(1, "حداقل یک مهارت باید انتخاب شود")
-    .required("انتخاب مهارت الزامیست"),
+//   // New Fields for Validation
+//   skills: yup
+//     .array()
+//     .min(1, "حداقل یک مهارت باید انتخاب شود")
+//     .required("انتخاب مهارت الزامیست"),
   
-    avatar: yup
-  .mixed()
-  .required("آپلود تصویر پروفایل الزامی است")
-  .test('fileFormat', "از این فرمت برای پروفایل پشتیبانی نمیشود  فرمت های مورد تایید  : JPG-BMP-PNG ", 
-    value => {
-      if (!value) return true;
-      const acceptedFormats = ['image/jpeg', 'image/png', 'image/bmp'];
-      return acceptedFormats.includes(value.type);
-    }
-  ).test('fileSize', "اندازه تصویر نباید از 2MB بیشتر باشد", 
-    value => !value || (value.size / 1024 / 1024 < 2)  // 2MB limit
-  )
-});
+//     avatar: yup
+//   .mixed()
+//   .required("آپلود تصویر پروفایل الزامی است")
+//   .test('fileFormat', "از این فرمت برای پروفایل پشتیبانی نمیشود  فرمت های مورد تایید  : JPG-BMP-PNG ", 
+//     value => {
+//       if (!value) return true;
+//       const acceptedFormats = ['image/jpeg', 'image/png', 'image/bmp'];
+//       return acceptedFormats.includes(value.type);
+//     }
+//   ).test('fileSize', "اندازه تصویر نباید از 2MB بیشتر باشد", 
+//     value => !value || (value.size / 1024 / 1024 < 2)  // 2MB limit
+//   )
+// });
 
   const { handleSubmit, resetForm } = useForm({
     validationSchema: schema,
@@ -318,7 +318,7 @@
       emit("update:mainTableKey", 208);
 
       // Assuming the response contains the newly created contact, log it
-      console.log("New contact added:", response.data);
+      // console.log("New contact added:", response.data);
 
       // Success Alert
       Swal.fire({
@@ -375,7 +375,7 @@
 
       state.loading = false;
       // await props.fetchUsers();
-      console.log("look we added a data on server");
+      // console.log("look we added a data on server");
     }
   };
 
@@ -430,7 +430,7 @@
     if (contactIndex !== -1) {
       contactsFromStorage[contactIndex] = updatedContact; // Update the contact
       localStorage.setItem("contacts", JSON.stringify(contactsFromStorage)); // Save updated contacts
-      console.log("Updated contact:", contactsFromStorage[contactIndex]);
+      // console.log("Updated contact:", contactsFromStorage[contactIndex]);
     }
 
     setTimeout(() => {
@@ -495,7 +495,7 @@
         }
       );
 
-      console.log("Contact updated successfully:", response.data);
+      // console.log("Contact updated successfully:", response.data);
       emit("update:mainTableKey", 208);
 
       // Show success feedback to the user
