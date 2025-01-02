@@ -33,8 +33,12 @@ const state = reactive({
     server_1_Contacts: [],
     contactsPreview: "",
     storedPreviewStatus: localStorage.getItem("Preview Status"),
-
     selectedContact: {},
+  },
+  pagination:{
+    limit_contacts_per_page:3,
+    total_contacts:44,
+    current_page:2
   },
   forms: {
     register: false,
@@ -110,7 +114,8 @@ onMounted(async () => {
   }
   getData();
 
-  await fetchUsers();
+  // await fetchUsers();
+  await fetchContacts(state.pagination.current_page)
   setTimeout(() => {
     state.loading.preview = false;
   }, 2400);
@@ -139,7 +144,8 @@ const getData = async () => {
       break;
 
     case "Server":
-      await fetchUsers();
+      // await fetchUsers();
+      await fetchContacts(state.pagination.current_page)
       break;
   }
 };
@@ -481,6 +487,39 @@ const animatedItems = ref(new Set());
 const handleAnimationEnd = (item) => {
   animatedItems.value.add(item);
 };
+
+
+async function fetchContacts(page = 1) {
+  const res = await fetch(`http://localhost:4000/users?_page=${page}&_limit=${state.pagination.limit_contacts_per_page}`);
+  // const res = await fetch(`http://localhost:4000/users?_page=2&_limit=4`);
+  const data = await res.json();
+
+  // // Get the total count from headers and ensure it's a number
+  // const total = res.headers.get('X-Total-Count');
+  // state.pagination.total_contacts = Number(total);  // Fix here
+
+  const total = res.headers.get('X-Total-Count');
+state.pagination.total_contacts = total ? Number(total) : 0;
+
+
+  state.contacts.server_1_Contacts = data;
+  state.pagination.current_page = page;
+}
+
+const nextPage=()=> {
+  if (state.pagination.current_page * state.pagination.limit_contacts_per_page < state.pagination.total_contacts) {
+    fetchContacts(state.pagination.current_page + 1);
+  }
+}
+
+const prevPage=()=> {
+  if (state.pagination.current_page > 1) {
+    fetchContacts(state.pagination.current_page - 1);
+  }
+}
+
+
+
 </script>
 <template>
   <div
@@ -557,7 +596,7 @@ const handleAnimationEnd = (item) => {
           <tr
             v-for="(item, index) in state.contacts.LocalContacts.length"
             :key="index"
-            class="bg-[#bcbfc5] even:bg-[#e5e7eb]"
+            class="even:bg-[#e0c083]  bg-[#f8f1e5]"
           >
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
@@ -739,7 +778,7 @@ const handleAnimationEnd = (item) => {
         @click="userMaking"
       >
         مخاطبین تصادفی
-        <v-icon left class="pl-3"> mdi-clock </v-icon>
+        <v-icon left class="pl-3"> mdi-human-male-male </v-icon>
       </v-btn>
     </div>
     <div
@@ -825,7 +864,7 @@ const handleAnimationEnd = (item) => {
             :style="{
                 animationDelay: `3s !important`,
               }"
-                          :class="{
+              :class="{
                 test_animate: !animatedItems.has(element),
               }"
               @animationend="handleAnimationEnd(element)"
@@ -834,6 +873,27 @@ const handleAnimationEnd = (item) => {
       </template>
     </v-card>
   </v-dialog>
+
+  <div>
+    <ul>
+      <li class="p-3 bg-green-500/50 border-2 flex items-center justify-center flex-col border-black" v-for="contact in state.contacts.server_1_Contacts" :key="contact.id">
+      <div class="rounded-full bg-red-400  w-24 h-24 overflow-hidden">
+        <img :src="contact.avatar" alt="Avatar" class="object-left" />
+      </div>
+        <span>{{ contact.fullname }} - {{ contact.phoneNumber }}</span><br>
+        <span>{{ contact.skills.join(",") }}</span>
+      </li>
+    </ul>
+
+    <div class="pagination">
+      <!-- :disabled="state.pagination.current_page === 1" -->
+      <v-btn @click="prevPage" :disabled="state.pagination.current_page === 1">Previous</v-btn>
+      <span>Page {{ state.pagination.current_page }} of {{ Math.ceil(state.pagination.total_contacts / state.pagination.limit_contacts_per_page) }}</span>
+<v-btn @click="nextPage" :disabled="state.pagination.current_page * state.pagination.limit_contacts_per_page >= state.pagination.total_contacts">Next</v-btn>
+      <!-- :disabled="state.pagination.current_page * state.pagination.limit_contacts_per_page >= state.pagination.total_contacts" -->
+      
+    </div>
+  </div>
 </template>
 
 <style scoped>
