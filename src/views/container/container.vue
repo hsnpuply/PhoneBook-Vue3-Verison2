@@ -38,7 +38,7 @@ const state = reactive({
   pagination:{
     limit_contacts_per_page:3,
     total_contacts:44,
-    current_page:2
+    current_page:1
   },
   forms: {
     register: false,
@@ -114,8 +114,8 @@ onMounted(async () => {
   }
   getData();
 
-  // await fetchUsers();
-  await fetchContacts(state.pagination.current_page)
+  await fetchUsers();
+  // await fetchContacts(state.pagination.current_page)
   setTimeout(() => {
     state.loading.preview = false;
   }, 2400);
@@ -125,6 +125,7 @@ onMounted(async () => {
   }, 2000);
   setTimeout(() => {
     state.loading.skeletonLoads.LocalContacts = false;
+    state.loading.skeletonLoads.server_1_Contacts = false;
   }, 6000);
 });
 
@@ -144,7 +145,7 @@ const getData = async () => {
       break;
 
     case "Server":
-      // await fetchUsers();
+      await fetchUsers();
       await fetchContacts(state.pagination.current_page)
       break;
   }
@@ -246,6 +247,7 @@ const localStorageCondition = () => {
 const serverCondition = () => {
   if (
     state.contacts.server_1_Contacts.length > 0 &&
+    !state.loading.skeletonLoads.server_1_Contacts &&
     state.contacts.contactsPreview == "Server"
   ) {
     state.contacts.contactsPreview = "Server";
@@ -489,34 +491,39 @@ const handleAnimationEnd = (item) => {
 };
 
 
-async function fetchContacts(page = 1) {
-  const res = await fetch(`http://localhost:4000/users?_page=${page}&_limit=${state.pagination.limit_contacts_per_page}`);
-  // const res = await fetch(`http://localhost:4000/users?_page=2&_limit=4`);
-  const data = await res.json();
-
+async function fetchContacts(page) {
+  const res = await axios.get('http://localhost:4000/users', {
+  params: { _page: 1, _limit: 4 }
+});
+// const res = await fetch(`http://localhost:4000/users?_page=2&_limit=4`);
+const data = res.data;
+const total = res.headers.get('X-Total-Count');
+console.log(total);  // Should show total number of recor
   // // Get the total count from headers and ensure it's a number
   // const total = res.headers.get('X-Total-Count');
   // state.pagination.total_contacts = Number(total);  // Fix here
 
-  const total = res.headers.get('X-Total-Count');
-state.pagination.total_contacts = total ? Number(total) : 0;
+//   const total = res.headers.get('X-Total-Count');
+// state.pagination.total_contacts = total ? Number(total) : 0;
 
 
   state.contacts.server_1_Contacts = data;
   state.pagination.current_page = page;
 }
 
-const nextPage=()=> {
-  if (state.pagination.current_page * state.pagination.limit_contacts_per_page < state.pagination.total_contacts) {
-    fetchContacts(state.pagination.current_page + 1);
+  const nextPage= async ()=> {
+    if (state.pagination.current_page * state.pagination.limit_contacts_per_page < state.pagination.total_contacts) {
+    await fetchContacts(state.pagination.current_page + 1);
+    // state.pagination.limit_contacts_per_page += 1
+      
+    }
   }
-}
 
-const prevPage=()=> {
-  if (state.pagination.current_page > 1) {
-    fetchContacts(state.pagination.current_page - 1);
+  const prevPage=()=> {
+    if (state.pagination.current_page > 1) {
+      fetchContacts(state.pagination.current_page - 1);
+    }
   }
-}
 
 
 
@@ -659,7 +666,7 @@ const prevPage=()=> {
         <!-- Server -->
         <ContactRecord
           :columnOrder="tableItems"
-          v-if="serverCondition()"
+          v-if="serverCondition() "
           :data="state.contacts.server_1_Contacts"
           :DeleteContacts="deleteServerContact"
           :toggleEditForm="toggleEditForm"
@@ -842,7 +849,8 @@ const prevPage=()=> {
               v-if="true"
               :key="element"
               :style="{
-                animationDelay: `${index * 0.3}s !important`,
+                animationDelay: `${(tableItems.length - index) * 0.2}s !important`,
+                
               }"
               class="hover:!bg-[#4c749f] even:bg-[#f8f1e5] col w-[300px] rounded-lg cursor-move select-none py-2 bg-gray-500 odd:bg-gray-300 odd:!bg-[#e0c083] text-black"
               :class="{
@@ -863,6 +871,8 @@ const prevPage=()=> {
             @click="col_filter = false"
             :style="{
                 animationDelay: `3s !important`,
+                
+
               }"
               :class="{
                 test_animate: !animatedItems.has(element),
@@ -876,7 +886,9 @@ const prevPage=()=> {
 
   <div>
     <ul>
-      <li class="p-3 bg-green-500/50 border-2 flex items-center justify-center flex-col border-black" v-for="contact in state.contacts.server_1_Contacts" :key="contact.id">
+      <li class="p-3 bg-green-500/50 border-2 flex items-center justify-center
+       flex-col border-black" 
+       v-for="contact in state.contacts.server_1_Contacts" :key="contact.id">
       <div class="rounded-full bg-red-400  w-24 h-24 overflow-hidden">
         <img :src="contact.avatar" alt="Avatar" class="object-left" />
       </div>
