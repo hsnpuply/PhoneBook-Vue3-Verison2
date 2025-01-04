@@ -35,10 +35,10 @@ const state = reactive({
     storedPreviewStatus: localStorage.getItem("Preview Status"),
     selectedContact: {},
   },
-  pagination:{
-    limit_contacts_per_page:3,
-    total_contacts:44,
-    current_page:1
+  pagination: {
+    limit_contacts_per_page:Number(localStorage.getItem('contacts_per_page')),
+    total_contacts: 44,
+    current_page: 1,
   },
   forms: {
     register: false,
@@ -56,7 +56,19 @@ const state = reactive({
   mainTableKey: 0,
 });
 
+const updateContactsPerPage = (newVal) => {
+  state.pagination.limit_contacts_per_page = newVal;
+  fetchContacts(newVal)
+  localStorage.setItem('contacts_per_page', newVal);
+};
+// watch(()=> state.pagination.limit_contacts_per_page,(newValue)=>{
+  
+//   alert(newValue)
+
+// })
+
 watch(state.contacts.contactsPreview, (newValue) => {
+  
   alert(state.contacts.contactsPreview);
   alert("something changed in contacts Preview");
 
@@ -71,14 +83,14 @@ watch(state.contacts.contactsPreview, (newValue) => {
   }
 });
 
-// function handleStorageChange(e) {
-//   if (e.key === "Preview Status") {
-//     state.contacts.contactsPreview = "LocalStorage";
-//     localStorage.setItem("Preview Status", "LocalStorage");
-//   }
-// }
+function handleStorageChange(e) {
+  if (e.key === "contacts_per_page") {
+    state.pagination.limit_contacts_per_page = 5;
+    localStorage.setItem("Preview Status", state.pagination.limit_contacts_per_page);
+  }
+}
 
-// window.addEventListener("storage", handleStorageChange);
+window.addEventListener("storage", handleStorageChange);
 const handlePreviewChange = (newVal) => {
   switch (newVal) {
     case "Server":
@@ -94,10 +106,15 @@ const handlePreviewChange = (newVal) => {
   }
 };
 onMounted(async () => {
-  if (
-    !localStorage.getItem("Preview Status") &&
-    state.contacts.contactsPreview == ""
-  ) {
+  if (!localStorage.getItem('contacts_per_page')) {
+    state.pagination.limit_contacts_per_page = 5;
+    localStorage.setItem('contacts_per_page', state.pagination.limit_contacts_per_page);
+  }
+  if (localStorage.getItem('contacts_per_page')) {
+    state.pagination.limit_contacts_per_page = localStorage.getItem('contacts_per_page');
+  }
+
+  if (!localStorage.getItem("Preview Status") && state.contacts.contactsPreview == "") {
     localStorage.setItem("Preview Status", "LocalStorage");
     state.contacts.contactsPreview = "LocalStorage";
   }
@@ -115,7 +132,7 @@ onMounted(async () => {
   getData();
 
   await fetchUsers();
-  // await fetchContacts(state.pagination.current_page)
+  await fetchContacts( state.pagination.limit_contacts_per_page)
   setTimeout(() => {
     state.loading.preview = false;
   }, 2400);
@@ -146,7 +163,7 @@ const getData = async () => {
 
     case "Server":
       await fetchUsers();
-      await fetchContacts(state.pagination.current_page)
+      await fetchContacts(state.pagination.limit_contacts_per_page);
       break;
   }
 };
@@ -172,10 +189,9 @@ const deleteServerContact = async (id) => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:4000/users/${id}`); // Update with your server's base URL
-        state.contacts.server_1_Contacts =
-          state.contacts.server_1_Contacts.filter(
-            (contact) => contact.id !== id
-          ); // Update the local list of users
+        state.contacts.server_1_Contacts = state.contacts.server_1_Contacts.filter(
+          (contact) => contact.id !== id
+        ); // Update the local list of users
 
         state.mainTableKey = state.mainTableKey + 1;
         // Show success notification
@@ -335,9 +351,7 @@ const NoDataLottie = (contactPreview) => {
   }
 };
 
-const lottieAnimation = computed(() =>
-  NoDataLottie(state.contacts.contactsPreview)
-);
+const lottieAnimation = computed(() => NoDataLottie(state.contacts.contactsPreview));
 
 const tableItems = ref([
   "شماره",
@@ -365,10 +379,7 @@ const tableAnimationClass = computed(() => {
   if (state.contacts.LocalContacts.length === 0 && !animationTriggered2.value) {
     animationTriggered2.value = true;
     return "animate__animated animate__slow animate__fadeInUp";
-  } else if (
-    state.contacts.LocalContacts.length > 0 &&
-    !animationTriggered2.value
-  ) {
+  } else if (state.contacts.LocalContacts.length > 0 && !animationTriggered2.value) {
     animationTriggered2.value = true;
     return "tableHavingContact animate__animated animate__fadeInUp";
   }
@@ -448,18 +459,10 @@ const userMaking = () => {
     "JavaScript",
     "Python",
   ];
-  const interestsList = [
-    "موسیقی",
-    "ورزش",
-    "کدنویسی",
-    "فیلم",
-    "عکاسی",
-    "طبیعت گردی",
-  ];
+  const interestsList = ["موسیقی", "ورزش", "کدنویسی", "فیلم", "عکاسی", "طبیعت گردی"];
   const contacts = Array.from({ length: 5 }, (_, index) => ({
     id: index + 1,
-    phoneNumber:
-      randomNumbers[Math.floor(Math.random() * randomNumbers.length)],
+    phoneNumber: randomNumbers[Math.floor(Math.random() * randomNumbers.length)],
     fullname: randomNames[Math.floor(Math.random() * randomNames.length)],
     selectedDate: randomDates[Math.floor(Math.random() * randomDates.length)],
     isCoworker: Math.random() > 0.5,
@@ -490,43 +493,40 @@ const handleAnimationEnd = (item) => {
   animatedItems.value.add(item);
 };
 
-
 async function fetchContacts(page) {
-  const res = await axios.get('http://localhost:4000/users', {
-  params: { _page: 1, _limit: 4 }
-});
-// const res = await fetch(`http://localhost:4000/users?_page=2&_limit=4`);
-const data = res.data;
-const total = res.headers.get('X-Total-Count');
-console.log(total);  // Should show total number of recor
+  const res = await axios.get("http://localhost:4000/users", {
+    params: { _page: 1, _limit: page },
+  });
+  // const res = await fetch(`http://localhost:4000/users?_page=2&_limit=4`);
+  const data = res.data;
+  const total = res.headers.get("X-Total-Count");
+  console.log(total); // Should show total number of recor
   // // Get the total count from headers and ensure it's a number
   // const total = res.headers.get('X-Total-Count');
   // state.pagination.total_contacts = Number(total);  // Fix here
 
-//   const total = res.headers.get('X-Total-Count');
-// state.pagination.total_contacts = total ? Number(total) : 0;
-
+  //   const total = res.headers.get('X-Total-Count');
+  // state.pagination.total_contacts = total ? Number(total) : 0;
 
   state.contacts.server_1_Contacts = data;
   state.pagination.current_page = page;
 }
 
-  const nextPage= async ()=> {
-    if (state.pagination.current_page * state.pagination.limit_contacts_per_page < state.pagination.total_contacts) {
+const nextPage = async () => {
+  if (
+    state.pagination.current_page * state.pagination.limit_contacts_per_page <
+    state.pagination.total_contacts
+  ) {
     await fetchContacts(state.pagination.current_page + 1);
     // state.pagination.limit_contacts_per_page += 1
-      
-    }
   }
+};
 
-  const prevPage=()=> {
-    if (state.pagination.current_page > 1) {
-      fetchContacts(state.pagination.current_page - 1);
-    }
+const prevPage = () => {
+  if (state.pagination.current_page > 1) {
+    fetchContacts(state.pagination.current_page - 1);
   }
-
-
-
+};
 </script>
 <template>
   <div
@@ -537,19 +537,13 @@ console.log(total);  // Should show total number of recor
     <h2 class="text-xl loading_text">... در حال بارگذاری</h2>
   </div>
 
-  <div
-    class="mx-auto mainContent h-full bg-cover"
-    v-if="state.loading.loadingStatus"
-  >
+  <div class="mx-auto mainContent h-full bg-cover" v-if="state.loading.loadingStatus">
     <header class="titlePage overflow-hidden">
       <div class="titleText animate__animated animate__fadeInUp animate__slow">
         <h1
           class="text-center py-8 text-3xl text-white title_header font-semibold flex items-center justify-center gap-2"
         >
-          <span
-            class="mdi"
-            :class="getTitleEmoji(state.contacts.contactsPreview)"
-          ></span>
+          <span class="mdi" :class="getTitleEmoji(state.contacts.contactsPreview)"></span>
           دفترچه تلفن {{ savingModeData(state.contacts.contactsPreview) }}
         </h1>
         <!-- <div class="fixed top-0 right-0">
@@ -579,14 +573,8 @@ console.log(total);  // Should show total number of recor
           <v-btn class="bg-[#2c3e50]" size="large" @click="col_filter = true"
             >ترتیب ستون ها</v-btn
           >
-          <tr
-            class="text-right !bg-[#2c3e50] text-[#627080] text-white text-lg"
-          >
-            <th
-              class="text-right"
-              v-for="(item, index) in tableItems"
-              :key="index"
-            >
+          <tr class="text-right !bg-[#2c3e50] text-[#627080] text-white text-lg">
+            <th class="text-right" v-for="(item, index) in tableItems" :key="index">
               {{ item }}
             </th>
           </tr>
@@ -603,7 +591,7 @@ console.log(total);  // Should show total number of recor
           <tr
             v-for="(item, index) in state.contacts.LocalContacts.length"
             :key="index"
-            class="even:bg-[#e0c083]  bg-[#f8f1e5]"
+            class="even:bg-[#e0c083] bg-[#f8f1e5]"
           >
             <td v-for="item in 8" :key="item" class="!h-28">
               <v-skeleton-loader type="text" color="transparent" class="">
@@ -611,11 +599,7 @@ console.log(total);  // Should show total number of recor
             </td>
             <td class="min-w-48">
               <div class="w-full px-8">
-                <v-skeleton-loader
-                  type="button,button"
-                  color="transparent"
-                  class=" "
-                >
+                <v-skeleton-loader type="button,button" color="transparent" class=" ">
                 </v-skeleton-loader>
               </div>
             </td>
@@ -643,11 +627,7 @@ console.log(total);  // Should show total number of recor
             </td>
             <td class="min-w-48">
               <div class="w-full px-8">
-                <v-skeleton-loader
-                  type="button,button"
-                  color="transparent"
-                  class=" "
-                >
+                <v-skeleton-loader type="button,button" color="transparent" class=" ">
                 </v-skeleton-loader>
               </div>
             </td>
@@ -666,7 +646,7 @@ console.log(total);  // Should show total number of recor
         <!-- Server -->
         <ContactRecord
           :columnOrder="tableItems"
-          v-if="serverCondition() "
+          v-if="serverCondition()"
           :data="state.contacts.server_1_Contacts"
           :DeleteContacts="deleteServerContact"
           :toggleEditForm="toggleEditForm"
@@ -755,6 +735,21 @@ console.log(total);  // Should show total number of recor
     </div>
 
     <div
+      class="skeletonLoaders xl:hidden flex flex-row-reverse flex-wrap items-stretch justify-center container mx-auto gap-8 rounded-lg"
+      v-if="state.loading.skeletonLoads.server_1_Contacts"
+    >
+      <v-skeleton-loader
+        v-for="(item, index) in state.contacts.server_1_Contacts"
+        :key="index"
+        min-height="540"
+        elevation="24"
+        type="	image , text, paragraph , article  , button , button"
+        class="bg-sky-500/60 rounded-lg border shadow-lg min-w-[47%] shadow-black skeletonLoaderCard"
+      >
+      </v-skeleton-loader>
+    </div>
+
+    <div
       v-if="
         !state.loading.skeletonLoads.LocalContacts ||
         !state.loading.skeletonLoads.server_1_Contacts
@@ -790,8 +785,7 @@ console.log(total);  // Should show total number of recor
     </div>
     <div
       v-if="
-        state.loading.skeletonLoads.LocalContacts &&
-        state.contacts.LocalContacts.length
+        state.loading.skeletonLoads.LocalContacts && state.contacts.LocalContacts.length
       "
       class="mt-5 animate__animated animate__slow animate__fadeInUp animate__delay-2s flex items-center !justify-center xl:!justify-end w-full bg-gray-500/20 mx-auto container lg:mx-0"
     >
@@ -805,7 +799,9 @@ console.log(total);  // Should show total number of recor
       :contactsPreview="state.contacts.contactsPreview"
       @changePreviewStatus="handlePreviewChange"
       :changePreviewStatus="changePreviewStatus"
-    />
+      :show_contacts_per_page="state.pagination.limit_contacts_per_page"
+      @update:show_contacts_per_page="updateContactsPerPage"
+      />
     <v-main style="height: 250px">
       <div class="d-flex justify-center align-center h-100"></div>
     </v-main>
@@ -838,19 +834,13 @@ console.log(total);  // Should show total number of recor
   <v-dialog v-model="col_filter" width="550" persistent class="column_order">
     <v-card title="ترتیب ستون ها" class="rounded-xl">
       <div class="columns flex flex-col gap-4 items-center justify-center">
-        <draggable
-          v-model="tableItems"
-          item-key="id"
-          tag="transition-group"
-          class=""
-        >
+        <draggable v-model="tableItems" item-key="id" tag="transition-group" class="">
           <template #item="{ element, index }">
             <div
               v-if="true"
               :key="element"
               :style="{
                 animationDelay: `${(tableItems.length - index) * 0.2}s !important`,
-                
               }"
               class="hover:!bg-[#4c749f] even:bg-[#f8f1e5] col w-[300px] rounded-lg cursor-move select-none py-2 bg-gray-500 odd:bg-gray-300 odd:!bg-[#e0c083] text-black"
               :class="{
@@ -866,18 +856,16 @@ console.log(total);  // Should show total number of recor
       <template v-slot:actions>
         <div class="w-full my-2">
           <v-btn
-            class=" bg-[#295687] hover:bg-[#3a6ea5] px-9"
+            class="bg-[#295687] hover:bg-[#3a6ea5] px-9"
             text="تایید"
             @click="col_filter = false"
             :style="{
-                animationDelay: `3s !important`,
-                
-
-              }"
-              :class="{
-                test_animate: !animatedItems.has(element),
-              }"
-              @animationend="handleAnimationEnd(element)"
+              animationDelay: `3s !important`,
+            }"
+            :class="{
+              test_animate: !animatedItems.has(element),
+            }"
+            @animationend="handleAnimationEnd(element)"
           ></v-btn>
         </div>
       </template>
@@ -886,24 +874,42 @@ console.log(total);  // Should show total number of recor
 
   <div>
     <ul>
-      <li class="p-3 bg-green-500/50 border-2 flex items-center justify-center
-       flex-col border-black" 
-       v-for="contact in state.contacts.server_1_Contacts" :key="contact.id">
-      <div class="rounded-full bg-red-400  w-24 h-24 overflow-hidden">
-        <img :src="contact.avatar" alt="Avatar" class="object-left" />
-      </div>
-        <span>{{ contact.fullname }} - {{ contact.phoneNumber }}</span><br>
+      <li
+        class="p-3 bg-green-500/50 border-2 flex items-center justify-center flex-col border-black"
+        v-for="contact in state.contacts.server_1_Contacts"
+        :key="contact.id"
+      >
+        <div class="rounded-full bg-red-400 w-24 h-24 overflow-hidden">
+          <img :src="contact.avatar" alt="Avatar" class="object-left" />
+        </div>
+        <span>{{ contact.fullname }} - {{ contact.phoneNumber }}</span
+        ><br />
         <span>{{ contact.skills.join(",") }}</span>
       </li>
     </ul>
 
     <div class="pagination">
       <!-- :disabled="state.pagination.current_page === 1" -->
-      <v-btn @click="prevPage" :disabled="state.pagination.current_page === 1">Previous</v-btn>
-      <span>Page {{ state.pagination.current_page }} of {{ Math.ceil(state.pagination.total_contacts / state.pagination.limit_contacts_per_page) }}</span>
-<v-btn @click="nextPage" :disabled="state.pagination.current_page * state.pagination.limit_contacts_per_page >= state.pagination.total_contacts">Next</v-btn>
+      <v-btn @click="prevPage" :disabled="state.pagination.current_page === 1"
+        >Previous</v-btn
+      >
+      <span
+        >Page {{ state.pagination.current_page }} of
+        {{
+          Math.ceil(
+            state.pagination.total_contacts / state.pagination.limit_contacts_per_page
+          )
+        }}</span
+      >
+      <v-btn
+        @click="nextPage"
+        :disabled="
+          state.pagination.current_page * state.pagination.limit_contacts_per_page >=
+          state.pagination.total_contacts
+        "
+        >Next</v-btn
+      >
       <!-- :disabled="state.pagination.current_page * state.pagination.limit_contacts_per_page >= state.pagination.total_contacts" -->
-      
     </div>
   </div>
 </template>

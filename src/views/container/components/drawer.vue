@@ -1,31 +1,52 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
-const props = defineProps({
-  drawer: Boolean,
-  contactsPreview: String,
-  server_1_Contacts: Array,
-  localContacts: Array
-})
+
+const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
+const NumberItems = ref([5, 10, 15, 20])
+
+const PickedTheme = ref('')
+const pagePerList = ref()
+
+  const props = defineProps({
+    drawer: Boolean,
+    contactsPreview: String,
+    server_1_Contacts: Array,
+    localContacts: Array,
+    show_contacts_per_page:Number
+  })
+    const emit = defineEmits([
+      "update:drawer","changePreviewStatus","show_contacts_per_page"
+
+    ]);
+
+  const state = reactive({
+    contacts: {
+      contactsPreview: props.contactsPreview,
+      data_saving_mode:[
+        { Mode : 'LocalStorage',Label:'مرورگر'},
+        { Mode : 'Server',Label:'سرور'},
+      ]
+    },
+    toggle: {
+      drawer: props.drawer,
+      guide_activation:false
+    },
+    pagination:{
+      page_Per_List:props.show_contacts_per_page,
+    }
+  })
+
+  const updatePagePerList = (newVal) => {
+  emit("update:show_contacts_per_page", newVal);
+  // alert(newVal)
+};
 
 
-const state = reactive({
-  contacts: {
-    contactsPreview: props.contactsPreview,
-    data_saving_mode:[
-      { Mode : 'LocalStorage',Label:'مرورگر'},
-      { Mode : 'Server',Label:'سرور'},
-    ]
-  },
-  toggle: {
-    drawer: props.drawer,
-    guide_activation:false
-  }
-})
+  // watch(()=>state.pagination.page_Per_List,(newVal)=>{
+  //   emit('show_contacts_per_page',newVal)
+  // })
 
-const emit = defineEmits([
-  "update:drawer","changePreviewStatus"
 
-]);
 
 
 
@@ -38,15 +59,11 @@ const toggleDrawer = () => {
 watch(() => state.contacts.contactsPreview, (newVal) => {
   emit("changePreviewStatus", newVal);
   localStorage.setItem("Preview Status",newVal)
+  alert(newVal)
   
 })
 
 
-const themeItems = ref(['آبی', 'سبز', 'زرد', 'بنفش'])
-const NumberItems = ref([10, 25, 30, 35])
-
-const PickedTheme = ref('')
-const pagePerList = ref(10)
 
 
 const themeChanger = (item) => {
@@ -204,7 +221,9 @@ const toggleGuideActivation= ()=>{
               <span class="text-black font-semibold text-base ">تعداد لیست هر صفحه :</span>
             </div>
             <div class="selectTheme">
-              <v-select :items="NumberItems" v-model="pagePerList" class="colorSelector w-26 scale-[.95]"
+              <v-select :items="NumberItems" 
+              @update:modelValue="updatePagePerList"
+              v-model="state.pagination.page_Per_List" class="colorSelector w-26 scale-[.95]"
                 bg-color="white" variant="outlined" hide-details />
             </div>
           </div>
