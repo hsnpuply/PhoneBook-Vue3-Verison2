@@ -459,9 +459,18 @@ const userMaking = () => {
     "JavaScript",
     "Python",
   ];
-  const interestsList = ["موسیقی", "ورزش", "کدنویسی", "فیلم", "عکاسی", "طبیعت گردی"];
-  const contacts = Array.from({ length: 5 }, (_, index) => ({
-    id: index + 1,
+  const interestsList = [
+    "موسیقی",
+    "ورزش",
+    "کدنویسی",
+    "فیلم",
+    "عکاسی",
+    "طبیعت گردی",
+  ];
+
+  // Generate new contacts
+  const newContacts = Array.from({ length: 5 }, (_, index) => ({
+    id: Date.now() + index,  // Ensure unique ID
     phoneNumber: randomNumbers[Math.floor(Math.random() * randomNumbers.length)],
     fullname: randomNames[Math.floor(Math.random() * randomNames.length)],
     selectedDate: randomDates[Math.floor(Math.random() * randomDates.length)],
@@ -474,15 +483,23 @@ const userMaking = () => {
       .slice(0, Math.floor(Math.random() * 3) + 1),
     avatar: randomAvatars[Math.floor(Math.random() * randomAvatars.length)],
   }));
-  localStorage.setItem("contacts", JSON.stringify(contacts));
-  state.contacts.LocalContacts.splice(
-    0,
-    state.contacts.LocalContacts.length,
-    ...contacts
-  );
-  // Call this function to generate and store the contacts
+
+  // Retrieve existing contacts from localStorage
+  const existingContacts = JSON.parse(localStorage.getItem("contacts")) || [];
+
+  // Merge new contacts with existing contacts
+  const updatedContacts = [...existingContacts, ...newContacts];
+
+  // Update localStorage and state
+  localStorage.setItem("contacts", JSON.stringify(updatedContacts));
+  state.contacts.LocalContacts.push(...newContacts);
+
+  // Call this function to handle additional actions
   getData();
 };
+
+
+
 const updateContactsPreview = (newPreview) => {
   state.contacts.contactsPreview = newPreview;
 };
@@ -527,6 +544,15 @@ const prevPage = () => {
     fetchContacts(state.pagination.current_page - 1);
   }
 };
+const delete_localstorage_contacts =()=>{
+ // Clear localStorage contacts
+ localStorage.setItem("contacts", JSON.stringify([]));
+
+// Clear reactive state contacts
+state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length);  getData()
+  
+
+}
 </script>
 <template>
   <div
@@ -754,9 +780,8 @@ const prevPage = () => {
         !state.loading.skeletonLoads.LocalContacts ||
         !state.loading.skeletonLoads.server_1_Contacts
       "
-      class="addNewContact flex-wrap flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 animate__animated animate__slow animate__delay-1s animate__fadeInRight"
+      class="addNewContact flex-wrap  flex xl:!justify-end justify-center container mx-auto xl:!px-0 py-5 xs:px-10 animate__animated animate__slow animate__delay-1s animate__fadeInRight"
     >
-      <!-- animate__animated animate__slow animate__delay-1s animate__fadeInRight -->
       <v-btn
         v-if="showRegisterButton(state.contacts.contactsPreview)"
         variant="elevated"
@@ -782,6 +807,30 @@ const prevPage = () => {
         مخاطبین تصادفی
         <v-icon left class="pl-3"> mdi-human-male-male </v-icon>
       </v-btn>
+      <v-btn
+        v-if="
+          showRegisterButton(state.contacts.contactsPreview) &&
+          state.contacts.contactsPreview == 'LocalStorage'
+        "
+        variant="elevated"
+        elevation="3"
+        class="bg-[#ee5d3c] hover:bg-[#cf7653eb] ml-5"
+        size="large"
+        @click="delete_localstorage_contacts"
+      >
+         حذف همه ی مخاطبین
+        <v-icon left class="pl-3"> mdi-delete </v-icon>
+      </v-btn>
+    </div>
+
+    <div class="flex items-center justify-center gap-4">
+      <v-btn prepend-icon="mdi mdi-skip-previous">قبلی</v-btn>
+      <div class="pagination_pages flex items-center gap-2 text-xl">
+      <span>1</span>
+      <span>of</span>
+      <span>5</span>
+      </div>
+      <v-btn append-icon="mdi mdi-skip-next">بعدی</v-btn>
     </div>
     <div
       v-if="

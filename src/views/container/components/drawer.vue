@@ -59,7 +59,7 @@ const toggleDrawer = () => {
 watch(() => state.contacts.contactsPreview, (newVal) => {
   emit("changePreviewStatus", newVal);
   localStorage.setItem("Preview Status",newVal)
-  alert(newVal)
+  // alert(newVal)
   
 })
 
