@@ -31,12 +31,13 @@ const state = reactive({
   contacts: {
     LocalContacts: [],
     server_1_Contacts: [],
+    paginated_contacts: [],
     contactsPreview: "",
     storedPreviewStatus: localStorage.getItem("Preview Status"),
     selectedContact: {},
   },
   pagination: {
-    limit_contacts_per_page:Number(localStorage.getItem('contacts_per_page')),
+    limit_contacts_per_page:Number(localStorage.getItem('contacts_per_page')) || 5,
     total_contacts: 44,
     current_page: 1,
   },
@@ -58,7 +59,7 @@ const state = reactive({
 
 const updateContactsPerPage = (newVal) => {
   state.pagination.limit_contacts_per_page = newVal;
-  fetchContacts(newVal)
+  // fetchContacts(newVal)
   localStorage.setItem('contacts_per_page', newVal);
 };
 // watch(()=> state.pagination.limit_contacts_per_page,(newValue)=>{
@@ -132,7 +133,7 @@ onMounted(async () => {
   getData();
 
   await fetchUsers();
-  await fetchContacts( state.pagination.limit_contacts_per_page)
+  // await fetchContacts( state.pagination.limit_contacts_per_page)
   setTimeout(() => {
     state.loading.preview = false;
   }, 2400);
@@ -152,6 +153,26 @@ function updateMainTableKey(newValue) {
 
 const getData = async () => {
   const storedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
+  state.contacts.paginated_contacts.splice(
+    0,
+    state.contacts.paginated_contacts.length,
+    ...storedContacts
+  );
+  
+
+  // Store all contacts without altering them later
+  state.contacts.paginated_contacts.splice(
+    0,
+    state.contacts.paginated_contacts.length,
+    ...storedContacts
+  );
+
+  // Set total contacts for pagination
+  state.pagination.total_contacts = storedContacts.length;
+
+  // Display the first page of data
+  split_data();
+
   switch (state.contacts.contactsPreview) {
     case "LocalStorage":
       state.contacts.LocalContacts.splice(
@@ -163,10 +184,55 @@ const getData = async () => {
 
     case "Server":
       await fetchUsers();
-      await fetchContacts(state.pagination.limit_contacts_per_page);
+
+      // await fetchContacts(state.pagination.limit_contacts_per_page);
+      
       break;
   }
 };
+const newData = ref([]);
+
+// Handle slicing for pagination
+const split_data = () => {
+    const start = (state.pagination.current_page - 1) * state.pagination.limit_contacts_per_page;
+    const end = Number(start) + Number(state.pagination.limit_contacts_per_page);
+
+  // Slice the right data for the current page
+  const selected_Contacts = state.contacts.paginated_contacts.slice(start, end);
+
+  // Replace only newData with the current page data using splice
+  const incremnetal = ref(0)
+  // debugger
+  newData.value.splice(incremnetal.value, end, ...selected_Contacts);
+  incremnetal.value += state.pagination.limit_contacts_per_page
+  alert(incremnetal.value)
+
+};
+// Pagination Controls
+const prev_page = () => {
+  if (state.pagination.current_page > 1) {
+    state.pagination.current_page--;
+    split_data();
+  }
+};
+
+const next_page = () => {
+  const maxPage = Math.ceil(state.pagination.total_contacts / state.pagination.limit_contacts_per_page);
+  if (state.pagination.current_page < maxPage) {
+    state.pagination.current_page++;
+    split_data();
+  }
+};
+
+
+
+
+const isPrevDisabled = computed(() => state.pagination.current_page === 1);
+const isNextDisabled = computed(() => {
+  const maxPage = Math.ceil(state.contacts.paginated_contacts.length / state.pagination.limit_contacts_per_page);
+  return state.pagination.current_page >= maxPage;
+});
+
 
 const deleteServerContact = async (id) => {
   Swal.fire({
@@ -493,6 +559,7 @@ const userMaking = () => {
   // Update localStorage and state
   localStorage.setItem("contacts", JSON.stringify(updatedContacts));
   state.contacts.LocalContacts.push(...newContacts);
+  state.contacts.paginated_contacts.push(...newContacts);
 
   // Call this function to handle additional actions
   getData();
@@ -508,41 +575,6 @@ const animatedItems = ref(new Set());
 
 const handleAnimationEnd = (item) => {
   animatedItems.value.add(item);
-};
-
-async function fetchContacts(page) {
-  const res = await axios.get("http://localhost:4000/users", {
-    params: { _page: 1, _limit: page },
-  });
-  // const res = await fetch(`http://localhost:4000/users?_page=2&_limit=4`);
-  const data = res.data;
-  const total = res.headers.get("X-Total-Count");
-  console.log(total); // Should show total number of recor
-  // // Get the total count from headers and ensure it's a number
-  // const total = res.headers.get('X-Total-Count');
-  // state.pagination.total_contacts = Number(total);  // Fix here
-
-  //   const total = res.headers.get('X-Total-Count');
-  // state.pagination.total_contacts = total ? Number(total) : 0;
-
-  state.contacts.server_1_Contacts = data;
-  state.pagination.current_page = page;
-}
-
-const nextPage = async () => {
-  if (
-    state.pagination.current_page * state.pagination.limit_contacts_per_page <
-    state.pagination.total_contacts
-  ) {
-    await fetchContacts(state.pagination.current_page + 1);
-    // state.pagination.limit_contacts_per_page += 1
-  }
-};
-
-const prevPage = () => {
-  if (state.pagination.current_page > 1) {
-    fetchContacts(state.pagination.current_page - 1);
-  }
 };
 const delete_localstorage_contacts =()=>{
  // Clear localStorage contacts
@@ -670,10 +702,18 @@ state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length);  ge
         />
 
         <!-- Server -->
-        <ContactRecord
+        <!-- <ContactRecord
           :columnOrder="tableItems"
           v-if="serverCondition()"
           :data="state.contacts.server_1_Contacts"
+          :DeleteContacts="deleteServerContact"
+          :toggleEditForm="toggleEditForm"
+          :getData="getData"
+        /> -->
+        <ContactRecord
+          :columnOrder="tableItems"
+          v-if="serverCondition()"
+          :data="newData"
           :DeleteContacts="deleteServerContact"
           :toggleEditForm="toggleEditForm"
           :getData="getData"
@@ -823,14 +863,19 @@ state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length);  ge
       </v-btn>
     </div>
 
-    <div class="flex items-center justify-center gap-4">
-      <v-btn prepend-icon="mdi mdi-skip-previous">قبلی</v-btn>
+    <!-- <div class="flex items-center justify-center gap-4">
+      <v-btn prepend-icon="mdi mdi-skip-previous" @click="prev_page">قبلی</v-btn>
       <div class="pagination_pages flex items-center gap-2 text-xl">
       <span>1</span>
       <span>of</span>
       <span>5</span>
       </div>
-      <v-btn append-icon="mdi mdi-skip-next">بعدی</v-btn>
+      <v-btn append-icon="mdi mdi-skip-next" @click="next_page">بعدی</v-btn>
+    </div> -->
+    <div class="pagination flex items-center justify-center gap-4 text-black">
+      <v-btn @click="prev_page" :disabled="isPrevDisabled">Previous</v-btn>
+      <span class="text-xl text-white">Page {{ state.pagination.current_page }}</span>
+      <v-btn @click="next_page" :disabled="isNextDisabled">Next</v-btn>
     </div>
     <div
       v-if="
@@ -920,7 +965,7 @@ state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length);  ge
       </template>
     </v-card>
   </v-dialog>
-
+hey hey
   <div>
     <ul>
       <li
