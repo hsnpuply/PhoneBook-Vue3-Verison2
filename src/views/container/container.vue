@@ -26,6 +26,7 @@ import {
 
 import ContactRecord from "./components/contactRecord.vue";
 import Drawer from "./components/drawer.vue";
+import { locale } from "moment/moment";
 
 const state = reactive({
   contacts: {
@@ -191,12 +192,15 @@ const getData = async () => {
   }
 };
 const newData = ref([]);
+const totalPages = computed(() => {
+  return Math.ceil(state.pagination.total_contacts / state.pagination.limit_contacts_per_page);
+});
 
 // Handle slicing for pagination
 const split_data = () => {
     const start = (state.pagination.current_page - 1) * state.pagination.limit_contacts_per_page;
     const end = Number(start) + Number(state.pagination.limit_contacts_per_page);
-
+    
   // Slice the right data for the current page
   const selected_Contacts = state.contacts.paginated_contacts.slice(start, end);
 
@@ -205,9 +209,15 @@ const split_data = () => {
   // debugger
   newData.value.splice(incremnetal.value, end, ...selected_Contacts);
   incremnetal.value += state.pagination.limit_contacts_per_page
-  alert(incremnetal.value)
 
 };
+
+const onPageChange = (newPage) => {
+  console.log("Page changed to:", newPage);
+  // Perform any additional logic when the page changes
+  split_data();
+};
+
 // Pagination Controls
 const prev_page = () => {
   if (state.pagination.current_page > 1) {
@@ -585,6 +595,15 @@ state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length);  ge
   
 
 }
+
+
+const kkG = ()=>{
+  alert('New Data ' + state.pagination.current_page)
+}
+
+watch(()=> state.pagination.current_page , (newVal)=>{
+  split_data()
+})
 </script>
 <template>
   <div
@@ -872,11 +891,39 @@ state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length);  ge
       </div>
       <v-btn append-icon="mdi mdi-skip-next" @click="next_page">بعدی</v-btn>
     </div> -->
-    <div class="pagination flex items-center justify-center gap-4 text-black">
-      <v-btn @click="prev_page" :disabled="isPrevDisabled">Previous</v-btn>
-      <span class="text-xl text-white">Page {{ state.pagination.current_page }}</span>
-      <v-btn @click="next_page" :disabled="isNextDisabled">Next</v-btn>
-    </div>
+    <!-- v-if="showRegisterButton(state.contacts.contactsPreview) &&
+    state.contacts.contactsPreview == 'LocalStorage'" -->
+    <!-- <div
+           class="pagination flex items-center justify-center gap-4 text-black">
+      <v-btn @click="prev_page" size="large"  class="rounded-lg" :disabled="isPrevDisabled"  prepend-icon="mdi mdi-skip-previous">قبلی</v-btn>
+      <p class="text-xl text-white"> 
+      <span>صفحه</span> <span>{{ state.pagination.current_page }}</span> از  <span>{{ (state.pagination.total_contacts / state.pagination.limit_contacts_per_page).toFixed()  }}</span>
+      </p>
+      <v-btn @click="next_page" size="large" class="rounded-lg" :disabled="isNextDisabled" append-icon="mdi mdi-skip-next">بعدی</v-btn>
+    </div> -->
+
+    <!-- test pagination  -->
+    <div class="text-center bg-black/20  ">
+    <v-container>
+      <v-row justify="center" >
+        <v-col cols="40"  >
+          <v-container class="max-width " >
+            <v-pagination
+              v-model="state.pagination.current_page"
+              :length="totalPages"
+              class="my-4 text-white  "
+              rounded="circle"
+              size="100px"
+              next-icon="mdi-skip-next"
+              prev-icon="mdi-skip-previous"
+            />
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
+  <!-- <v-pagination :length="4" ></v-pagination> -->
+
     <div
       v-if="
         state.loading.skeletonLoads.LocalContacts && state.contacts.LocalContacts.length
