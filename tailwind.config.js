@@ -13,7 +13,10 @@ export default {
       },
       colors: {
         'drawer_primary': '#ebf1ef',
-      }
+      },
+      maxHeight: {
+        'calc-100-plus-10': 'calc(100% + 10px)',
+      },
     },  },
   plugins: [],
 }

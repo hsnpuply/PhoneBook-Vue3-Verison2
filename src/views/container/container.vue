@@ -604,6 +604,7 @@ const kkG = ()=>{
 watch(()=> state.pagination.current_page , (newVal)=>{
   split_data()
 })
+
 </script>
 <template>
   <div
@@ -1012,47 +1013,20 @@ watch(()=> state.pagination.current_page , (newVal)=>{
       </template>
     </v-card>
   </v-dialog>
-hey hey
-  <div>
-    <ul>
-      <li
-        class="p-3 bg-green-500/50 border-2 flex items-center justify-center flex-col border-black"
-        v-for="contact in state.contacts.server_1_Contacts"
-        :key="contact.id"
-      >
-        <div class="rounded-full bg-red-400 w-24 h-24 overflow-hidden">
-          <img :src="contact.avatar" alt="Avatar" class="object-left" />
-        </div>
-        <span>{{ contact.fullname }} - {{ contact.phoneNumber }}</span
-        ><br />
-        <span>{{ contact.skills.join(",") }}</span>
-      </li>
-    </ul>
+  
 
-    <div class="pagination">
-      <!-- :disabled="state.pagination.current_page === 1" -->
-      <v-btn @click="prevPage" :disabled="state.pagination.current_page === 1"
-        >Previous</v-btn
-      >
-      <span
-        >Page {{ state.pagination.current_page }} of
-        {{
-          Math.ceil(
-            state.pagination.total_contacts / state.pagination.limit_contacts_per_page
-          )
-        }}</span
-      >
-      <v-btn
-        @click="nextPage"
-        :disabled="
-          state.pagination.current_page * state.pagination.limit_contacts_per_page >=
-          state.pagination.total_contacts
-        "
-        >Next</v-btn
-      >
-      <!-- :disabled="state.pagination.current_page * state.pagination.limit_contacts_per_page >= state.pagination.total_contacts" -->
-    </div>
+  <div class="matn relative group">
+  <p class="text-2xl max-h-[80px] overflow-hidden group-hover:max-h-[400px] duration-700">
+    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Assumenda quis eum id adipisci cumque ut nulla! Ea repellat veniam, neque consequuntur, obcaecati odio officiis necessitatibus, modi quam optio sequi quia reprehenderit. Natus numquam quasi explicabo ipsum enim iusto laborum labore, officia tempora nesciunt animi asperiores. Qui autem debitis natus recusandae nemo veniam, exercitationem nesciunt quia? Ut pariatur laudantium deleniti amet consequuntur animi earum deserunt corrupti. Mollitia esse cum perferendis quae. Assumenda consequatur esse cumque temporibus est adipisci dolore saepe culpa, dolorem perspiciatis laboriosam facere in cum harum delectus enim quos quisquam ex quibusdam ab quasi vero vel omnis deserunt. Voluptatem explicabo quam reiciendis. Suscipit, ratione doloremque voluptatibus soluta cumque, dolorum id accusantium quas magni explicabo voluptate possimus error neque voluptatem!
+  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Assumenda quis eum id adipisci cumque ut nulla! Ea repellat veniam, neque consequuntur, obcaecati odio officiis necessitatibus, modi quam optio sequi quia reprehenderit. Natus numquam quasi explicabo ipsum enim iusto laborum labore, officia tempora nesciunt animi asperiores. Qui autem debitis natus recusandae nemo veniam, exercitationem nesciunt quia? Ut pariatur laudantium deleniti amet consequuntur animi earum deserunt corrupti. Mollitia esse cum perferendis quae. Assumenda consequatur esse cumque temporibus est adipisci dolore saepe culpa, dolorem perspiciatis laboriosam facere in cum harum delectus enim quos quisquam ex quibusdam ab quasi vero vel omnis deserunt. Voluptatem explicabo quam reiciendis. Suscipit, ratione doloremque voluptatibus soluta cumque, dolorum id accusantium quas magni explicabo voluptate possimus error neque voluptatem!
+  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Assumenda quis eum id adipisci cumque ut nulla! Ea repellat veniam, neque consequuntur, obcaecati odio officiis necessitatibus, modi quam optio sequi quia reprehenderit. Natus numquam quasi explicabo ipsum enim iusto laborum labore, officia tempora nesciunt animi asperiores. Qui autem debitis natus recusandae nemo veniam, exercitationem nesciunt quia? Ut pariatur laudantium deleniti amet consequuntur animi earum deserunt corrupti. Mollitia esse cum perferendis quae. Assumenda consequatur esse cumque temporibus est adipisci dolore saepe culpa, dolorem perspiciatis laboriosam facere in cum harum delectus enim quos quisquam ex quibusdam ab quasi vero vel omnis deserunt. Voluptatem explicabo quam reiciendis. Suscipit, ratione doloremque voluptatibus soluta cumque, dolorum id accusantium quas magni explicabo voluptate possimus error neque voluptatem!
+  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Assumenda quis eum id adipisci cumque ut nulla! Ea repellat veniam, neque consequuntur, obcaecati odio officiis necessitatibus, modi quam optio sequi quia reprehenderit. Natus numquam quasi explicabo ipsum enim iusto laborum labore, officia tempora nesciunt animi asperiores. Qui autem debitis natus recusandae nemo veniam, exercitationem nesciunt quia? Ut pariatur laudantium deleniti amet consequuntur animi earum deserunt corrupti. Mollitia esse cum perferendis quae. Assumenda consequatur esse cumque temporibus est adipisci dolore saepe culpa, dolorem perspiciatis laboriosam facere in cum harum delectus enim quos quisquam ex quibusdam ab quasi vero vel omnis deserunt. Voluptatem explicabo quam reiciendis. Suscipit, ratione doloremque voluptatibus soluta cumque, dolorum id accusantium quas magni explicabo voluptate possimus error neque voluptatem!
+  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Assumenda quis eum id adipisci cumque ut nulla! Ea repellat veniam, neque consequuntur, obcaecati odio officiis necessitatibus, modi quam optio sequi quia reprehenderit. Natus numquam quasi explicabo ipsum enim iusto laborum labore, officia tempora nesciunt animi asperiores. Qui autem debitis natus recusandae nemo veniam, exercitationem nesciunt quia? Ut pariatur laudantium deleniti amet consequuntur animi earum deserunt corrupti. Mollitia esse cum perferendis quae. Assumenda consequatur esse cumque temporibus est adipisci dolore saepe culpa, dolorem perspiciatis laboriosam facere in cum harum delectus enim quos quisquam ex quibusdam ab quasi vero vel omnis deserunt. Voluptatem explicabo quam reiciendis. Suscipit, ratione doloremque voluptatibus soluta cumque, dolorum id accusantium quas magni explicabo voluptate possimus error neque voluptatem!
+  </p>
+  <div class="more bg-black/90 text-center absolute w-full bottom-0 h-4 group-hover:!h-0 group-hover:-bottom-4" >
+  <v-icon icon="mdi-clock" size="x-large"></v-icon>
   </div>
+</div>  
 </template>
 
 <style scoped>
