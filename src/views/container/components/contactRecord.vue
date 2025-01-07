@@ -70,8 +70,8 @@ const toggle_expand = (id) => {
 
 <draggable v-model="localData" group="allContacts" @end="saveOrderLocal" tag="tbody" class="select-none text-xl bg-[#dddbdb] text-[#333333] cursor-grab">
     <template #item="{ element, index }">
-      <tr :class="expandedRows[element.id] ? '!h-[200px]' : ''"
-          class="relative overflow-hidden h-[20px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
+      <tr :class="expandedRows[element.id] ? '!h-[200px] ' : ''"
+          class="relative ease-in-out overflow-hidden h-[20px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
         <td v-for="(col, i) in columnOrder" :key="i">
           <template v-if="fieldsMapping[col] === 'index'">
             {{ index + 1 }}
@@ -86,12 +86,12 @@ const toggle_expand = (id) => {
             {{ element.isCoworker ? "بله" : "خیر" }}
           </template>
           <template v-else-if="fieldsMapping[col] === 'skills'">
-            <p class="max-w-20 max-h-5 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-44 max-h-full' : ''">
+            <p class="max-w-20 max-h-5 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-44 !max-h-[200px] !duration-500' : ''">
               {{ element.skills.join(" , ") }}
             </p>
           </template>
           <template v-else-if="fieldsMapping[col] === 'favorites'">
-            <p class="max-w-20 max-h-20 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-44 max-h-full' : ''">
+            <p class="max-w-20 max-h-20 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-44 !max-h-[200px]  !duration-500' : ''">
               {{ element.favorites.join(" , ") }}
             </p>
           </template>
