@@ -77,12 +77,13 @@ const copyToClipboard = (number) => {
       Swal.fire({
         icon: "success",
         title: "کپی شد",
+        width:'200px',
         toast: true,
         position: "top",  // Top-right corner
         showConfirmButton: false,
         timer: 1000,
         color: "green",
-        background: "#dddbdb",
+        background: "#fff",
         timerProgressBar: true,
       })
 
@@ -93,7 +94,7 @@ const copyToClipboard = (number) => {
 <draggable v-model="localData" group="allContacts" @end="saveOrderLocal" tag="tbody" class=" select-none text-xl bg-[#dddbdb] text-[#333333] cursor-grab">
     <template #item="{ element, index }">
       <tr :class="expandedRows[element.id] ? '!h-[200px] ' : ''"
-          class="relative ease-in-out overflow-hidden h-[100px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
+          class="group relative ease-in-out overflow-hidden h-[100px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
         <td v-for="(col, i) in columnOrder" :key="i">
           <template v-if="fieldsMapping[col] === 'index'">
             {{ index + 1 }}
@@ -110,8 +111,9 @@ const copyToClipboard = (number) => {
             </span>
           </template>
           <template v-else-if="fieldsMapping[col] === 'isCoworker'">
-            {{ element.isCoworker ? "بله" : "خیر" }}
-          </template>
+            <v-icon v-if="element.isCoworker" icon="mdi-check" color="green" class="text-4xl" ></v-icon>
+            <v-icon v-else icon="mdi-close-thick" class="text-red-500 group-hover:!text-red-600"></v-icon>
+            </template>
           <template v-else-if="fieldsMapping[col] === 'skills'">
             <p class="max-w-20 max-h-5 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
               {{ element.skills.join(" , ") }}
