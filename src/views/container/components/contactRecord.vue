@@ -3,6 +3,8 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { convertNumbersToPersian as PersianNumberConvertorX } from "@/utilities/functions";
 import moment from "moment-jalaali";
 import draggable from "vuedraggable";
+import Swal from "sweetalert2";
+
 
 const props = defineProps({
   data: Array,
@@ -65,13 +67,33 @@ const expandedRows = reactive({});
 const toggle_expand = (id) => {
   expandedRows[id] = !expandedRows[id]; // Toggle expansion for the specific row
 };
+const formatPhoneNumber = (number) => {
+  if (!number) return "";
+  return number.replace(/(\d{4})(\d{3})(\d{4})/, '$1-$2-$3');
+};
+const copyToClipboard = (number) => {
+  navigator.clipboard.writeText(number)
+
+      Swal.fire({
+        icon: "success",
+        title: "کپی شد",
+        toast: true,
+        position: "top",  // Top-right corner
+        showConfirmButton: false,
+        timer: 1000,
+        color: "green",
+        background: "#dddbdb",
+        timerProgressBar: true,
+      })
+
+};
 </script>
 <template>
 
-<draggable v-model="localData" group="allContacts" @end="saveOrderLocal" tag="tbody" class="select-none text-xl bg-[#dddbdb] text-[#333333] cursor-grab">
+<draggable v-model="localData" group="allContacts" @end="saveOrderLocal" tag="tbody" class=" select-none text-xl bg-[#dddbdb] text-[#333333] cursor-grab">
     <template #item="{ element, index }">
       <tr :class="expandedRows[element.id] ? '!h-[200px] ' : ''"
-          class="relative ease-in-out overflow-hidden h-[20px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
+          class="relative ease-in-out overflow-hidden h-[100px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
         <td v-for="(col, i) in columnOrder" :key="i">
           <template v-if="fieldsMapping[col] === 'index'">
             {{ index + 1 }}
@@ -81,6 +103,11 @@ const toggle_expand = (id) => {
           </template>
           <template v-else-if="fieldsMapping[col] === 'selectedDate'">
             {{ PersianNumberConvertorX(moment(element.selectedDate).format("jYYYY/jMM/jDD")) }}
+          </template>
+          <template v-else-if="fieldsMapping[col] === 'phoneNumber'">
+            <span class="cursor-pointer hover:underline" @click="copyToClipboard(element.phoneNumber)">
+              {{ PersianNumberConvertorX(formatPhoneNumber(element.phoneNumber)) }}
+            </span>
           </template>
           <template v-else-if="fieldsMapping[col] === 'isCoworker'">
             {{ element.isCoworker ? "بله" : "خیر" }}
@@ -96,15 +123,15 @@ const toggle_expand = (id) => {
             </p>
           </template>
           <template v-else-if="fieldsMapping[col] === 'actions'">
-            <div class="actionButtonsContainer flex gap-2 items-center justify-center">
-              <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete" @click="props.DeleteContacts(element.id, props.data)"
+            <div class="actionButtonsContainer flex gap-16 items-center justify-center">
+              <!-- <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete" @click="props.DeleteContacts(element.id, props.data)"
                 class="bg-red-600/90 hover:bg-red-600/95">
-                حذف
-              </v-btn>
-              <v-btn variant="elevated" color="blue" prepend-icon="mdi-account" @click="props.toggleEditForm(element)"
+              </v-btn> -->
+              <v-icon color="black" @click="props.toggleEditForm(element)" >mdi-pencil</v-icon>
+              <v-icon color="red" class="hover:bg-red-500/80  rounded-full " @click="props.DeleteContacts(element.id, props.data)" >mdi-delete</v-icon>
+              <!-- <v-btn variant="elevated" color="blue" prepend-icon="mdi-pen" @click="props.toggleEditForm(element)"
                 class="bg-sky-600/90 hover:bg-sky-600/95">
-                ویرایش
-              </v-btn>
+              </v-btn> -->
             </div>
           </template>
           <template v-else>
