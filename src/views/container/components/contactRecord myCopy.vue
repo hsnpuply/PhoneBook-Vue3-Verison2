@@ -50,17 +50,11 @@ const saveOrderLocal = ()=>{
     localStorage.setItem("contacts", JSON.stringify(localData.value));
     break;
     case 'Server':
-      // console.log('lols');
+      console.log('lols');
       
       break;
     
   }
-}
-
-const is_expanded =ref(false)
-const toggle_expand = ()=>{
-  is_expanded.value = !is_expanded.value
-
 }
 </script>
 <template>
@@ -70,10 +64,8 @@ const toggle_expand = ()=>{
   tag="tbody"
    class="select-none text-xl  bg-[#dddbdb] text-[#333333] cursor-grab">
     <template #item="{ element, index }">
-      <tr 
-      :class="is_expanded ? '!h-[200px] ' : '' "
-       class="relative  overflow-hidden h-[20px]  text-right hover:!bg-[#4c749f] hover:text-white duration-150  even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
-        <td v-for="(col, i) in columnOrder" :key="i">
+      <tr class="h-2 hover:h-[10rem]  relative text-right hover:!bg-[#4c749f] hover:text-white duration-150  even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
+        <td v-for="(col, i) in columnOrder" :key="i" class="">
           <template v-if="fieldsMapping[col] === 'index'">
             {{ index + 1 }}
           </template>
@@ -87,13 +79,6 @@ const toggle_expand = ()=>{
           </template>
           <template v-else-if="fieldsMapping[col] === 'isCoworker'">
             {{ element.isCoworker ? "بله" : "خیر" }}
-          </template>
-          <template v-else-if="fieldsMapping[col] === 'skills'">
-            <p class="max-w-20 max-h-5 overflow-hidden " :class="is_expanded  ? 'max-w-44 max-h-full' : ''" >
-              {{
-              element.skills.join(" , ")
-            }}
-            </p>
           </template>
           <template v-else-if="fieldsMapping[col] === 'actions'">
             <div class="actionButtonsContainer flex gap-2 items-center justify-center">
@@ -110,17 +95,18 @@ const toggle_expand = ()=>{
               ویرایش
             </v-btn>
           </div>
+
           </template>
           <template v-else>
             {{ Array.isArray(element[fieldsMapping[col]]) ? element[fieldsMapping[col]].join(", ") : element[fieldsMapping[col]] }}
           </template>
         </td>
-        <div class="expand_toggle py-2 absolute -bottom-6 right-[45%] " @click="toggle_expand">
-          <v-btn icon="mdi-arrow-down" :class="is_expanded ? 'rotate-180' : ''" >
-          </v-btn>
+        <div class="group test absolute bottom-0 left-0 bg-black w-full text-center p-2">
+        <span class="">Lorem ipsum dolor sit amet.</span>
         </div>
       </tr>
     </template>
+    
   </draggable>
 </template>
-<style></style> 
+<style></style>

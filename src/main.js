@@ -4,7 +4,6 @@ import '@mdi/font/css/materialdesignicons.min.css'
 
 import AnalogClock from "vue3-analog-clock";
 import "vue3-analog-clock/dist/style.css";
-import VueTour from 'vue-tour'
 
 import Vue3Lottie from 'vue3-lottie'
 
@@ -49,4 +48,4 @@ app.use(Vue3PersianDatetimePicker, {
       //... And whatever you want to set as default.
       //...
     }
-  }).use(AnalogClock).use(Vue3Lottie).use(VueTour).mount('#app')
+  }).use(AnalogClock).use(Vue3Lottie).mount('#app')

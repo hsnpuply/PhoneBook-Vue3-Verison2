@@ -20,7 +20,7 @@ const props = defineProps({
 
 const myCurrentID = ref(props.currentID)
 const vasetSelectedItems = reactive({ ...props.selectedContact })  // Create reactive copy
-console.log(vasetSelectedItems)
+// console.log(vasetSelectedItems)
 
 
 const emit = defineEmits(["update:dialogEditState"]);

@@ -317,7 +317,7 @@ const fetchUsers = async () => {
   try {
     const response = await axios.get("http://localhost:4000/users"); // Replace with your actual URL
     state.contacts.server_1_Contacts = response.data;
-    console.log(state.contacts.server_1_Contacts);
+    // console.log(state.contacts.server_1_Contacts);
 
     // console.log(users);
   } catch (error) {
@@ -597,11 +597,9 @@ state.contacts.LocalContacts.splice(0, state.contacts.LocalContacts.length);  ge
 }
 
 
-const kkG = ()=>{
-  alert('New Data ' + state.pagination.current_page)
-}
 
-watch(()=> state.pagination.current_page , (newVal)=>{
+
+watch(()=> state.pagination.current_page , ()=>{
   split_data()
 })
 
@@ -904,7 +902,7 @@ watch(()=> state.pagination.current_page , (newVal)=>{
     </div> -->
 
     <!-- test pagination  -->
-    <div class="text-center bg-black/20  ">
+    <div class="text-center bg-black/40  ">
     <v-container>
       <v-row justify="center" >
         <v-col cols="40"  >
@@ -914,7 +912,7 @@ watch(()=> state.pagination.current_page , (newVal)=>{
               :length="totalPages"
               class="my-4 text-white  "
               rounded="circle"
-              size="100px"
+              size="50px"
               next-icon="mdi-skip-next"
               prev-icon="mdi-skip-previous"
             />
@@ -1015,7 +1013,7 @@ watch(()=> state.pagination.current_page , (newVal)=>{
   </v-dialog>
   
 
-  <div class="matn relative group">
+  <!-- <div class="matn relative group">
   <p class="text-2xl max-h-[80px] overflow-hidden group-hover:max-h-[400px] duration-700">
     Lorem ipsum, dolor sit amet consectetur adipisicing elit. Assumenda quis eum id adipisci cumque ut nulla! Ea repellat veniam, neque consequuntur, obcaecati odio officiis necessitatibus, modi quam optio sequi quia reprehenderit. Natus numquam quasi explicabo ipsum enim iusto laborum labore, officia tempora nesciunt animi asperiores. Qui autem debitis natus recusandae nemo veniam, exercitationem nesciunt quia? Ut pariatur laudantium deleniti amet consequuntur animi earum deserunt corrupti. Mollitia esse cum perferendis quae. Assumenda consequatur esse cumque temporibus est adipisci dolore saepe culpa, dolorem perspiciatis laboriosam facere in cum harum delectus enim quos quisquam ex quibusdam ab quasi vero vel omnis deserunt. Voluptatem explicabo quam reiciendis. Suscipit, ratione doloremque voluptatibus soluta cumque, dolorum id accusantium quas magni explicabo voluptate possimus error neque voluptatem!
   Lorem ipsum, dolor sit amet consectetur adipisicing elit. Assumenda quis eum id adipisci cumque ut nulla! Ea repellat veniam, neque consequuntur, obcaecati odio officiis necessitatibus, modi quam optio sequi quia reprehenderit. Natus numquam quasi explicabo ipsum enim iusto laborum labore, officia tempora nesciunt animi asperiores. Qui autem debitis natus recusandae nemo veniam, exercitationem nesciunt quia? Ut pariatur laudantium deleniti amet consequuntur animi earum deserunt corrupti. Mollitia esse cum perferendis quae. Assumenda consequatur esse cumque temporibus est adipisci dolore saepe culpa, dolorem perspiciatis laboriosam facere in cum harum delectus enim quos quisquam ex quibusdam ab quasi vero vel omnis deserunt. Voluptatem explicabo quam reiciendis. Suscipit, ratione doloremque voluptatibus soluta cumque, dolorum id accusantium quas magni explicabo voluptate possimus error neque voluptatem!
@@ -1026,7 +1024,10 @@ watch(()=> state.pagination.current_page , (newVal)=>{
   <div class="more bg-black/90 text-center absolute w-full bottom-0 h-4 group-hover:!h-0 group-hover:-bottom-4" >
   <v-icon icon="mdi-clock" size="x-large"></v-icon>
   </div>
-</div>  
+</div>   -->
+
+
+
 </template>
 
 <style scoped>
