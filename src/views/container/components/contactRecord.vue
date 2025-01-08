@@ -96,7 +96,7 @@ const getSkillStyle = (skill) => {
     'CSS': 'bg-gradient-to-r from-purple-400 to-pink-500 text-white',
     'HTML': 'bg-gradient-to-r from-orange-400 to-red-500 text-white',
     'JavaScript': 'bg-gradient-to-r from-yellow-300 to-amber-500 text-black',
-    'Python': 'bg-gradient-to-r from-blue-500 to-cyan-600 text-white'
+    'Python': 'bg-gradient-to-r from-blue-500 via-blue-400 to-yellow-400 text-white'  // 3-color gradient for Python
   };
   return styles[skill] || 'bg-gradient-to-r from-gray-400 to-gray-600 text-white'; // Default gradient
 };
@@ -127,10 +127,10 @@ const getSkillStyle = (skill) => {
             <v-icon v-else icon="mdi-close-thick" class="text-red-500 group-hover:!text-red-600"></v-icon>
             </template>
           <template v-else-if="fieldsMapping[col] === 'skills'">
-            <div class="max-w-20 max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
+            <div class="max-w-20   max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
             <p   :class="getSkillStyle(item)" 
 
-            class="bg-red-400/80 text-white rounded-full p-2 my-2 text-sm text-center" v-for="(item,index) in element.skills" :key="index">
+            class=" shadow-black/50 shadow-sm text-white rounded-full p-2 my-2 text-sm text-center" v-for="(item,index) in element.skills" :key="index">
               {{ item }}
             </p>
             </div>
