@@ -88,6 +88,18 @@ const copyToClipboard = (number) => {
       })
 
 };
+const getSkillStyle = (skill) => {
+  const styles = {
+    'Vue.js': 'bg-gradient-to-r from-green-400 to-emerald-600 text-white',
+    'React': 'bg-gradient-to-r from-blue-400 to-indigo-600 text-white',
+    'Node.js': 'bg-gradient-to-r from-green-600 to-lime-500 text-white',
+    'CSS': 'bg-gradient-to-r from-purple-400 to-pink-500 text-white',
+    'HTML': 'bg-gradient-to-r from-orange-400 to-red-500 text-white',
+    'JavaScript': 'bg-gradient-to-r from-yellow-300 to-amber-500 text-black',
+    'Python': 'bg-gradient-to-r from-blue-500 to-cyan-600 text-white'
+  };
+  return styles[skill] || 'bg-gradient-to-r from-gray-400 to-gray-600 text-white'; // Default gradient
+};
 </script>
 <template>
 
@@ -115,9 +127,13 @@ const copyToClipboard = (number) => {
             <v-icon v-else icon="mdi-close-thick" class="text-red-500 group-hover:!text-red-600"></v-icon>
             </template>
           <template v-else-if="fieldsMapping[col] === 'skills'">
-            <p class="max-w-20 max-h-5 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
-              {{ element.skills.join(" , ") }}
+            <div class="max-w-20 max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
+            <p   :class="getSkillStyle(item)" 
+
+            class="bg-red-400/80 text-white rounded-full p-2 my-2 text-sm text-center" v-for="(item,index) in element.skills" :key="index">
+              {{ item }}
             </p>
+            </div>
           </template>
           <template v-else-if="fieldsMapping[col] === 'favorites'">
             <p class="max-w-20 max-h-20 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28  transition-[max-height] ease-in-out !max-h-[300px]  !duration-500' : ''">
