@@ -664,8 +664,8 @@ watch(()=> state.pagination.current_page , ()=>{
           <v-btn class="no-print bg-[#2c3e50]" size="large" @click="col_filter = true"
             >ترتیب ستون ها</v-btn
           >
-          <tr class="text-right !bg-[#2c3e50] text-white text-lg">
-            <th class=" text-right" v-for="(item, index) in tableItems" :key="index">
+          <tr class="table_headings text-right !bg-[#2c3e50] text-white text-lg">
+            <th class=" text-right" :class="item === 'عملیات' ? 'no-print' : ''" v-for="(item, index) in tableItems" :key="index">
               {{ item }}
             </th>
           </tr>

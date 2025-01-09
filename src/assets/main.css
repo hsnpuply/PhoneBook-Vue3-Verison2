@@ -22,6 +22,7 @@ tr > th , tr > td{
 table{
     direction: rtl;
     /* border:2px solid #d1ccc0; */
+    overflow: hidden;
 }
 
 /* .printer:hover{
@@ -29,9 +30,21 @@ table{
 
 
 @media print {
+
   .no-print {
     display: none;
   }
+  .row_records{
+    background: none !important;
+    color: black !important;
+  }
+  .phone_number{
+    text-decoration: none !important;
+  }
+  .table_headings{
+    color: black !important;
+  }
+
   .the_table{
     display: block !important;
     filter: none !important;
@@ -41,29 +54,37 @@ table{
 
   .title_header {
     filter: none !important;
+    color: black !important;
   }
   th{
     filter: none !important;
     text-shadow: none !important;
     border-bottom: 3px solid black !important;
+    font-size: 15px;
   }
   .tr_contact_record{
     width: 40px !important;
   }
+
 .skills_badge,.favs_badge{
   filter: none;
   border-radius: 0px;
   box-shadow: none;
   text-align: center;
-
+  font-size: 15px;
+  color: black !important;
 }
 .skills_container,.favs_container{
-  max-height: 100%;
-  max-width: 100%;
+  max-height:100%;
+  max-width: 200px;
   display: flex;
+  overflow: auto;
   gap: 2px;
 }
-
+.avatar_img{
+  width: 40px !important;
+  height: 40px !important;
+}
 
 }
 .title_header {

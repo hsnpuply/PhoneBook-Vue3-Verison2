@@ -106,19 +106,19 @@ const getSkillStyle = (skill) => {
 <draggable v-model="localData" group="allContacts" @end="saveOrderLocal" tag="tbody" class=" select-none text-xl bg-[#dddbdb] text-[#333333] cursor-grab">
     <template #item="{ element, index }">
       <tr :class="expandedRows[element.id] ? '!h-[200px] ' : ''"
-          class="row_records group tr_contact_record relative ease-in-out overflow-hidden h-[100px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
+          class="row_records  group tr_contact_record relative ease-in-out overflow-hidden h-[100px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
         <td v-for="(col, i) in columnOrder" :key="i">
           <template v-if="fieldsMapping[col] === 'index'">
-            {{ index + 1 }}
+            <span >{{ index + 1 }}</span>
           </template>
           <template v-else-if="fieldsMapping[col] === 'avatar'">
-            <v-avatar variant="elevated" class="!h-20 !w-20 my-2" :image="element.avatar" />
+            <v-avatar variant="elevated" class="avatar_img !h-20 !w-20 my-2" :image="element.avatar" />
           </template>
           <template v-else-if="fieldsMapping[col] === 'selectedDate'">
             {{ PersianNumberConvertorX(moment(element.selectedDate).format("jYYYY/jMM/jDD")) }}
           </template>
           <template v-else-if="fieldsMapping[col] === 'phoneNumber'">
-            <span class="cursor-pointer hover:underline" @click="copyToClipboard(element.phoneNumber)">
+            <span class="phone_number cursor-pointer hover:underline" @click="copyToClipboard(element.phoneNumber)">
               {{ PersianNumberConvertorX(formatPhoneNumber(element.phoneNumber)) }}
             </span>
           </template>
@@ -139,21 +139,19 @@ const getSkillStyle = (skill) => {
             <div class="max-w-20 favs_container   max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
             <p   
 
-            class="favs_badge  text-white p-2 my-2 text-sm text-center" v-for="(item,index) in element.favorites" :key="index">
+            class="favs_badge   p-2 my-2  text-center" v-for="(item,index) in element.favorites" :key="index">
               {{ item }}
             </p>
             </div>
           </template>
           <template v-else-if="fieldsMapping[col] === 'actions'">
-            <div class="actionButtonsContainer flex gap-16 items-center justify-center">
-              <!-- <v-btn variant="elevated" elevation="2" prepend-icon="mdi-delete" @click="props.DeleteContacts(element.id, props.data)"
-                class="bg-red-600/90 hover:bg-red-600/95">
-              </v-btn> -->
+            <div class="actionButtonsContainer
+            no-print
+             flex gap-16 items-center justify-center">
+
               <v-icon color="black" @click="props.toggleEditForm(element)" >mdi-pencil</v-icon>
-              <v-icon color="red" class="hover:bg-red-500/80  rounded-full " @click="props.DeleteContacts(element.id, props.data)" >mdi-delete</v-icon>
-              <!-- <v-btn variant="elevated" color="blue" prepend-icon="mdi-pen" @click="props.toggleEditForm(element)"
-                class="bg-sky-600/90 hover:bg-sky-600/95">
-              </v-btn> -->
+              <v-icon color="red" class="  " @click="props.DeleteContacts(element.id, props.data)" >mdi-delete</v-icon>
+
             </div>
           </template>
           <template v-else>
@@ -162,7 +160,7 @@ const getSkillStyle = (skill) => {
         </td>
 
         <!-- Display the expand toggle button only if the 'skills' array has more than 2 items -->
-        <div v-if="element.skills && element.skills.length > 2" class="expand_toggle py-2 absolute -bottom-6 right-[45%]" @click="toggle_expand(element.id)">
+        <div v-if="element.skills && element.skills.length > 2" class="expand_toggle no-print py-2 absolute -bottom-6 right-[45%]" @click="toggle_expand(element.id)">
           <v-btn icon="mdi-arrow-down" :class="expandedRows[element.id] ? 'rotate-180' : ''">
           </v-btn>
         </div>
