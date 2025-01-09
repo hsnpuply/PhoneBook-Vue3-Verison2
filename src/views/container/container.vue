@@ -603,6 +603,12 @@ watch(()=> state.pagination.current_page , ()=>{
   split_data()
 })
 
+// const table_ref =ref('')
+// const print_table = ()=>{
+//   table_ref.value.document.write()
+
+// }
+
 </script>
 <template>
   <div
@@ -630,7 +636,7 @@ watch(()=> state.pagination.current_page , ()=>{
 
     <div class="container mx-auto rounded-lg">
       <div
-        class="px-4 my-2 text-center lg:!text-left animate__animated animate__slow animate__fadeInLeft"
+        class="no-print flex gap-8 px-4 my-2 text-center lg:!text-left animate__animated animate__slow animate__fadeInLeft"
       >
         <div class="setting">
           <span
@@ -638,19 +644,28 @@ watch(()=> state.pagination.current_page , ()=>{
             @click.stop="drawer = !drawer"
           />
         </div>
+        <div class="setting">
+          <span
+            class="cursor-pointer mdi mdi-printer text-3xl
+             text-white hover:scale-[.94]
+              inline-flex duration-300 ease-in-out "
+            @click.stop="print_table"
+          />
+        </div>
       </div>
 
       <v-table
-        class="the_table hidden xl:block"
+        ref="table_ref"
+        class="the_table hidden xl:block !overflow-hidden"
         :class="tableAnimationClass"
         :key="state.mainTableKey"
       >
         <thead class="relative bg-transparent">
-          <v-btn class="bg-[#2c3e50]" size="large" @click="col_filter = true"
+          <v-btn class="no-print bg-[#2c3e50]" size="large" @click="col_filter = true"
             >ترتیب ستون ها</v-btn
           >
-          <tr class="text-right !bg-[#2c3e50] text-[#627080] text-white text-lg">
-            <th class="text-right" v-for="(item, index) in tableItems" :key="index">
+          <tr class="text-right !bg-[#2c3e50] text-white text-lg">
+            <th class=" text-right" v-for="(item, index) in tableItems" :key="index">
               {{ item }}
             </th>
           </tr>
@@ -777,7 +792,7 @@ watch(()=> state.pagination.current_page , ()=>{
         :deleteServerContact="deleteServerContact"
         :contactsPreview="state.contacts.contactsPreview"
         :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap"
+        class="!max-w-[50%] flex-1 flex-wrap no-print"
       />
     </div>
 
@@ -799,7 +814,7 @@ watch(()=> state.pagination.current_page , ()=>{
         :serverUpdate="UpdateDataServer"
         :contactsPreview="state.contacts.contactsPreview"
         :key="index"
-        class="!max-w-[50%] flex-1 flex-wrap"
+        class="!max-w-[50%] flex-1 flex-wrap no-print"
       />
     </div>
 
@@ -846,7 +861,7 @@ watch(()=> state.pagination.current_page , ()=>{
         elevation="3"
         size="large"
         @click="toggleRegisterForm"
-        class="bg-[#295687] hover:bg-[#3a6ea5]"
+        class="bg-[#295687] hover:bg-[#3a6ea5] no-print"
       >
         ثبت مخاطب
         <v-icon left class="pl-3"> mdi-plus </v-icon>
@@ -858,7 +873,7 @@ watch(()=> state.pagination.current_page , ()=>{
         "
         variant="elevated"
         elevation="3"
-        class="bg-[#cd9732] hover:bg-[#cfa353] ml-5"
+        class="bg-[#cd9732] hover:bg-[#cfa353] ml-5 no-print"
         size="large"
         @click="userMaking"
       >
@@ -872,7 +887,7 @@ watch(()=> state.pagination.current_page , ()=>{
         "
         variant="elevated"
         elevation="3"
-        class="bg-[#ee5d3c] hover:bg-[#cf7653eb] ml-5"
+        class="bg-[#ee5d3c] hover:bg-[#cf7653eb] ml-5 no-print"
         size="large"
         @click="delete_localstorage_contacts"
       >
@@ -901,8 +916,8 @@ watch(()=> state.pagination.current_page , ()=>{
       <v-btn @click="next_page" size="large" class="rounded-lg" :disabled="isNextDisabled" append-icon="mdi mdi-skip-next">بعدی</v-btn>
     </div> -->
 
-    <!-- test pagination  -->
-    <div class="text-center bg-black/40  ">
+    <!--  pagination  -->
+    <div class="text-center bg-black/40  no-print">
     <v-container>
       <v-row justify="center" >
         <v-col cols="40"  >
@@ -1036,9 +1051,7 @@ watch(()=> state.pagination.current_page , ()=>{
   background-position: center;
   background-size: cover;
 }
-.title_header {
-  filter: drop-shadow(2px 3px 4px #000);
-}
+
 .test_animate {
   animation: testAnimate 1s 1s ease-out forwards;
   opacity: 0;

@@ -24,6 +24,51 @@ table{
     /* border:2px solid #d1ccc0; */
 }
 
+/* .printer:hover{
+} */
+
+
+@media print {
+  .no-print {
+    display: none;
+  }
+  .the_table{
+    display: block !important;
+    filter: none !important;
+    overflow: hidden;
+    border: 2px solid black;
+  }
+
+  .title_header {
+    filter: none !important;
+  }
+  th{
+    filter: none !important;
+    text-shadow: none !important;
+    border-bottom: 3px solid black !important;
+  }
+  .tr_contact_record{
+    width: 40px !important;
+  }
+.skills_badge,.favs_badge{
+  filter: none;
+  border-radius: 0px;
+  box-shadow: none;
+  text-align: center;
+
+}
+.skills_container,.favs_container{
+  max-height: 100%;
+  max-width: 100%;
+  display: flex;
+  gap: 2px;
+}
+
+
+}
+.title_header {
+  filter: drop-shadow(2px 3px 4px #000);
+}
 
 .vpd-body {
     background-color: rgba(0, 0, 0, 0.567);

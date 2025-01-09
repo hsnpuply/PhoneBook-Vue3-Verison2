@@ -106,7 +106,7 @@ const getSkillStyle = (skill) => {
 <draggable v-model="localData" group="allContacts" @end="saveOrderLocal" tag="tbody" class=" select-none text-xl bg-[#dddbdb] text-[#333333] cursor-grab">
     <template #item="{ element, index }">
       <tr :class="expandedRows[element.id] ? '!h-[200px] ' : ''"
-          class="group relative ease-in-out overflow-hidden h-[100px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
+          class="row_records group tr_contact_record relative ease-in-out overflow-hidden h-[100px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
         <td v-for="(col, i) in columnOrder" :key="i">
           <template v-if="fieldsMapping[col] === 'index'">
             {{ index + 1 }}
@@ -127,18 +127,22 @@ const getSkillStyle = (skill) => {
             <v-icon v-else icon="mdi-close-thick" class="text-red-500 group-hover:!text-red-600"></v-icon>
             </template>
           <template v-else-if="fieldsMapping[col] === 'skills'">
-            <div class="max-w-20   max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
+            <div class="max-w-20 skills_container   max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
             <p   :class="getSkillStyle(item)" 
 
-            class=" shadow-black/50 shadow-sm text-white rounded-full p-2 my-2 text-sm text-center" v-for="(item,index) in element.skills" :key="index">
+            class="skills_badge shadow-black/50 shadow-sm text-white rounded-full p-2 my-2 text-sm text-center" v-for="(item,index) in element.skills" :key="index">
               {{ item }}
             </p>
             </div>
           </template>
           <template v-else-if="fieldsMapping[col] === 'favorites'">
-            <p class="max-w-20 max-h-20 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28  transition-[max-height] ease-in-out !max-h-[300px]  !duration-500' : ''">
-              {{ element.favorites.join(" , ") }}
+            <div class="max-w-20 favs_container   max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
+            <p   
+
+            class="favs_badge  text-white p-2 my-2 text-sm text-center" v-for="(item,index) in element.favorites" :key="index">
+              {{ item }}
             </p>
+            </div>
           </template>
           <template v-else-if="fieldsMapping[col] === 'actions'">
             <div class="actionButtonsContainer flex gap-16 items-center justify-center">
