@@ -136,12 +136,12 @@ const getSkillStyle = (skill) => {
             </div>
           </template>
           <template v-else-if="fieldsMapping[col] === 'favorites'">
-            <div class="max-w-20 favs_container   max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
-            <p   
+            <div class="max-w-20  favs_container flex gap-2 flex-col   max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
+            <span   
 
-            class="favs_badge   p-2 my-2  text-center" v-for="(item,index) in element.favorites" :key="index">
-              {{ item }}
-            </p>
+            class="favs_badge print:text-sm text-lg p-1  text-center" v-for="(item,index) in element.favorites" :key="index">
+              {{ item  + ' '}}
+            </span>
             </div>
           </template>
           <template v-else-if="fieldsMapping[col] === 'actions'">

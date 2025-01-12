@@ -573,6 +573,7 @@ const userMaking = () => {
   localStorage.setItem("contacts", JSON.stringify(updatedContacts));
   state.contacts.LocalContacts.push(...newContacts);
   state.contacts.paginated_contacts.push(...newContacts);
+  newData.value.push(...newContacts);
 
   // Call this function to handle additional actions
   getData();
