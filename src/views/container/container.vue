@@ -62,6 +62,9 @@ const updateContactsPerPage = (newVal) => {
   state.pagination.limit_contacts_per_page = newVal;
   // fetchContacts(newVal)
   localStorage.setItem('contacts_per_page', newVal);
+  newData.value.splice(0,newData.value.length,newVal)
+  split_data()
+
 };
 // watch(()=> state.pagination.limit_contacts_per_page,(newValue)=>{
   
@@ -609,6 +612,8 @@ watch(()=> state.pagination.current_page , ()=>{
 
 // }
 
+
+
 </script>
 <template>
   <div
@@ -725,32 +730,33 @@ watch(()=> state.pagination.current_page , ()=>{
           </tr>
         </tbody>
 
-        <ContactRecord
+        <!-- <ContactRecord
           :columnOrder="tableItems"
           v-if="localStorageCondition()"
           :data="state.contacts.LocalContacts"
           :DeleteContacts="DeleteContacts"
           :toggleEditForm="toggleEditForm"
           :getData="getData"
+        /> -->
+        <ContactRecord
+          :columnOrder="tableItems"
+          v-if="localStorageCondition()"
+          :data="newData"
+          :DeleteContacts="deleteServerContact"
+          :toggleEditForm="toggleEditForm"
+          :getData="getData"
         />
 
         <!-- Server -->
-        <!-- <ContactRecord
+        <ContactRecord
           :columnOrder="tableItems"
           v-if="serverCondition()"
           :data="state.contacts.server_1_Contacts"
           :DeleteContacts="deleteServerContact"
           :toggleEditForm="toggleEditForm"
           :getData="getData"
-        /> -->
-        <ContactRecord
-          :columnOrder="tableItems"
-          v-if="serverCondition()"
-          :data="newData"
-          :DeleteContacts="deleteServerContact"
-          :toggleEditForm="toggleEditForm"
-          :getData="getData"
         />
+
       </v-table>
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
