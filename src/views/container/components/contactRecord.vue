@@ -133,7 +133,7 @@ const getSkillStyle = (skill) => {
             <span class="hidden print:block">{{ element.isCoworker ? 'بله' : 'خیر' }}</span>
             </template>
           <template v-else-if="fieldsMapping[col] === 'skills'">
-            <div class="max-w-20 skills_container   max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
+            <div class="max-w-20 skills_container    max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">
             <p   :class="getSkillStyle(item)" 
 
             class="skills_badge shadow-black/50 shadow-sm text-white rounded-full p-2 my-2 text-sm text-center" v-for="(item,index) in element.skills" :key="index">
