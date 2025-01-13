@@ -109,22 +109,28 @@ const getSkillStyle = (skill) => {
           class="row_records  group tr_contact_record relative ease-in-out overflow-hidden h-[100px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
         <td v-for="(col, i) in columnOrder" :key="i">
           <template v-if="fieldsMapping[col] === 'index'">
-            <span >{{ index + 1 }}</span>
+            <span >{{ PersianNumberConvertorX(`${index + 1}`) }}</span>
+          </template>
+          <template v-else-if="fieldsMapping[col] === 'fullname'">
+            <span class="print:text-sm w-full"> {{ element.fullname }}</span>
           </template>
           <template v-else-if="fieldsMapping[col] === 'avatar'">
             <v-avatar variant="elevated" class="avatar_img !h-20 !w-20 my-2" :image="element.avatar" />
           </template>
           <template v-else-if="fieldsMapping[col] === 'selectedDate'">
+          <span class="print:text-base">
             {{ PersianNumberConvertorX(moment(element.selectedDate).format("jYYYY/jMM/jDD")) }}
+          </span>
           </template>
           <template v-else-if="fieldsMapping[col] === 'phoneNumber'">
-            <span class="phone_number cursor-pointer hover:underline" @click="copyToClipboard(element.phoneNumber)">
+            <span class="print:text-base phone_number cursor-pointer hover:underline" @click="copyToClipboard(element.phoneNumber)">
               {{ PersianNumberConvertorX(formatPhoneNumber(element.phoneNumber)) }}
             </span>
           </template>
           <template v-else-if="fieldsMapping[col] === 'isCoworker'">
-            <v-icon v-if="element.isCoworker" icon="mdi-check" color="green" class="text-4xl" ></v-icon>
-            <v-icon v-else icon="mdi-close-thick" class="text-red-500 group-hover:!text-red-600"></v-icon>
+            <v-icon v-if="element.isCoworker" icon="mdi-check" color="green" class=" print:hidden text-4xl" ></v-icon>
+            <v-icon v-else icon="mdi-close-thick" class="text-red-500 group-hover:!text-red-600 print:hidden "></v-icon>
+            <span class="hidden print:block">{{ element.isCoworker ? 'بله' : 'خیر' }}</span>
             </template>
           <template v-else-if="fieldsMapping[col] === 'skills'">
             <div class="max-w-20 skills_container   max-h-12 overflow-hidden " :class="expandedRows[element.id] ? 'max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500' : ''">

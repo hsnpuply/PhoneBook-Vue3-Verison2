@@ -11,6 +11,8 @@ import NoDataLocalAnimation from "@/assets/NoDataLocalAnimation.json";
 import draggable from "vuedraggable";
 import moment from "moment-jalaali";
 import Sortable from "sortablejs/modular/sortable.complete.esm.js";
+import print from 'vue3-print-nb';
+
 const col_filter = ref(false);
 
 const myArray = ref([
@@ -608,10 +610,10 @@ watch(()=> state.pagination.current_page , ()=>{
 })
 
 // const table_ref =ref('')
-// const print_table = ()=>{
-//   table_ref.value.document.write()
+const print_table = ()=>{
+  window.print()
 
-// }
+}
 
 
 
@@ -651,27 +653,45 @@ watch(()=> state.pagination.current_page , ()=>{
           />
         </div>
         <div class="setting">
-          <span
-            class="cursor-pointer mdi mdi-printer text-3xl
+          <v-btn
+            class="cursor-pointer mdi mdi-printer text-3xl bg-red-400
              text-white hover:scale-[.94]
               inline-flex duration-300 ease-in-out "
-            @click.stop="print_table"
-          />
+              v-print="'#contact_table'"
+          ></v-btn>
+        <!-- <button v-print="'#print-section'">Print</button> -->
+
+            <!-- @click.stop="print_table" -->
+            <p >test</p>
         </div>
       </div>
+      <div>
+        <button >Print</button>
+        <div >
+            <h1>This content will be printed</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+    </div>
+    <v-table
+    
+    >
+    <p 
+    class="text-4xl bg-red-500 px-4 py-2 cursor-pointer"> heyhey</p>
+    </v-table>
 
       <v-table
+        id="contact_table"
         ref="table_ref"
         class="the_table hidden xl:block !overflow-hidden"
         :class="tableAnimationClass"
         :key="state.mainTableKey"
       >
-        <thead class="relative bg-transparent">
+        <thead  class="relative bg-transparent">
           <v-btn class="no-print bg-[#2c3e50]" size="large" @click="col_filter = true"
             >ترتیب ستون ها</v-btn
           >
           <tr class="table_headings text-right !bg-[#2c3e50] text-white text-lg">
-            <th class=" text-right" :class="item === 'عملیات' ? 'no-print' : ''" v-for="(item, index) in tableItems" :key="index">
+            <th class="print:py-8 print:border-l-4 last:border-l-0 border-black border-solid print:mt-8 text-right" :class="item === 'عملیات' ? 'no-print' : ''" v-for="(item, index) in tableItems" :key="index">
               {{ item }}
             </th>
           </tr>
