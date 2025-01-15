@@ -1,7 +1,9 @@
 /* custom styles */
+/* @import '../assets/fonts/Vazir.woff'; */
+
 @font-face {
     font-family: VazirPersian;
-    src: url('../assets/fonts/Vazir.woff');
+    src: url('../assets/fonts/Vazir.woff') format('woff');
 }
 
 html{
@@ -211,3 +213,6 @@ tr{
   transition: all .5s ease-in-out !important;
 }
 
+
+#contact_do{
+}

@@ -657,36 +657,37 @@ const print_table = ()=>{
             class="cursor-pointer mdi mdi-printer text-3xl bg-red-400
              text-white hover:scale-[.94]
               inline-flex duration-300 ease-in-out "
-              v-print="'#contact_table'"
+              v-print="'#contacts_table'"
           ></v-btn>
         <!-- <button v-print="'#print-section'">Print</button> -->
 
             <!-- @click.stop="print_table" -->
-            <p >test</p>
         </div>
       </div>
-      <div>
-        <button >Print</button>
-        <div >
-            <h1>This content will be printed</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-    </div>
-    <v-table
-    
-    >
-    <p 
-    class="text-4xl bg-red-500 px-4 py-2 cursor-pointer"> heyhey</p>
+      test-vtable
+    <v-table id="contact_doo">
+    Lorem ipsum dolor sit amet.
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore, ipsam mollitia velit voluptatibus magni quae illum adipisci ipsum commodi iste delectus laborum? Atque quam cumque quia maxime optio iste ipsa?
     </v-table>
 
-      <v-table
-        id="contact_table"
+      <!-- <p id="contact_do">testest</p> -->
+    <div class="test_my" >
+      <!-- <h1
+       id="contact_do"
+          class=" print:flex text-center py-8 text-3xl text-white title_header font-semibold items-center justify-center gap-2"
+        >
+          <span class="mdi" :class="getTitleEmoji(state.contacts.contactsPreview)"></span>
+          دفترچه تلفن {{ savingModeData(state.contacts.contactsPreview) }}
+        </h1>  -->
+             <v-table
         ref="table_ref"
         class="the_table hidden xl:block !overflow-hidden"
         :class="tableAnimationClass"
         :key="state.mainTableKey"
       >
-        <thead  class="relative bg-transparent">
+        <thead 
+          class="relative bg-transparent"
+          >
           <v-btn class="no-print bg-[#2c3e50]" size="large" @click="col_filter = true"
             >ترتیب ستون ها</v-btn
           >
@@ -779,6 +780,8 @@ const print_table = ()=>{
         />
 
       </v-table>
+    </div>
+
       <div
         class="flex flex-col py-20 xl:py-0 md:rounded-lg !rounded-2xl bg-white items-center justify-center min-h-[200px] text-center"
         :class="getNoContactAnimatedClass"

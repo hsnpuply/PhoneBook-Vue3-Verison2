@@ -9,11 +9,11 @@ import print from 'vue3-print-nb';
 import Vue3Lottie from 'vue3-lottie'
 
 
-const vuetify = createVuetify({
-  icons: {
-    defaultSet: 'mdi', // Change this if using a different icon set
-  },
-});
+// const vuetify = createVuetify({
+//   icons: {
+//     defaultSet: 'mdi', // Change this if using a different icon set
+//   },
+// });
 
 
 import { registerPlugins } from '@/plugins'
