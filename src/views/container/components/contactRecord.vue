@@ -12,6 +12,7 @@ const props = defineProps({
   toggleEditForm: Function,
   getData:Function,
   columnOrder: Array,
+  isPrint:Boolean
 
 }); 
 
@@ -103,7 +104,10 @@ const getSkillStyle = (skill) => {
 </script>
 <template>
 
-<draggable v-model="localData" group="allContacts" @end="saveOrderLocal" tag="tbody" class=" select-none text-xl bg-[#dddbdb] text-[#333333] cursor-grab">
+<draggable v-model="localData" group="allContacts" @end="saveOrderLocal"
+ tag="tbody"
+  :class="{'' : props.isPrint}"
+  class=" select-none text-xl bg-[#dddbdb] text-[#333333] cursor-grab">
     <template #item="{ element, index }">
       <tr :class="expandedRows[element.id] ? '!h-[200px] ' : ''"
           class="row_records  group tr_contact_record relative ease-in-out overflow-hidden h-[100px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60">
@@ -151,7 +155,9 @@ const getSkillStyle = (skill) => {
             </div>
           </template>
           <template v-else-if="fieldsMapping[col] === 'actions'">
-            <div class="actionButtonsContainer
+            <div 
+            v-if="!props.isPrint"
+            class="actionButtonsContainer
             no-print
              flex gap-16 items-center justify-center">
 

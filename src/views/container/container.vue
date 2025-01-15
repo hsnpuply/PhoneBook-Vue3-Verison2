@@ -654,23 +654,16 @@ const print_table = ()=>{
         </div>
         <div class="setting">
           <v-btn
-            class="cursor-pointer mdi mdi-printer text-3xl bg-red-400
+            class="cursor-pointer mdi mdi-printer text-3xl
              text-white hover:scale-[.94]
               inline-flex duration-300 ease-in-out "
-              v-print="'#contacts_table'"
+              v-print="'#print_table'"
           ></v-btn>
         <!-- <button v-print="'#print-section'">Print</button> -->
 
             <!-- @click.stop="print_table" -->
         </div>
       </div>
-      test-vtable
-    <v-table id="contact_doo">
-    Lorem ipsum dolor sit amet.
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore, ipsam mollitia velit voluptatibus magni quae illum adipisci ipsum commodi iste delectus laborum? Atque quam cumque quia maxime optio iste ipsa?
-    </v-table>
-
-      <!-- <p id="contact_do">testest</p> -->
     <div class="test_my" >
       <!-- <h1
        id="contact_do"
@@ -1073,6 +1066,27 @@ const print_table = ()=>{
 
 
 
+
+  <table class="w-full">
+    <thead 
+          class="relative bg-transparent  "
+          >
+          <tr class=" text-right !bg-[#2c3e50] text-white text-lg ">
+            <th class="print:py-8 print:border-l-4 last:border-l-0 border-black border-solid print:mt-8 text-right" :class="item === 'عملیات' ? 'no-print hidden' : ''" v-for="(item, index) in tableItems" :key="index">
+              {{ item }}
+            </th>
+          </tr>
+        </thead>
+          <ContactRecord
+          :columnOrder="tableItems"
+          v-if="localStorageCondition()"
+          :data="newData"
+          :DeleteContacts="deleteServerContact"
+          :toggleEditForm="toggleEditForm"
+          :getData="getData"
+          :isPrint="true"
+        />
+  </table>
 </template>
 
 <style scoped>
