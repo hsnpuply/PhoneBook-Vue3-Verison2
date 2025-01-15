@@ -657,7 +657,7 @@ const print_table = ()=>{
             class="cursor-pointer mdi mdi-printer text-3xl
              text-white hover:scale-[.94]
               inline-flex duration-300 ease-in-out "
-              v-print="'#print_table'"
+              v-print="'#my_table'"
           ></v-btn>
         <!-- <button v-print="'#print-section'">Print</button> -->
 
@@ -1067,7 +1067,7 @@ const print_table = ()=>{
 
 
 
-  <table class="w-full">
+  <table class="w-full border-4 border-black " id="my_table">
     <thead 
           class="relative bg-transparent  "
           >
@@ -1080,7 +1080,7 @@ const print_table = ()=>{
           <ContactRecord
           :columnOrder="tableItems"
           v-if="localStorageCondition()"
-          :data="newData"
+          :data="state.contacts.LocalContacts"
           :DeleteContacts="deleteServerContact"
           :toggleEditForm="toggleEditForm"
           :getData="getData"
