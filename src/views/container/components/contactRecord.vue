@@ -98,7 +98,7 @@ const getSkillStyle = (skill) => {
     "Node.js": "bg-gradient-to-r from-green-600 to-lime-500 text-white",
     CSS: "bg-gradient-to-r from-purple-400 to-pink-500 text-white",
     HTML: "bg-gradient-to-r from-orange-400 to-red-500 text-white",
-    JavaScript: "bg-gradient-to-r from-yellow-300 to-amber-500 text-black",
+    JavaScript: "bg-gradient-to-r from-yellow-300 to-amber-500 text-white",
     Python:
       "bg-gradient-to-r from-blue-500 via-blue-400 to-yellow-400 text-white", // 3-color gradient for Python
   };
@@ -121,9 +121,9 @@ const getSkillStyle = (skill) => {
         :class="expandedRows[element.id]  ? '!h-[200px] ' : ''"
         class="row_records group tr_contact_record relative ease-in-out overflow-hidden h-[100px] text-right hover:!bg-[#4c749f] hover:text-white duration-150 even:bg-gray-200 even:!bg-[#e0c083] bg-gray-400/50 !bg-[#f8f1e5] hover:bg-sky-900/60"
       >
-        <td v-for="(col, i) in columnOrder" :key="i">
+        <td v-for="(col, i) in columnOrder" :key="i"  :class="props.isPrint ?  'border-[3px] border-solid border-black' : ''">
           <template v-if="fieldsMapping[col] === 'index'">
-            <span>{{ PersianNumberConvertorX(`${index + 1}`) }}</span>
+            <span class="p-4 text-center">{{ PersianNumberConvertorX(`${index + 1}`) }}</span>
           </template>
           <template v-else-if="fieldsMapping[col] === 'fullname'">
             <span class="print:text-sm w-full"> {{ element.fullname }}</span>
@@ -155,7 +155,8 @@ const getSkillStyle = (skill) => {
             </span>
           </template>
           <template v-else-if="fieldsMapping[col] === 'isCoworker'">
-            <v-icon
+            <div v-if="!props.isPrint" class="flex items-center justify-center">
+              <v-icon
               v-if="element.isCoworker && !props.isPrint"
               icon="mdi-check"
               color="green"
@@ -166,9 +167,13 @@ const getSkillStyle = (skill) => {
               icon="mdi-close-thick"
               class="text-red-500 group-hover:!text-red-600 print:hidden"
             ></v-icon>
-            <span v-if="props.isPrint"  class="">{{
+            </div>
+            <div class=" text-center">
+              <span v-if="props.isPrint"  class="text-center w-full ">{{
               element.isCoworker ? "بله" : "خیر"
             }}</span>
+            </div>
+
           </template>
           <template v-else-if="fieldsMapping[col] === 'skills'">
             <div
@@ -177,16 +182,16 @@ const getSkillStyle = (skill) => {
                 expandedRows[element.id] && !props.isPrint
                   ? 'max-w-28 skills_container transition-[max-height] ease-in-out !max-h-[300px] !duration-500'
                   : '' ,
-                  !props.isPrint ? 'max-h-12 ' : 'flex max-w-full gap-4 '
+                  !props.isPrint ? ' max-h-12 ' : 'flex max-w-full gap-4 '
                   ]
               "
             >
               <p
                 :class="[!props.isPrint ? getSkillStyle(item)  : ''
                   ,  !props.isPrint ? 'skills_badge shadow-black/50 shadow-sm rounded-full p-2 my-2'
-                   : '' 
+                   : '!text-lg' 
                 ]"
-                class="  text-white  text-sm text-center"
+                class=" text-sm text-center"
                 v-for="(item, index) in element.skills"
                 :key="index"
               >

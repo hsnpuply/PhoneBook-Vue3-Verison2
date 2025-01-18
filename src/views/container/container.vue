@@ -1066,8 +1066,14 @@ const print_table = ()=>{
 
 
 
-
-  <table class="w-full border-4 border-black " id="my_table">
+  <div class="printable w-full" id="my_table">
+    <h1
+          class="text-center py-1 text-xl text-white title_header font-semibold flex items-center justify-center gap-2"
+        >
+          <span class="mdi" :class="getTitleEmoji(state.contacts.contactsPreview)"></span>
+          دفترچه تلفن {{ savingModeData(state.contacts.contactsPreview) }}
+        </h1>
+    <table class="w-full border-4 border-black " >
     <thead 
           class="relative bg-transparent  "
           >
@@ -1087,6 +1093,8 @@ const print_table = ()=>{
           :isPrint="true"
         />
   </table>
+  </div>
+
 </template>
 
 <style scoped>
