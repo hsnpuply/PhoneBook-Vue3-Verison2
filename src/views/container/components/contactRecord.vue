@@ -215,13 +215,13 @@ const getSkillStyle = (skill) => {
           </template>
           <template v-else-if="fieldsMapping[col] === 'favorites'">
             <div
-              class="max-w-20 favs_container "
+              class="max-w-20   w-full "
               :class="
               [
                 expandedRows[element.id] && !props.isPrint
-                  ? 'flex gap-2 flex-col overflow-hidden max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500'
+                  ? ' favs_container flex gap-2 flex-col overflow-hidden max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500'
                   : '',
-                  !props.isPrint ? 'max-h-12' : ' flex gap-4 flex-col py-4 px-4'
+                  !props.isPrint ? 'max-h-12' : 'bg-blue-500  flex gap-4 flex-col py-4 px-4 text-center'
 
                   ]
               "

@@ -1076,7 +1076,7 @@ const print_table = ()=>{
           >
           <tr class="  text-right !bg-[#2c3e50] text-white text-lg ">
             <th
-             class=" text-center w-full  px-12 print:py-4 print:border-l-4 last:border-l-0 border-black border-solid print:mt-8  w-full" :class="item === 'عملیات' ? 'no-print hidden' : ''" v-for="(item, index) in tableItems" :key="index">
+             class=" text-center px-12 print:py-4 print:border-l-4 last:border-l-0 border-black border-solid print:mt-8 " :class="item === 'عملیات' ? 'no-print hidden' : ''" v-for="(item, index) in tableItems" :key="index">
               {{ item }}
             </th>
           </tr>
