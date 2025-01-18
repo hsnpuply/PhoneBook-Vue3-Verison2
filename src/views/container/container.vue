@@ -659,9 +659,6 @@ const print_table = ()=>{
               inline-flex duration-300 ease-in-out "
               v-print="'#my_table'"
           ></v-btn>
-        <!-- <button v-print="'#print-section'">Print</button> -->
-
-            <!-- @click.stop="print_table" -->
         </div>
       </div>
     <div class="test_my" >
@@ -1073,12 +1070,13 @@ const print_table = ()=>{
           <span class="mdi" :class="getTitleEmoji(state.contacts.contactsPreview)"></span>
           دفترچه تلفن {{ savingModeData(state.contacts.contactsPreview) }}
         </h1>
-    <table class="w-full border-4 border-black " >
+    <table class="w-full border-4 border-black table_printable" >
     <thead 
           class="relative bg-transparent  "
           >
-          <tr class=" text-right !bg-[#2c3e50] text-white text-lg ">
-            <th class="print:py-8 print:border-l-4 last:border-l-0 border-black border-solid print:mt-8 text-right" :class="item === 'عملیات' ? 'no-print hidden' : ''" v-for="(item, index) in tableItems" :key="index">
+          <tr class="  text-right !bg-[#2c3e50] text-white text-lg ">
+            <th
+             class=" text-center w-full  px-12 print:py-4 print:border-l-4 last:border-l-0 border-black border-solid print:mt-8  w-full" :class="item === 'عملیات' ? 'no-print hidden' : ''" v-for="(item, index) in tableItems" :key="index">
               {{ item }}
             </th>
           </tr>

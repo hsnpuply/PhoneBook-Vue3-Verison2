@@ -123,19 +123,26 @@ const getSkillStyle = (skill) => {
       >
         <td v-for="(col, i) in columnOrder" :key="i"  :class="props.isPrint ?  'border-[3px] border-solid border-black' : ''">
           <template v-if="fieldsMapping[col] === 'index'">
-            <span class="p-4 text-center">{{ PersianNumberConvertorX(`${index + 1}`) }}</span>
+            <span class="px-2 ">{{ PersianNumberConvertorX(`${index + 1}`) }}</span>
           </template>
           <template v-else-if="fieldsMapping[col] === 'fullname'">
+          <div class="text-center"
+          :class="{'px-4' : props.isPrint}"
+          >
             <span class="print:text-sm w-full"> {{ element.fullname }}</span>
+          </div>
           </template>
           <template v-else-if="fieldsMapping[col] === 'avatar'">
-            <v-avatar
+            <div class="" :class="{ 'px-2 flex items-center justify-center' : props.isPrint}">
+              <v-avatar
               variant="elevated"
               class="avatar_img !h-20 !w-20 my-2"
               :image="element.avatar"
             />
+            </div>
           </template>
           <template v-else-if="fieldsMapping[col] === 'selectedDate'">
+          <div class="" :class="{ 'px-2 text-center' : props.isPrint}">
             <span class="print:text-base">
               {{
                 PersianNumberConvertorX(
@@ -143,8 +150,11 @@ const getSkillStyle = (skill) => {
                 )
               }}
             </span>
+          </div>
+
           </template>
           <template v-else-if="fieldsMapping[col] === 'phoneNumber'">
+          <div class="" :class="{'px-3' : props.isPrint}" >
             <span
               class="print:text-base phone_number cursor-pointer hover:underline"
               @click="copyToClipboard(element.phoneNumber)"
@@ -153,6 +163,8 @@ const getSkillStyle = (skill) => {
                 PersianNumberConvertorX(formatPhoneNumber(element.phoneNumber))
               }}
             </span>
+          
+          </div>
           </template>
           <template v-else-if="fieldsMapping[col] === 'isCoworker'">
             <div v-if="!props.isPrint" class="flex items-center justify-center">
@@ -168,7 +180,9 @@ const getSkillStyle = (skill) => {
               class="text-red-500 group-hover:!text-red-600 print:hidden"
             ></v-icon>
             </div>
-            <div class=" text-center">
+            <div class=" text-center" 
+            :class="{'px-8' : props.isPrint}"
+            >
               <span v-if="props.isPrint"  class="text-center w-full ">{{
               element.isCoworker ? "بله" : "خیر"
             }}</span>
@@ -182,14 +196,14 @@ const getSkillStyle = (skill) => {
                 expandedRows[element.id] && !props.isPrint
                   ? 'max-w-28 skills_container transition-[max-height] ease-in-out !max-h-[300px] !duration-500'
                   : '' ,
-                  !props.isPrint ? ' max-h-12 ' : 'flex max-w-full gap-4 '
+                  !props.isPrint ? ' max-h-12 ' : 'flex max-w-full flex-col py-4 gap-4 px-4 '
                   ]
               "
             >
               <p
                 :class="[!props.isPrint ? getSkillStyle(item)  : ''
                   ,  !props.isPrint ? 'skills_badge shadow-black/50 shadow-sm rounded-full p-2 my-2'
-                   : '!text-lg' 
+                   : '!text-lg' ,
                 ]"
                 class=" text-sm text-center"
                 v-for="(item, index) in element.skills"
@@ -207,7 +221,7 @@ const getSkillStyle = (skill) => {
                 expandedRows[element.id] && !props.isPrint
                   ? 'flex gap-2 flex-col overflow-hidden max-w-28 transition-[max-height] ease-in-out !max-h-[300px] !duration-500'
                   : '',
-                  !props.isPrint ? 'max-h-12' : ' flex gap-4'
+                  !props.isPrint ? 'max-h-12' : ' flex gap-4 flex-col py-4 px-4'
 
                   ]
               "

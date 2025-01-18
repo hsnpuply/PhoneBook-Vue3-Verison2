@@ -25,6 +25,8 @@ table{
     direction: rtl;
     /* border:2px solid #d1ccc0; */
     overflow: hidden;
+
+
 }
 
 /* .printer:hover{
@@ -32,6 +34,10 @@ table{
 
 tr{
   border: 2px solid black;
+}
+.table_printable{
+  break-after: avoid;
+  break-before: avoid;
 }
 
 @media print {
@@ -58,6 +64,8 @@ tr{
     display: block !important;
     filter: none !important;
     overflow: hidden;
+    /* page-break-after:avoid;
+    page-break-before:avoid; */
   }
 
   .title_header {
